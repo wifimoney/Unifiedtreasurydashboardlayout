@@ -33,6 +33,50 @@ import {
 import { ThemeProvider, useTheme } from "./lib/ThemeContext";
 import { Button } from "./components/ui/button";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import {
+  connectorsForWallets,
+} from '@rainbow-me/rainbowkit';
+import {
+  metaMaskWallet,
+  coinbaseWallet,
+  rainbowWallet,
+  walletConnectWallet,
+  trustWallet,        
+  ledgerWallet,       
+  rabbyWallet,
+  phantomWallet,      
+  zerionWallet,
+} from '@rainbow-me/rainbowkit/wallets';
+
+const projectId = 'YOUR_PROJECT_ID';
+
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: 'Suggested',
+      wallets: [
+        metaMaskWallet,
+        coinbaseWallet,
+        rainbowWallet,
+        rabbyWallet,
+      ],
+    },
+    {
+      groupName: 'Other Wallets',
+      wallets: [
+        trustWallet,
+        ledgerWallet,
+        phantomWallet,
+        zerionWallet,
+        walletConnectWallet,
+      ],
+    },
+  ],
+  {
+    appName: 'My RainbowKit App',
+    projectId: projectId,
+  }
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
