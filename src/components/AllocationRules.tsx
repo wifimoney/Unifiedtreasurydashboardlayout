@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useChainId } from 'wagmi';
 import { parseEther, formatEther } from 'viem';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Label } from './ui/label';
@@ -26,8 +26,8 @@ import {
   ExternalLink,
   RefreshCw
 } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
-import { contracts, RuleType, RuleStatus, getExplorerUrl } from '../lib/contracts';
+import { toast } from 'sonner';
+import { getUserContracts, RuleType, RuleStatus, getExplorerUrl } from '../lib/contracts';
 
 // Interface matching contract Rule struct
 interface ContractRule {
@@ -86,6 +86,7 @@ const ruleTypeLabels = {
 
 export function AllocationRules() {
   const { address, isConnected } = useAccount();
+  const chainId = useChainId();
   const [rules, setRules] = useState<AllocationRule[]>([]);
   const [isLoadingRules, setIsLoadingRules] = useState(true);
   const [formData, setFormData] = useState({
@@ -97,6 +98,11 @@ export function AllocationRules() {
     maxExecutions: '100',
   });
 
+  // Get user's deployed contracts or fallback to default
+  const contracts = useMemo(() => {
+    return getUserContracts(address, chainId);
+  }, [address, chainId]);
+
   // Read rule count from contract (wagmi v2)
   const { data: ruleCount, refetch: refetchCount } = useReadContract({
     ...contracts.RuleEngine,
@@ -104,9 +110,24 @@ export function AllocationRules() {
   });
 
   // Contract writes (wagmi v2)
-  const { data: createRuleHash, writeContract: writeCreateRule, isPending: isCreating, error: createRuleError } = useWriteContract();
-  const { data: executeRuleHash, writeContract: writeExecuteRule, isPending: isExecuting } = useWriteContract();
-  const { data: updateStatusHash, writeContract: writeUpdateStatus } = useWriteContract();
+  const {
+    data: createRuleHash,
+    writeContract: writeCreateRule,
+    isPending: isCreating,
+    error: createRuleError,
+    isError: isCreateError,
+  } = useWriteContract();
+
+  const {
+    data: executeRuleHash,
+    writeContract: writeExecuteRule,
+    isPending: isExecuting
+  } = useWriteContract();
+
+  const {
+    data: updateStatusHash,
+    writeContract: writeUpdateStatus
+  } = useWriteContract();
 
   // Debug contract setup
   useEffect(() => {
@@ -116,10 +137,68 @@ export function AllocationRules() {
       isWalletConnected: isConnected,
       walletAddress: address,
     });
-    if (createRuleError) {
-      console.error('❌ createRule error:', createRuleError);
+  }, [writeCreateRule, isConnected, address]);
+
+  // Track transaction pending state
+  useEffect(() => {
+    if (isCreating) {
+      console.log('⏳ Transaction is pending - wallet should be prompting...');
     }
-  }, [writeCreateRule, isConnected, address, createRuleError]);
+  }, [isCreating]);
+
+  // Handle errors
+  useEffect(() => {
+    if (isCreateError && createRuleError) {
+      console.error('❌ Contract write error:', {
+        error: createRuleError,
+        message: createRuleError.message,
+        cause: createRuleError.cause,
+      });
+
+      // Deep inspect the error to find rate limit source
+      console.log('🔍 Error details:', {
+        errorType: createRuleError.constructor.name,
+        message: createRuleError.message,
+        stack: createRuleError.stack?.split('\n').slice(0, 3),
+      });
+
+      // Show user-friendly error messages
+      const errorMessage = createRuleError.message?.toLowerCase() || '';
+      const causeMessage = (createRuleError.cause as any)?.message?.toLowerCase() || '';
+      const errorDetails = (createRuleError as any)?.details?.toLowerCase() || '';
+
+      // Check all error sources for rate limit
+      const isRateLimit = errorMessage.includes('rate limit') ||
+                         causeMessage.includes('rate limit') ||
+                         errorDetails.includes('rate limit');
+
+      if (isRateLimit) {
+        console.error('⚠️ RATE LIMIT DETECTED - This is from your WALLET\'S RPC, not Alchemy!');
+        toast.error('Wallet RPC Rate Limit', {
+          description: 'Your wallet (MetaMask/RainbowKit) has its own RPC that is rate limited. Wait 60 seconds and try again. The Alchemy endpoint is fine.',
+          duration: 10000,
+        });
+      } else if (errorMessage.includes('user rejected') || errorMessage.includes('user denied')) {
+        toast.error('Transaction rejected', {
+          description: 'You declined the transaction in your wallet'
+        });
+      } else if (errorMessage.includes('insufficient funds') || errorMessage.includes('insufficient balance')) {
+        toast.error('Insufficient funds for gas', {
+          description: 'You need more USDC to pay for transaction gas'
+        });
+      } else if (errorMessage.includes('nonce')) {
+        toast.error('Transaction nonce error', {
+          description: 'Please try again or reset your wallet'
+        });
+      } else {
+        // Extract meaningful error from the message
+        const shortMessage = errorMessage.split('\n')[0].substring(0, 100);
+        toast.error('Transaction failed', {
+          description: shortMessage || 'Please try again'
+        });
+      }
+    }
+  }, [isCreateError, createRuleError]);
 
   // Wait for create rule transaction (wagmi v2)
   const { isLoading: isWaitingForTx, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({
@@ -269,7 +348,7 @@ export function AllocationRules() {
     }
   }, [isUpdateStatusSuccess, updateStatusHash, refetchCount]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('🚀 Form submitted!');
 
@@ -278,6 +357,25 @@ export function AllocationRules() {
       toast.error('Please connect your wallet');
       return;
     }
+
+    if (!address) {
+      console.warn('⚠️ No wallet address');
+      toast.error('Wallet address not found');
+      return;
+    }
+
+    // Check if on correct chain
+    const ARC_TESTNET_CHAIN_ID = 5042002;
+    if (chainId !== ARC_TESTNET_CHAIN_ID) {
+      console.error('❌ Wrong network! Current:', chainId, 'Expected:', ARC_TESTNET_CHAIN_ID);
+      toast.error('Wrong Network', {
+        description: `Please switch to Arc Testnet (Chain ID: ${ARC_TESTNET_CHAIN_ID}). You are currently on Chain ID: ${chainId}`,
+        duration: 10000,
+      });
+      return;
+    }
+
+    console.log('✅ Chain check passed. Current chain ID:', chainId);
 
     if (!formData.recipientWallet || !formData.usdcAmount || !formData.ruleType) {
       console.warn('⚠️ Missing required fields:', formData);
@@ -288,6 +386,23 @@ export function AllocationRules() {
     if (!writeCreateRule) {
       console.error('❌ writeContract function not available');
       toast.error('Contract write function not ready. Please try again.');
+      return;
+    }
+
+    console.log('✅ Wallet state:', {
+      isConnected,
+      address,
+      contractAddress: contracts.RuleEngine.address,
+      ruleCount: ruleCount?.toString() || 'not loaded',
+    });
+
+    // Verify contract is accessible
+    if (ruleCount === undefined) {
+      console.error('❌ Cannot read from RuleEngine contract. It may not exist on this network.');
+      toast.error('Contract Not Found', {
+        description: 'The RuleEngine contract cannot be found. Make sure you are on Arc Testnet.',
+        duration: 10000,
+      });
       return;
     }
 
@@ -321,31 +436,56 @@ export function AllocationRules() {
 
       // Contract expects these parameters in this exact order:
       // createRule(name, description, ruleType, triggerAmount, checkInterval, minExecutionGap, recipients, values, usePercentages, maxPerExecution)
-      writeCreateRule({
-        ...contracts.RuleEngine,
+      const txParams = {
+        address: contracts.RuleEngine.address,
+        abi: contracts.RuleEngine.abi,
         functionName: 'createRule',
         args: [
           ruleName,  // name (string)
           ruleDescription, // description (string)
           parseInt(formData.ruleType),  // ruleType (uint8)
           amount,  // triggerAmount (uint256)
-          intervalSeconds,  // checkInterval (uint256)
-          intervalSeconds,  // minExecutionGap (uint256) - same as interval for simplicity
+          BigInt(intervalSeconds),  // checkInterval (uint256)
+          BigInt(intervalSeconds),  // minExecutionGap (uint256) - same as interval for simplicity
           [formData.recipientWallet as `0x${string}`], // recipients (address[])
           [amount],  // values (uint256[]) - full amount to single recipient
           false,  // usePercentages (bool) - false means fixed amounts
           0n,  // maxPerExecution (uint256) - 0 means unlimited
         ],
+        account: address,
+      } as const;
+
+      console.log('📝 Transaction parameters:', txParams);
+
+      toast.loading('Preparing transaction...', {
+        description: 'Please wait a moment...',
+        id: 'preparing-tx',
       });
 
-      console.log('✅ createRule transaction initiated');
+      // Add a small delay to avoid hitting rate limits immediately
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      toast.loading('Creating rule on-chain...', {
-        description: 'Please confirm the transaction in your wallet',
-      });
+      try {
+        console.log('🎯 Calling writeCreateRule...');
+        writeCreateRule(txParams);
+        console.log('✅ createRule transaction initiated');
+
+        toast.loading('Creating rule on-chain...', {
+          description: 'Please confirm the transaction in your wallet',
+          id: 'creating-rule',
+        });
+      } catch (writeError) {
+        console.error('❌ Error calling writeCreateRule:', writeError);
+        toast.error('Failed to initiate transaction', {
+          description: writeError instanceof Error ? writeError.message : 'Unknown error'
+        });
+        return;
+      }
     } catch (error) {
-      console.error('Error creating rule:', error);
-      toast.error('Failed to create rule');
+      console.error('💥 Error in handleSubmit:', error);
+      toast.error('Failed to prepare transaction', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   };
 
@@ -618,6 +758,15 @@ export function AllocationRules() {
                   </>
                 )}
               </Button>
+            </div>
+
+            {/* RPC Fallback Info */}
+            <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-xl">
+              <Shield className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-green-800 dark:text-green-300">
+                <p className="font-semibold mb-1">Redundant RPC Endpoints</p>
+                <p>Using 5 fallback RPC endpoints for maximum reliability. If one endpoint is rate limited, the system automatically switches to the next available endpoint.</p>
+              </div>
             </div>
 
             {/* Info Banner */}
