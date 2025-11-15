@@ -1,5 +1,8 @@
 import { defineChain } from 'viem'
 
+// Using Arc public RPCs to avoid rate limiting issues
+console.log('🌐 Arc Testnet RPC configured: Public RPCs (no rate limits)');
+
 export const arcTestnet = defineChain({
   id: 5042002,
   name: 'Arc Testnet',

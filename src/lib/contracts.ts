@@ -5,6 +5,7 @@ import ScheduledPaymentsDeployment from './deployments/arcTestnet/ScheduledPayme
 import RuleEngineDeployment from './deployments/arcTestnet/RuleEngine.json'
 import ComplianceTrackerDeployment from './deployments/arcTestnet/ComplianceTracker.json'
 import TreasuryAggregatorDeployment from './deployments/arcTestnet/TreasuryAggregatorSimple.json'
+import { ContractDeploymentService } from './contractDeploymentService'
 
 // Contract configuration type
 export interface ContractConfig {
@@ -12,7 +13,64 @@ export interface ContractConfig {
   abi: any;
 }
 
-// Main contract exports
+/**
+ * Get user's deployed contracts or fallback to default
+ * @param walletAddress - The connected wallet address
+ * @param chainId - The current chain ID
+ */
+export function getUserContracts(walletAddress?: string, chainId?: number) {
+  // TEMPORARILY DISABLED: Just use default contracts for everyone
+  // This avoids issues with wallet-specific contract storage
+  console.log('ℹ️ Using default contracts for all users');
+  return contracts;
+
+  /* ORIGINAL CODE - COMMENTED OUT FOR NOW
+  // If wallet is connected and has deployed contracts, use those
+  if (walletAddress && chainId) {
+    const userContracts = ContractDeploymentService.getUserContracts(walletAddress, chainId);
+
+    if (userContracts?.ruleEngine) {
+      console.log('✅ Using user\'s deployed contracts:', userContracts);
+      return {
+        TreasuryCore: {
+          address: (userContracts.treasuryCore || "0xcee3Bb02aE95E1Dbc2e5C51a502Ac6eC5deEFa81") as `0x${string}`,
+          abi: TreasuryCoreDeployment.abi,
+        },
+        PayrollManager: {
+          address: PayrollManagerDeployment.address as `0x${string}`,
+          abi: PayrollManagerDeployment.abi,
+        },
+        BudgetAllocator: {
+          address: (userContracts.budgetAllocator || BudgetAllocatorDeployment.address) as `0x${string}`,
+          abi: BudgetAllocatorDeployment.abi,
+        },
+        ScheduledPayments: {
+          address: (userContracts.scheduledPayments || ScheduledPaymentsDeployment.address) as `0x${string}`,
+          abi: ScheduledPaymentsDeployment.abi,
+        },
+        RuleEngine: {
+          address: userContracts.ruleEngine as `0x${string}`,
+          abi: RuleEngineDeployment.abi,
+        },
+        ComplianceTracker: {
+          address: (userContracts.complianceTracker || ComplianceTrackerDeployment.address) as `0x${string}`,
+          abi: ComplianceTrackerDeployment.abi,
+        },
+        TreasuryAggregator: {
+          address: TreasuryAggregatorDeployment.address as `0x${string}`,
+          abi: TreasuryAggregatorDeployment.abi,
+        },
+      };
+    }
+  }
+
+  // Fallback to default deployed contracts
+  console.log('ℹ️ Using default contracts');
+  return contracts;
+  */
+}
+
+// Main contract exports - Using addresses from deployment JSONs
 export const contracts = {
   TreasuryCore: {
     address: TreasuryCoreDeployment.address as `0x${string}`,
