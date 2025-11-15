@@ -3,6 +3,9 @@ import { useAccount } from 'wagmi';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Wallet, RefreshCw, ArrowUpRight } from 'lucide-react';
 import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 import axios from 'axios';
 
 interface ChainBalance {
@@ -438,135 +441,112 @@ export function WalletBalances() {
       )}
 
       {/* Transfer to Gateway Modal */}
-      {console.log('Dialog render - transferModalOpen:', transferModalOpen, 'selectedChain:', selectedChain?.chain)}
-      {transferModalOpen && selectedChain && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={closeTransferModal}
-          />
+      <Dialog open={transferModalOpen} onOpenChange={setTransferModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Move USDC to Gateway</DialogTitle>
+            <DialogDescription>
+              Transfer USDC from {selectedChain?.chain} to Circle Gateway
+            </DialogDescription>
+          </DialogHeader>
 
-          {/* Modal Content */}
-          <div className="relative z-[10000] w-full max-w-lg mx-4 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-6">
-            {/* Close Button */}
-            <button
-              onClick={closeTransferModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {/* Header */}
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold dark:text-white">Move USDC to Gateway</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Transfer USDC from {selectedChain.chain} to Circle Gateway
-              </p>
+          <div className="space-y-4 py-4">
+            {/* Chain Info */}
+            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">From Chain</p>
+              <p className="font-semibold dark:text-white">{selectedChain?.chain}</p>
             </div>
 
-            {/* Body */}
-            <div className="space-y-4">
-              {/* Chain Info */}
-              <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">From Chain</p>
-                <p className="font-semibold dark:text-white">{selectedChain.chain}</p>
-              </div>
+            {/* Available Balance */}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600 dark:text-gray-400">Available USDC:</span>
+              <span className="font-semibold dark:text-white">
+                ${selectedChain?.chain === 'ARC Testnet'
+                  ? parseFloat(selectedChain?.nativeBalance || '0').toFixed(2)
+                  : parseFloat(selectedChain?.usdcBalance || '0').toFixed(2)}
+              </span>
+            </div>
 
-              {/* Available Balance */}
+            {/* Gas Balance Warning */}
+            {selectedChain?.chain !== 'ARC Testnet' && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Available USDC:</span>
-                <span className="font-semibold dark:text-white">
-                  ${selectedChain.chain === 'ARC Testnet'
-                    ? parseFloat(selectedChain.nativeBalance || '0').toFixed(2)
-                    : parseFloat(selectedChain.usdcBalance || '0').toFixed(2)}
+                <span className="text-gray-600 dark:text-gray-400">Gas ({selectedChain?.nativeToken}):</span>
+                <span className={`font-semibold ${parseFloat(selectedChain?.nativeBalance || '0') < 0.001 ? 'text-red-500' : 'dark:text-white'}`}>
+                  {parseFloat(selectedChain?.nativeBalance || '0').toFixed(6)} {selectedChain?.nativeToken}
                 </span>
               </div>
+            )}
 
-              {/* Gas Balance Warning */}
-              {selectedChain.chain !== 'ARC Testnet' && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Gas ({selectedChain.nativeToken}):</span>
-                  <span className={`font-semibold ${parseFloat(selectedChain.nativeBalance || '0') < 0.001 ? 'text-red-500' : 'dark:text-white'}`}>
-                    {parseFloat(selectedChain.nativeBalance || '0').toFixed(6)} {selectedChain.nativeToken}
-                  </span>
-                </div>
-              )}
-
-              {/* Amount Input */}
-              <div className="space-y-2">
-                <label htmlFor="amount" className="text-sm font-medium dark:text-white">Amount (USDC)</label>
-                <div className="flex gap-2">
-                  <input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    value={transferAmount}
-                    onChange={(e) => {
-                      setTransferAmount(e.target.value);
-                      setValidationError(null);
-                    }}
-                    className="flex-1 h-10 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const maxAmount = selectedChain.chain === 'ARC Testnet'
-                        ? selectedChain.nativeBalance || '0'
-                        : selectedChain.usdcBalance || '0';
-                      setTransferAmount(maxAmount);
-                      setValidationError(null);
-                    }}
-                    className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                  >
-                    Max
-                  </button>
-                </div>
+            {/* Amount Input */}
+            <div className="space-y-2">
+              <Label htmlFor="amount">Amount (USDC)</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  value={transferAmount}
+                  onChange={(e) => {
+                    setTransferAmount(e.target.value);
+                    setValidationError(null);
+                  }}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const maxAmount = selectedChain?.chain === 'ARC Testnet'
+                      ? selectedChain?.nativeBalance || '0'
+                      : selectedChain?.usdcBalance || '0';
+                    setTransferAmount(maxAmount);
+                    setValidationError(null);
+                  }}
+                >
+                  Max
+                </Button>
               </div>
-
-              {/* Validation Error */}
-              {validationError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
-                  {validationError}
-                </div>
-              )}
             </div>
 
-            {/* Footer */}
-            <div className="flex gap-3 mt-6">
-              <Button
-                variant="outline"
-                onClick={closeTransferModal}
-                disabled={transferring}
-                className="flex-1 dark:border-gray-700 dark:hover:bg-gray-700"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleTransferToGateway}
-                disabled={transferring || !transferAmount || parseFloat(transferAmount) <= 0}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
-              >
-                {transferring ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <ArrowUpRight className="w-4 h-4 mr-2" />
-                    Transfer to Gateway
-                  </>
-                )}
-              </Button>
-            </div>
+            {/* Validation Error */}
+            {validationError && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
+                {validationError}
+              </div>
+            )}
           </div>
-        </div>
-      )}
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={closeTransferModal}
+              disabled={transferring}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleTransferToGateway}
+              disabled={transferring || !transferAmount || parseFloat(transferAmount) <= 0}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {transferring ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <ArrowUpRight className="w-4 h-4 mr-2" />
+                  Transfer to Gateway
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
