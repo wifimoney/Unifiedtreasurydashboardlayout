@@ -1,0 +1,187 @@
+{
+  "address": "0x8fae9af125e47e5925af95189e88459608362766",
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "budgetAllocator",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "contract BudgetAllocator"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getBasicStats",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "totalEmployees",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "totalDepartments",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "totalScheduledPayments",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "totalTransactions",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getTreasurySnapshot",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct TreasuryAggregatorSimple.TreasurySnapshot",
+          "components": [
+            {
+              "name": "totalBalance",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "treasuryBalance",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "payrollBalance",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "budgetBalance",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "scheduledBalance",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "timestamp",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "payrollManager",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "contract PayrollManager"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "scheduledPayments",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "contract ScheduledPayments"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "setBudgetAllocator",
+      "inputs": [
+        {
+          "name": "_budgetAllocator",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setPayrollManager",
+      "inputs": [
+        {
+          "name": "_payrollManager",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setScheduledPayments",
+      "inputs": [
+        {
+          "name": "_scheduledPayments",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setTreasuryCore",
+      "inputs": [
+        {
+          "name": "_treasuryCore",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "treasuryCore",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "contract TreasuryCore"
+        }
+      ],
+      "stateMutability": "view"
+    }
+  ]
+}
