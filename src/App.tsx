@@ -58,7 +58,7 @@ const connectors = connectorsForWallets(
         metaMaskWallet,
         coinbaseWallet,
         rainbowWallet,
-        rabbyWallet,
+        phantomWallet,
       ],
     },
     {
@@ -66,7 +66,7 @@ const connectors = connectorsForWallets(
       wallets: [
         trustWallet,
         ledgerWallet,
-        phantomWallet,
+        rabbyWallet,
         zerionWallet,
         walletConnectWallet,
       ],
