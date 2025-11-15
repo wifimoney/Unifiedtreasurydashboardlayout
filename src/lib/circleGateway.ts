@@ -18,12 +18,11 @@ const CHAIN_INFO = {
 } as const;
 
 interface CircleBalanceResponse {
+  token: string;
   balances: Array<{
-    amount: string;
-    token: string;
-    source: {
-      domain: number;
-    };
+    domain: number;
+    depositor: string;
+    balance: string;
   }>;
 }
 
@@ -56,8 +55,8 @@ export async function fetchChainBalance(
 
     console.log(`Response for ${chain}:`, response.data);
 
-    const balance = response.data.balances[0];
-    const amount = balance ? parseFloat(balance.amount) : 0;
+    const balanceData = response.data.balances[0];
+    const amount = balanceData ? parseFloat(balanceData.balance) : 0;
     const info = CHAIN_INFO[chain];
 
     console.log(`${chain} balance: ${amount} USDC`);

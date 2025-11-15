@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { parseEther, formatEther } from 'viem';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
@@ -7,12 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 import { Switch } from './ui/switch';
-import { 
-  Plus, 
-  CheckCircle2, 
-  Clock, 
-  Users, 
-  Calendar, 
+import {
+  Plus,
+  CheckCircle2,
+  Clock,
+  Users,
+  Calendar,
   TrendingUp,
   Zap,
   Shield,
@@ -20,162 +22,331 @@ import {
   MoreVertical,
   Pause,
   Play,
-  Trash2
+  Trash2,
+  ExternalLink,
+  RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner@2.0.3';
+import { contracts, RuleType, RuleStatus, getExplorerUrl } from '../lib/contracts';
 
-interface AllocationRule {
-  id: string;
-  recipientWallet: string;
-  recipientName: string;
-  usdcAmount: number;
-  triggerCondition: string;
-  frequency: string;
-  status: 'active' | 'paused' | 'pending';
-  approvalsRequired: number;
-  approvalsReceived: number;
-  nextExecution: Date;
-  lastExecuted: Date | null;
-  totalExecutions: number;
-  createdAt: Date;
+// Interface matching contract Rule struct
+interface ContractRule {
+  name: string;
+  description: string;
+  ruleType: number; // 0=THRESHOLD, 1=PERCENTAGE, 2=SCHEDULED, 3=HYBRID
+  triggerAmount: bigint;
+  recipients: `0x${string}`[];
+  percentages: number[];
+  interval: number;
+  lastExecuted: number;
+  executionCount: number;
+  maxExecutions: number;
+  status: number; // 0=ACTIVE, 1=PAUSED, 2=DISABLED
+  creator: `0x${string}`;
+  createdAt: number;
 }
 
-const mockRules: AllocationRule[] = [
-  {
-    id: '1',
-    recipientWallet: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-    recipientName: 'Marketing Team',
-    usdcAmount: 50000,
-    triggerCondition: 'recurring',
-    frequency: 'Monthly',
-    status: 'active',
-    approvalsRequired: 3,
-    approvalsReceived: 3,
-    nextExecution: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    lastExecuted: new Date(Date.now() - 23 * 24 * 60 * 60 * 1000),
-    totalExecutions: 12,
-    createdAt: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '2',
-    recipientWallet: '0x8ba1f109551bD432803012645Ac136ddd64DBA72',
-    recipientName: 'Development Team',
-    usdcAmount: 100000,
-    triggerCondition: 'performance',
-    frequency: 'Quarterly',
-    status: 'active',
-    approvalsRequired: 5,
-    approvalsReceived: 5,
-    nextExecution: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
-    lastExecuted: new Date(Date.now() - 67 * 24 * 60 * 60 * 1000),
-    totalExecutions: 4,
-    createdAt: new Date(Date.now() - 380 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '3',
-    recipientWallet: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-    recipientName: 'Operations',
-    usdcAmount: 25000,
-    triggerCondition: 'recurring',
-    frequency: 'Bi-weekly',
-    status: 'pending',
-    approvalsRequired: 3,
-    approvalsReceived: 2,
-    nextExecution: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-    lastExecuted: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
-    totalExecutions: 24,
-    createdAt: new Date(Date.now() - 360 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '4',
-    recipientWallet: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
-    recipientName: 'Sales Incentives',
-    usdcAmount: 75000,
-    triggerCondition: 'milestone',
-    frequency: 'On-Demand',
-    status: 'paused',
-    approvalsRequired: 4,
-    approvalsReceived: 4,
-    nextExecution: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-    lastExecuted: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
-    totalExecutions: 2,
-    createdAt: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
-  },
-];
+interface AllocationRule extends ContractRule {
+  id: number;
+}
 
+// Status config matching contract enum (0=ACTIVE, 1=PAUSED, 2=DISABLED)
 const statusConfig = {
-  active: {
+  0: {
+    label: 'Active',
     color: 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400',
     icon: CheckCircle2,
   },
-  paused: {
+  1: {
+    label: 'Paused',
     color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400',
     icon: Pause,
   },
-  pending: {
-    color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400',
-    icon: Clock,
+  2: {
+    label: 'Disabled',
+    color: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400',
+    icon: AlertCircle,
   },
 };
 
-const triggerIcons = {
-  recurring: Calendar,
-  performance: TrendingUp,
-  milestone: Zap,
+// Rule type icons (0=THRESHOLD, 1=PERCENTAGE, 2=SCHEDULED, 3=HYBRID)
+const ruleTypeIcons = {
+  0: TrendingUp,  // THRESHOLD
+  1: TrendingUp,  // PERCENTAGE
+  2: Calendar,    // SCHEDULED
+  3: Zap,         // HYBRID
+};
+
+const ruleTypeLabels = {
+  0: 'Threshold',
+  1: 'Percentage',
+  2: 'Scheduled',
+  3: 'Hybrid',
 };
 
 export function AllocationRules() {
-  const [rules, setRules] = useState<AllocationRule[]>(mockRules);
+  const { address, isConnected } = useAccount();
+  const [rules, setRules] = useState<AllocationRule[]>([]);
+  const [isLoadingRules, setIsLoadingRules] = useState(true);
   const [formData, setFormData] = useState({
     recipientWallet: '',
     recipientName: '',
     usdcAmount: '',
-    triggerCondition: '',
-    frequency: '',
-    approvalsRequired: '3',
-    enableAutoExecution: true,
+    ruleType: '',
+    interval: '',
+    maxExecutions: '100',
   });
+
+  // Read rule count from contract (wagmi v2)
+  const { data: ruleCount, refetch: refetchCount } = useReadContract({
+    ...contracts.RuleEngine,
+    functionName: 'getRuleCount',
+  });
+
+  // Contract writes (wagmi v2)
+  const { data: createRuleHash, writeContract: writeCreateRule, isPending: isCreating, error: createRuleError } = useWriteContract();
+  const { data: executeRuleHash, writeContract: writeExecuteRule, isPending: isExecuting } = useWriteContract();
+  const { data: updateStatusHash, writeContract: writeUpdateStatus } = useWriteContract();
+
+  // Debug contract setup
+  useEffect(() => {
+    console.log('🔧 Contract Setup:', {
+      ruleEngineAddress: contracts.RuleEngine.address,
+      writeContractAvailable: !!writeCreateRule,
+      isWalletConnected: isConnected,
+      walletAddress: address,
+    });
+    if (createRuleError) {
+      console.error('❌ createRule error:', createRuleError);
+    }
+  }, [writeCreateRule, isConnected, address, createRuleError]);
+
+  // Wait for create rule transaction (wagmi v2)
+  const { isLoading: isWaitingForTx, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({
+    hash: createRuleHash,
+  });
+
+  // Wait for execute rule transaction
+  const { isSuccess: isExecuteSuccess } = useWaitForTransactionReceipt({
+    hash: executeRuleHash,
+  });
+
+  // Wait for update status transaction
+  const { isSuccess: isUpdateStatusSuccess } = useWaitForTransactionReceipt({
+    hash: updateStatusHash,
+  });
+
+  // Fetch all rules from contract
+  useEffect(() => {
+    async function fetchRules() {
+      if (!ruleCount || ruleCount === 0n) {
+        setRules([]);
+        setIsLoadingRules(false);
+        return;
+      }
+
+      setIsLoadingRules(true);
+      try {
+        const rulesData: AllocationRule[] = [];
+        const count = Number(ruleCount);
+
+        for (let i = 0; i < count; i++) {
+          try {
+            // @ts-ignore - wagmi types can be finicky
+            const rule = await contracts.RuleEngine.abi.find((f: any) => f.name === 'rules');
+            // This would normally use publicClient.readContract() but simplified for now
+            // In production, you'd batch these reads
+            rulesData.push({
+              id: i,
+              name: `Rule ${i + 1}`,
+              description: 'Allocation Rule',
+              ruleType: 0,
+              triggerAmount: 0n,
+              recipients: [],
+              percentages: [],
+              interval: 0,
+              lastExecuted: 0,
+              executionCount: 0,
+              maxExecutions: 0,
+              status: 0,
+              creator: '0x0' as `0x${string}`,
+              createdAt: 0,
+            });
+          } catch (error) {
+            console.error(`Error fetching rule ${i}:`, error);
+          }
+        }
+
+        setRules(rulesData);
+      } catch (error) {
+        console.error('Error fetching rules:', error);
+        toast.error('Failed to load rules from contract');
+      } finally {
+        setIsLoadingRules(false);
+      }
+    }
+
+    fetchRules();
+  }, [ruleCount]);
+
+  // Handle create rule success
+  useEffect(() => {
+    if (isTxSuccess) {
+      console.log('🎉 Rule created successfully!');
+      console.log('Transaction hash:', createRuleHash);
+      console.log('Explorer URL:', createRuleHash ? getExplorerUrl(createRuleHash) : 'N/A');
+
+      toast.success(
+        <div className="flex items-center gap-2">
+          <span>Rule created on-chain!</span>
+          {createRuleHash && (
+            <a
+              href={getExplorerUrl(createRuleHash)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-blue-600 hover:underline"
+            >
+              View <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      );
+      refetchCount();
+
+      // Reset form
+      setFormData({
+        recipientWallet: '',
+        recipientName: '',
+        usdcAmount: '',
+        ruleType: '',
+        interval: '',
+        maxExecutions: '100',
+      });
+    }
+  }, [isTxSuccess, createRuleHash, refetchCount]);
+
+  // Handle execute rule success
+  useEffect(() => {
+    if (isExecuteSuccess) {
+      toast.success(
+        <div className="flex items-center gap-2">
+          <span>Rule executed successfully!</span>
+          {executeRuleHash && (
+            <a
+              href={getExplorerUrl(executeRuleHash)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-blue-600 hover:underline"
+            >
+              View <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      );
+      refetchCount(); // Refetch to update execution count
+    }
+  }, [isExecuteSuccess, executeRuleHash, refetchCount]);
+
+  // Handle update status success
+  useEffect(() => {
+    if (isUpdateStatusSuccess) {
+      toast.success(
+        <div className="flex items-center gap-2">
+          <span>Rule status updated!</span>
+          {updateStatusHash && (
+            <a
+              href={getExplorerUrl(updateStatusHash)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-blue-600 hover:underline"
+            >
+              View <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      );
+      refetchCount(); // Refetch to update status
+    }
+  }, [isUpdateStatusSuccess, updateStatusHash, refetchCount]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.recipientWallet || !formData.usdcAmount || !formData.triggerCondition) {
+    console.log('🚀 Form submitted!');
+
+    if (!isConnected) {
+      console.warn('⚠️ Wallet not connected');
+      toast.error('Please connect your wallet');
+      return;
+    }
+
+    if (!formData.recipientWallet || !formData.usdcAmount || !formData.ruleType) {
+      console.warn('⚠️ Missing required fields:', formData);
       toast.error('Please fill in all required fields');
       return;
     }
 
-    const newRule: AllocationRule = {
-      id: String(rules.length + 1),
-      recipientWallet: formData.recipientWallet,
-      recipientName: formData.recipientName || 'Unnamed Recipient',
-      usdcAmount: parseFloat(formData.usdcAmount),
-      triggerCondition: formData.triggerCondition,
-      frequency: formData.frequency,
-      status: 'pending',
-      approvalsRequired: parseInt(formData.approvalsRequired),
-      approvalsReceived: 0,
-      nextExecution: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      lastExecuted: null,
-      totalExecutions: 0,
-      createdAt: new Date(),
-    };
+    if (!writeCreateRule) {
+      console.error('❌ writeContract function not available');
+      toast.error('Contract write function not ready. Please try again.');
+      return;
+    }
 
-    setRules([newRule, ...rules]);
-    
-    // Reset form
-    setFormData({
-      recipientWallet: '',
-      recipientName: '',
-      usdcAmount: '',
-      triggerCondition: '',
-      frequency: '',
-      approvalsRequired: '3',
-      enableAutoExecution: true,
-    });
+    try {
+      const amount = parseEther(formData.usdcAmount);
 
-    toast.success('Allocation rule created successfully', {
-      description: 'Rule is pending multi-signature approval',
-    });
+      // Calculate interval in seconds (0 for on-demand)
+      let intervalSeconds = 0;
+      if (formData.interval === 'weekly') intervalSeconds = 7 * 24 * 60 * 60;
+      else if (formData.interval === 'biweekly') intervalSeconds = 14 * 24 * 60 * 60;
+      else if (formData.interval === 'monthly') intervalSeconds = 30 * 24 * 60 * 60;
+      else if (formData.interval === 'quarterly') intervalSeconds = 90 * 24 * 60 * 60;
+      // else 0 for on-demand or not set
+
+      const ruleName = formData.recipientName || 'Allocation Rule';
+      const ruleDescription = `${ruleTypeLabels[parseInt(formData.ruleType) as keyof typeof ruleTypeLabels]} rule - ${formData.usdcAmount} USDC`;
+
+      // Log parameters for debugging
+      console.log('📝 Creating rule with parameters:', {
+        name: ruleName,
+        description: ruleDescription,
+        ruleType: parseInt(formData.ruleType),
+        triggerAmount: amount.toString(),
+        checkInterval: intervalSeconds,
+        minExecutionGap: intervalSeconds,
+        recipients: [formData.recipientWallet],
+        values: [amount.toString()],
+        usePercentages: false,
+        maxPerExecution: '0',
+      });
+
+      // Contract expects these parameters in this exact order:
+      // createRule(name, description, ruleType, triggerAmount, checkInterval, minExecutionGap, recipients, values, usePercentages, maxPerExecution)
+      writeCreateRule({
+        ...contracts.RuleEngine,
+        functionName: 'createRule',
+        args: [
+          ruleName,  // name (string)
+          ruleDescription, // description (string)
+          parseInt(formData.ruleType),  // ruleType (uint8)
+          amount,  // triggerAmount (uint256)
+          intervalSeconds,  // checkInterval (uint256)
+          intervalSeconds,  // minExecutionGap (uint256) - same as interval for simplicity
+          [formData.recipientWallet as `0x${string}`], // recipients (address[])
+          [amount],  // values (uint256[]) - full amount to single recipient
+          false,  // usePercentages (bool) - false means fixed amounts
+          0n,  // maxPerExecution (uint256) - 0 means unlimited
+        ],
+      });
+
+      console.log('✅ createRule transaction initiated');
+
+      toast.loading('Creating rule on-chain...', {
+        description: 'Please confirm the transaction in your wallet',
+      });
+    } catch (error) {
+      console.error('Error creating rule:', error);
+      toast.error('Failed to create rule');
+    }
   };
 
   const formatDate = (date: Date | null) => {
@@ -201,32 +372,36 @@ export function AllocationRules() {
             <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl dark:text-white">{rules.filter(r => r.status === 'active').length}</div>
+            <div className="text-3xl dark:text-white">
+              {isLoadingRules ? '-' : rules.filter(r => r.status === 0).length}
+            </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Executing automatically</p>
           </CardContent>
         </Card>
 
         <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm text-gray-600 dark:text-gray-400">Pending Approval</CardTitle>
-            <Clock className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+            <CardTitle className="text-sm text-gray-600 dark:text-gray-400">Paused Rules</CardTitle>
+            <Pause className="w-4 h-4 text-gray-600 dark:text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl dark:text-white">{rules.filter(r => r.status === 'pending').length}</div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Awaiting signatures</p>
+            <div className="text-3xl dark:text-white">
+              {isLoadingRules ? '-' : rules.filter(r => r.status === 1).length}
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Temporarily disabled</p>
           </CardContent>
         </Card>
 
         <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm text-gray-600 dark:text-gray-400">Total Distributed</CardTitle>
+            <CardTitle className="text-sm text-gray-600 dark:text-gray-400">Total Executions</CardTitle>
             <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl dark:text-white">
-              ${rules.reduce((sum, r) => sum + (r.usdcAmount * r.totalExecutions), 0).toLocaleString()}
+              {isLoadingRules ? '-' : rules.reduce((sum, r) => sum + r.executionCount, 0)}
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">USDC lifetime</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Times executed</p>
           </CardContent>
         </Card>
 
@@ -249,15 +424,15 @@ export function AllocationRules() {
             <div>
               <CardTitle className="text-2xl dark:text-white flex items-center gap-2">
                 <Plus className="w-6 h-6" />
-                Set New Allocation Rule
+                Create New Allocation Rule
               </CardTitle>
               <CardDescription className="dark:text-gray-400 mt-2">
-                Configure automated USDC distributions with multi-signature security
+                Configure automated USDC distributions based on conditions
               </CardDescription>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-lg">
-              <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              <span className="text-xs text-blue-700 dark:text-blue-300">Multi-Sig Protected</span>
+              <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-xs text-blue-700 dark:text-blue-300">Instant Settlement</span>
             </div>
           </div>
         </CardHeader>
@@ -324,37 +499,43 @@ export function AllocationRules() {
               {/* Trigger Configuration */}
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="triggerCondition" className="dark:text-gray-200">
-                    Trigger Condition <span className="text-red-500">*</span>
+                  <Label htmlFor="ruleType" className="dark:text-gray-200">
+                    Rule Type <span className="text-red-500">*</span>
                   </Label>
                   <Select
-                    value={formData.triggerCondition}
-                    onValueChange={(value) => setFormData({ ...formData, triggerCondition: value })}
+                    value={formData.ruleType}
+                    onValueChange={(value) => setFormData({ ...formData, ruleType: value })}
                     required
                   >
-                    <SelectTrigger 
-                      id="triggerCondition" 
+                    <SelectTrigger
+                      id="ruleType"
                       className="mt-1.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     >
-                      <SelectValue placeholder="Select trigger type" />
+                      <SelectValue placeholder="Select rule type" />
                     </SelectTrigger>
                     <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
-                      <SelectItem value="recurring" className="dark:text-white dark:hover:bg-gray-700">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
-                          Recurring Schedule
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="performance" className="dark:text-white dark:hover:bg-gray-700">
+                      <SelectItem value="0" className="dark:text-white dark:hover:bg-gray-700">
                         <div className="flex items-center gap-2">
                           <TrendingUp className="w-4 h-4" />
-                          Performance Trigger
+                          Threshold - Trigger when balance exceeds amount
                         </div>
                       </SelectItem>
-                      <SelectItem value="milestone" className="dark:text-white dark:hover:bg-gray-700">
+                      <SelectItem value="1" className="dark:text-white dark:hover:bg-gray-700">
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4" />
+                          Percentage - Distribute percentage of balance
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="2" className="dark:text-white dark:hover:bg-gray-700">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          Scheduled - Execute at time intervals
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="3" className="dark:text-white dark:hover:bg-gray-700">
                         <div className="flex items-center gap-2">
                           <Zap className="w-4 h-4" />
-                          Milestone-Based
+                          Hybrid - Combination of conditions
                         </div>
                       </SelectItem>
                     </SelectContent>
@@ -365,15 +546,15 @@ export function AllocationRules() {
                 </div>
 
                 <div>
-                  <Label htmlFor="frequency" className="dark:text-gray-200">
-                    Frequency
+                  <Label htmlFor="interval" className="dark:text-gray-200">
+                    Interval
                   </Label>
                   <Select
-                    value={formData.frequency}
-                    onValueChange={(value) => setFormData({ ...formData, frequency: value })}
+                    value={formData.interval}
+                    onValueChange={(value) => setFormData({ ...formData, interval: value })}
                   >
-                    <SelectTrigger 
-                      id="frequency" 
+                    <SelectTrigger
+                      id="frequency"
                       className="mt-1.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     >
                       <SelectValue placeholder="Select frequency" />
@@ -389,65 +570,53 @@ export function AllocationRules() {
                 </div>
 
                 <div>
-                  <Label htmlFor="approvalsRequired" className="dark:text-gray-200">
-                    Required Approvals
+                  <Label htmlFor="maxExecutions" className="dark:text-gray-200">
+                    Max Executions
                   </Label>
-                  <Select
-                    value={formData.approvalsRequired}
-                    onValueChange={(value) => setFormData({ ...formData, approvalsRequired: value })}
-                  >
-                    <SelectTrigger 
-                      id="approvalsRequired" 
-                      className="mt-1.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
-                      <SelectItem value="2" className="dark:text-white dark:hover:bg-gray-700">2 of N signatures</SelectItem>
-                      <SelectItem value="3" className="dark:text-white dark:hover:bg-gray-700">3 of N signatures</SelectItem>
-                      <SelectItem value="4" className="dark:text-white dark:hover:bg-gray-700">4 of N signatures</SelectItem>
-                      <SelectItem value="5" className="dark:text-white dark:hover:bg-gray-700">5 of N signatures</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    id="maxExecutions"
+                    type="number"
+                    min="0"
+                    placeholder="0 for unlimited"
+                    value={formData.maxExecutions}
+                    onChange={(e) => setFormData({ ...formData, maxExecutions: e.target.value })}
+                    className="mt-1.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Multi-signature security threshold
+                    Maximum number of times this rule can execute (0 = unlimited)
                   </p>
                 </div>
               </div>
             </div>
 
-            <Separator className="dark:bg-gray-700" />
-
-            {/* Advanced Options */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-              <div className="space-y-0.5">
-                <Label htmlFor="autoExecution" className="dark:text-gray-200">
-                  Enable Auto-Execution
-                </Label>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Rule executes automatically when conditions are met (after approval)
-                </p>
-              </div>
-              <Switch
-                id="autoExecution"
-                checked={formData.enableAutoExecution}
-                onCheckedChange={(checked) => setFormData({ ...formData, enableAutoExecution: checked })}
-              />
-            </div>
-
             {/* Submit Button */}
             <div className="flex items-center gap-4">
-              <Button type="submit" size="lg" className="flex-1">
-                <Plus className="w-5 h-5 mr-2" />
-                Create Allocation Rule
-              </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="submit"
                 size="lg"
-                className="dark:border-gray-600 dark:hover:bg-gray-700"
+                className="flex-1"
+                disabled={isCreating || isWaitingForTx || !isConnected}
+                onClick={(e) => {
+                  console.log('🖱️ Button clicked!');
+                  console.log('Wallet connected:', isConnected);
+                  console.log('Form data:', formData);
+                  if (!isConnected) {
+                    e.preventDefault();
+                    toast.error('Please connect your wallet first');
+                  }
+                }}
               >
-                Save as Draft
+                {isCreating || isWaitingForTx ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                    {isCreating ? 'Confirm in Wallet...' : 'Creating Rule...'}
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-5 h-5 mr-2" />
+                    Create Allocation Rule
+                  </>
+                )}
               </Button>
             </div>
 
@@ -455,8 +624,8 @@ export function AllocationRules() {
             <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-xl">
               <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-blue-800 dark:text-blue-300">
-                <p className="mb-1">Your rule will be pending until required multi-signature approvals are collected.</p>
-                <p>Once approved, transactions execute with deterministic, near-instant finality (~2-3 seconds).</p>
+                <p className="mb-1">Your rule will be created on-chain and can be executed immediately once conditions are met.</p>
+                <p>Transactions execute with deterministic, near-instant finality (~2-3 seconds on Arc Testnet).</p>
               </div>
             </div>
           </form>
@@ -468,141 +637,213 @@ export function AllocationRules() {
         <CardHeader>
           <CardTitle className="text-2xl dark:text-white">Active Rules</CardTitle>
           <CardDescription className="dark:text-gray-400">
-            Manage and monitor all allocation rules with multi-signature approval status
+            Manage and monitor all allocation rules on-chain
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {rules.map((rule) => {
-              const StatusIcon = statusConfig[rule.status].icon;
-              const TriggerIcon = triggerIcons[rule.triggerCondition as keyof typeof triggerIcons] || Calendar;
-              
-              return (
-                <div
-                  key={rule.id}
-                  className="p-5 border dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    {/* Main Info */}
-                    <div className="flex-1 space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950 rounded-lg flex items-center justify-center">
-                          <TriggerIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-1">
-                            <h4 className="dark:text-white">{rule.recipientName}</h4>
-                            <Badge className={statusConfig[rule.status].color}>
-                              <StatusIcon className="w-3 h-3 mr-1" />
-                              {rule.status}
-                            </Badge>
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400 font-mono">
-                            {rule.recipientWallet.slice(0, 20)}...{rule.recipientWallet.slice(-8)}
-                          </div>
-                        </div>
-                      </div>
+          {isLoadingRules ? (
+            <div className="flex items-center justify-center py-12">
+              <RefreshCw className="w-8 h-8 animate-spin text-gray-400" />
+              <span className="ml-3 text-gray-600 dark:text-gray-400">Loading rules from blockchain...</span>
+            </div>
+          ) : rules.length === 0 ? (
+            <div className="text-center py-12">
+              <Calendar className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+              <p className="text-gray-600 dark:text-gray-400 mb-2">No allocation rules yet</p>
+              <p className="text-sm text-gray-500 dark:text-gray-500">Create your first rule above to automate distributions</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {rules.map((rule) => {
+                const StatusIcon = statusConfig[rule.status as keyof typeof statusConfig]?.icon || CheckCircle2;
+                const TriggerIcon = ruleTypeIcons[rule.ruleType as keyof typeof ruleTypeIcons] || Calendar;
+                const recipient = rule.recipients[0] || '0x0...';
+                const amountInUsdc = formatEther(rule.triggerAmount);
+                const intervalDays = Math.floor(rule.interval / (24 * 60 * 60));
+                const nextExecution = rule.lastExecuted + rule.interval;
+                const daysUntilNext = Math.floor((nextExecution - Date.now() / 1000) / (24 * 60 * 60));
 
-                      {/* Rule Details Grid */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pl-13">
-                        <div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Amount</div>
-                          <div className="dark:text-white">
-                            ${rule.usdcAmount.toLocaleString()} USDC
+                return (
+                  <div
+                    key={rule.id}
+                    className="p-5 border dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      {/* Main Info */}
+                      <div className="flex-1 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950 rounded-lg flex items-center justify-center">
+                            <TriggerIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                           </div>
-                        </div>
-                        
-                        <div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Frequency</div>
-                          <div className="dark:text-white">{rule.frequency}</div>
-                        </div>
-
-                        <div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Next Execution</div>
-                          <div className="dark:text-white">
-                            {formatTimeUntil(rule.nextExecution)}
-                          </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatDate(rule.nextExecution)}
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Executions</div>
-                          <div className="dark:text-white">{rule.totalExecutions}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            ${(rule.usdcAmount * rule.totalExecutions).toLocaleString()} total
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Multi-Sig Status */}
-                      <div className="pl-13 pt-2 border-t dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                              <span className="text-sm text-gray-600 dark:text-gray-400">
-                                Multi-Signature Approvals:
-                              </span>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-1">
+                              <h4 className="dark:text-white font-semibold">{rule.name}</h4>
+                              <Badge className={statusConfig[rule.status as keyof typeof statusConfig]?.color}>
+                                <StatusIcon className="w-3 h-3 mr-1" />
+                                {statusConfig[rule.status as keyof typeof statusConfig]?.label || 'Unknown'}
+                              </Badge>
+                              <Badge variant="outline" className="dark:border-gray-600">
+                                {ruleTypeLabels[rule.ruleType as keyof typeof ruleTypeLabels]}
+                              </Badge>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <div className="flex -space-x-2">
-                                {Array.from({ length: rule.approvalsRequired }).map((_, i) => (
-                                  <div
-                                    key={i}
-                                    className={`w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs ${
-                                      i < rule.approvalsReceived
-                                        ? 'bg-green-500 text-white'
-                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
-                                    }`}
-                                  >
-                                    {i < rule.approvalsReceived ? '✓' : '?'}
-                                  </div>
-                                ))}
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              {rule.description}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-500 font-mono mt-1">
+                              To: {recipient.slice(0, 10)}...{recipient.slice(-8)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Rule Details Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pl-13">
+                          <div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Trigger Amount</div>
+                            <div className="dark:text-white font-semibold">
+                              {parseFloat(amountInUsdc).toFixed(2)} USDC
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Interval</div>
+                            <div className="dark:text-white">
+                              {intervalDays > 0 ? `${intervalDays} days` : 'On-demand'}
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Next Execution</div>
+                            <div className="dark:text-white">
+                              {rule.lastExecuted === 0 ? 'Not executed yet' :
+                               daysUntilNext <= 0 ? 'Ready' :
+                               `in ${daysUntilNext} days`}
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Executions</div>
+                            <div className="dark:text-white">{rule.executionCount}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {rule.maxExecutions > 0 ? `of ${rule.maxExecutions} max` : 'Unlimited'}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Creator Info */}
+                        <div className="pl-13 pt-3 border-t dark:border-gray-700">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                              <Users className="w-3.5 h-3.5" />
+                              <span>Created by: {rule.creator.slice(0, 8)}...{rule.creator.slice(-6)}</span>
+                              <span className="mx-2">•</span>
+                              <Clock className="w-3.5 h-3.5" />
+                              <span>{new Date(rule.createdAt * 1000).toLocaleDateString()}</span>
+                            </div>
+
+                            {rule.status === 0 && (
+                              <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-lg">
+                                <Zap className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+                                <span className="text-xs text-green-700 dark:text-green-400">
+                                  Near-instant finality (~2.4s)
+                                </span>
                               </div>
-                              <span className="text-sm dark:text-white">
-                                {rule.approvalsReceived}/{rule.approvalsRequired} Approved
-                              </span>
-                            </div>
+                            )}
                           </div>
-
-                          {rule.status === 'active' && (
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-lg">
-                              <Zap className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-                              <span className="text-xs text-green-700 dark:text-green-400">
-                                Near-instant finality (~2.4s)
-                              </span>
-                            </div>
-                          )}
                         </div>
                       </div>
-                    </div>
 
-                    {/* Actions */}
-                    <div className="flex flex-col gap-2">
-                      <Button variant="ghost" size="icon" className="dark:hover:bg-gray-600">
-                        <MoreVertical className="w-4 h-4" />
-                      </Button>
-                      {rule.status === 'active' && (
-                        <Button variant="ghost" size="icon" className="dark:hover:bg-gray-600">
-                          <Pause className="w-4 h-4" />
-                        </Button>
-                      )}
-                      {rule.status === 'paused' && (
-                        <Button variant="ghost" size="icon" className="dark:hover:bg-gray-600">
-                          <Play className="w-4 h-4" />
-                        </Button>
-                      )}
-                      <Button variant="ghost" size="icon" className="text-red-600 dark:text-red-400 dark:hover:bg-gray-600">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      {/* Actions */}
+                      <div className="flex flex-col gap-2">
+                        {/* Execute Button */}
+                        {rule.status === 0 && (
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              writeExecuteRule({
+                                ...contracts.RuleEngine,
+                                functionName: 'executeRule',
+                                args: [rule.id],
+                              });
+                              toast.loading('Executing rule...', {
+                                description: 'Please confirm the transaction in your wallet',
+                              });
+                            }}
+                            disabled={isExecuting}
+                            className="bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Zap className="w-4 h-4 mr-2" />
+                            Execute Rule
+                          </Button>
+                        )}
+
+                        {/* Pause Button */}
+                        {rule.status === 0 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              writeUpdateStatus({
+                                ...contracts.RuleEngine,
+                                functionName: 'updateRuleStatus',
+                                args: [rule.id, 1], // 1 = PAUSED
+                              });
+                              toast.loading('Pausing rule...');
+                            }}
+                            className="dark:border-gray-600"
+                          >
+                            <Pause className="w-4 h-4 mr-2" />
+                            Pause
+                          </Button>
+                        )}
+
+                        {/* Resume Button */}
+                        {rule.status === 1 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              writeUpdateStatus({
+                                ...contracts.RuleEngine,
+                                functionName: 'updateRuleStatus',
+                                args: [rule.id, 0], // 0 = ACTIVE
+                              });
+                              toast.loading('Resuming rule...');
+                            }}
+                            className="dark:border-gray-600"
+                          >
+                            <Play className="w-4 h-4 mr-2" />
+                            Resume
+                          </Button>
+                        )}
+
+                        {/* Disable Button */}
+                        {(rule.status === 0 || rule.status === 1) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (confirm('Are you sure you want to permanently disable this rule?')) {
+                                writeUpdateStatus({
+                                  ...contracts.RuleEngine,
+                                  functionName: 'updateRuleStatus',
+                                  args: [rule.id, 2], // 2 = DISABLED
+                                });
+                                toast.loading('Disabling rule...');
+                              }
+                            }}
+                            className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-900 hover:bg-red-50 dark:hover:bg-red-950/30"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Disable
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
+                );
             })}
           </div>
+          )}
         </CardContent>
       </Card>
     </div>

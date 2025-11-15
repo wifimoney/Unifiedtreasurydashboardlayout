@@ -1,0 +1,99 @@
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+     │ Hackathon Winning Plan: Complete Treasury Automation                                                                      │
+     │                                                                                                                           │
+     │ Phase 1: Connect AllocationRules to Smart Contracts (2-3 hours)                                                           │
+     │                                                                                                                           │
+     │ Goal: Transform mock UI into real on-chain functionality                                                                  │
+     │                                                                                                                           │
+     │ Tasks:                                                                                                                    │
+     │ 1. Import contract ABIs and addresses from deployment files                                                               │
+     │ 2. Add wagmi hooks to AllocationRules component:                                                                          │
+     │   - useContractRead to fetch existing rules from RuleEngine                                                               │
+     │   - useContractWrite to create new rules on-chain                                                                         │
+     │   - useContractWrite to execute rules                                                                                     │
+     │ 3. Display real rule data from blockchain                                                                                 │
+     │ 4. Add transaction feedback (pending, success, error states)                                                              │
+     │ 5. Test creating and viewing rules on Arc Testnet                                                                         │
+     │                                                                                                                           │
+     │ Success Criteria: Click "Create Rule" → actual transaction → rule appears on-chain                                        │
+     │                                                                                                                           │
+     │ ---                                                                                                                       │
+     │ Phase 2: Add Rule Execution Capability (1-2 hours)                                                                        │
+     │                                                                                                                           │
+     │ Goal: Show automated distributions working                                                                                │
+     │                                                                                                                           │
+     │ Tasks:                                                                                                                    │
+     │ 1. Add "Execute Rule" button to each rule card                                                                            │
+     │ 2. Connect to executeRule() function in RuleEngine contract                                                               │
+     │ 3. Show before/after balances when rule executes                                                                          │
+     │ 4. Display distribution to recipients in real-time                                                                        │
+     │ 5. Add transaction links to Arc explorer                                                                                  │
+     │                                                                                                                           │
+     │ Success Criteria: Execute rule → funds distributed to recipients → visible on dashboard                                   │
+     │                                                                                                                           │
+     │ ---                                                                                                                       │
+     │ Phase 3: Gateway Integration Enhancement (1 hour)                                                                         │
+     │                                                                                                                           │
+     │ Goal: Show unified balance and complete Gateway story                                                                     │
+     │                                                                                                                           │
+     │ Tasks:                                                                                                                    │
+     │ 1. Add prominent "Gateway Balance" card to Treasury Overview                                                              │
+     │ 2. Fetch and display unified USDC balance from Gateway API                                                                │
+     │ 3. Show benefit: "One balance across 4 chains"                                                                            │
+     │ 4. Update after deposit to show real-time sync                                                                            │
+     │                                                                                                                           │
+     │ Success Criteria: Unified Gateway balance visible and updates after deposits                                              │
+     │                                                                                                                           │
+     │ ---                                                                                                                       │
+     │ Phase 4: Treasury Contract Integration (1 hour)                                                                           │
+     │                                                                                                                           │
+     │ Goal: Connect multi-sig treasury to the system                                                                            │
+     │                                                                                                                           │
+     │ Tasks:                                                                                                                    │
+     │ 1. Add simple TreasuryCore interaction UI:                                                                                │
+     │   - Display treasury balance                                                                                              │
+     │   - List pending multi-sig transactions                                                                                   │
+     │   - Add approve transaction button                                                                                        │
+     │ 2. Show multi-sig workflow in action                                                                                      │
+     │ 3. Link rules to treasury funding                                                                                         │
+     │                                                                                                                           │
+     │ Success Criteria: Can view and approve transactions in TreasuryCore                                                       │
+     │                                                                                                                           │
+     │ ---                                                                                                                       │
+     │ Phase 5: Demo Preparation (1 hour)                                                                                        │
+     │                                                                                                                           │
+     │ Goal: Perfect the demo flow                                                                                               │
+     │                                                                                                                           │
+     │ Tasks:                                                                                                                    │
+     │ 1. Fund TreasuryCore with testnet USDC                                                                                    │
+     │ 2. Create 2-3 sample allocation rules on-chain:                                                                           │
+     │   - "Marketing Budget - $10k monthly"                                                                                     │
+     │   - "Dev Team Bonus - 5% of treasury"                                                                                     │
+     │   - "Operations - $5k weekly"                                                                                             │
+     │ 3. Execute one rule to show distribution                                                                                  │
+     │ 4. Prepare demo script with talking points                                                                                │
+     │ 5. Test full flow end-to-end                                                                                              │
+     │                                                                                                                           │
+     │ Success Criteria: Can demo full flow in 5 minutes without errors                                                          │
+     │                                                                                                                           │
+     │ ---                                                                                                                       │
+     │ Total Estimated Time: 6-7 hours                                                                                           │
+     │                                                                                                                           │
+     │ Priority Order:                                                                                                           │
+     │                                                                                                                           │
+     │ 1. MUST HAVE: Phase 1 (contract connection)                                                                               │
+     │ 2. MUST HAVE: Phase 2 (execution)                                                                                         │
+     │ 3. SHOULD HAVE: Phase 5 (demo prep)                                                                                       │
+     │ 4. NICE TO HAVE: Phase 3 & 4 (polish)                                                                                     │
+     │                                                                                                                           │
+     │ Winning Demo Flow:                                                                                                        │
+     │                                                                                                                           │
+     │ 1. Show multi-chain balances                                                                                              │
+     │ 2. Deposit to Gateway from Base Sepolia                                                                                   │
+     │ 3. View unified Gateway balance                                                                                           │
+     │ 4. Create allocation rule on-chain (live!)                                                                                │
+     │ 5. Execute rule → funds distributed                                                                                       │
+     │ 6. Show transaction on Arc explorer                                                                                       │
+     │ 7. Highlight: automated, multi-chain, secure treasury management                                                          │
+     │                                                                                                                           │
+     │ This plan focuses on making the core automated allocation feature work, which is the heart of the challenge requirements. │
