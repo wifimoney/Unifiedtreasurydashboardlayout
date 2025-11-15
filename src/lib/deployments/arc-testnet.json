@@ -1,0 +1,34 @@
+{
+  "chainId": 5042002,
+  "name": "Arc Testnet",
+  "contracts": {
+    "TreasuryCore": {
+      "address": "0xda51feda9cc07143639b88ec1bd4d08bd1a3f50d",
+      "txHash": "0xc7175a5adf83a85a5b88feef21dc256ba8604280003976619e1169adf89214db"
+    },
+    "BudgetAllocator": {
+      "address": "0x4da9d22d5556069b1e3ccecc166cf56b84020687",
+      "txHash": "0x54a7d8682d030d45281984fa075b59aea5637bfaf85e1d9dadc65136b978fb71"
+    },
+    "PayrollManager": {
+      "address": "0x43c82bcd545756843f885c36ed2ace832b0e8015",
+      "txHash": "0xb9b1e4209dcdac7ed678989a44521fd9b2041da610b34ae00374fc37db5775d5"
+    },
+    "ScheduledPayments": {
+      "address": "0x6be303cc9138c6ff7dac734ce0244e7dfb44fb91",
+      "txHash": "0x4f6d50f504db2f89a0ae619e62f81f5fab3999a2e78527d9b278a69e0bdd4ed3"
+    },
+    "ComplianceTracker": {
+      "address": "0xa3a673aa006a96a9e0e69a84a892e1abf5090d39"
+    },
+    "RuleEngine": {
+      "address": "0x3b41d199e653ef8b62bf5e0266e522783293ba02"
+    },
+    "TreasuryAggregator": {
+      "address": "0x8fae9af125e47e5925af95189e88459608362766"
+    }
+  },
+  "deployedAt": "2025-11-15T19:00:00.000Z",
+  "deployer": "0x18314572f1D7669043f9659EDAB96490035dD232"
+}
+
