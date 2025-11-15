@@ -1,0 +1,1397 @@
+{
+  "address": "0x1438D8a1866ABe4267187369888562CEC19bCA92",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_treasury",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_usdc",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "BudgetAllocated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newBudget",
+          "type": "uint256"
+        }
+      ],
+      "name": "BudgetUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "budget",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "manager",
+          "type": "address"
+        }
+      ],
+      "name": "DepartmentCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        }
+      ],
+      "name": "DepartmentDeactivated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        }
+      ],
+      "name": "ExpenseRecorded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "requestId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "FundRequested",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "requestId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "approver",
+          "type": "address"
+        }
+      ],
+      "name": "RequestApproved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "requestId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "rejector",
+          "type": "address"
+        }
+      ],
+      "name": "RequestRejected",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "allExpenses",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "spentBy",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_departmentId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "allocateFunds",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_requestId",
+          "type": "uint256"
+        }
+      ],
+      "name": "approveFundRequest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_budget",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_manager",
+          "type": "address"
+        }
+      ],
+      "name": "createDepartment",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_departmentId",
+          "type": "uint256"
+        }
+      ],
+      "name": "deactivateDepartment",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "departmentCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "departmentExpenses",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "spentBy",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "departments",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalBudget",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "spentAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "availableBalance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "manager",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "createdAt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "fundRequests",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "departmentId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "requester",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "rejected",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "executed",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "requestedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "approvedBy",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_departmentId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getDepartmentBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_departmentId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getDepartmentDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalBudget",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "spentAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "availableBalance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "manager",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_departmentId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getDepartmentExpenses",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "departmentId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "description",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "spentBy",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct BudgetAllocator.Expense[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPendingRequests",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalBudget",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalSpent",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_departmentId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_description",
+          "type": "string"
+        }
+      ],
+      "name": "recordExpense",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_requestId",
+          "type": "uint256"
+        }
+      ],
+      "name": "rejectFundRequest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "requestCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_departmentId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_reason",
+          "type": "string"
+        }
+      ],
+      "name": "requestFunds",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_departmentId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFunds",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "treasury",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_departmentId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_newManager",
+          "type": "address"
+        }
+      ],
+      "name": "updateDepartmentManager",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "usdc",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0xd6ff1ed95a1f679fa447f8c02ec4b30ceca589818d43314d123b3a637404969d",
+  "receipt": {
+    "to": null,
+    "from": "0x1484fb70070B7907af809EECc5eAE2ae2cd04C28",
+    "contractAddress": "0x1438D8a1866ABe4267187369888562CEC19bCA92",
+    "transactionIndex": 1,
+    "gasUsed": "1921520",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xf82e8c2c687d13e0b01ab52c0fd2d4a52e6ec168c1c3e934be03f39951d57c62",
+    "transactionHash": "0xd6ff1ed95a1f679fa447f8c02ec4b30ceca589818d43314d123b3a637404969d",
+    "logs": [],
+    "blockNumber": 11287983,
+    "cumulativeGasUsed": "1942520",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xcee3Bb02aE95E1Dbc2e5C51a502Ac6eC5deEFa81",
+    "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "c8cc5f07fcb48433307ce8656020ab61",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.30+commit.73712a01\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_treasury\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_usdc\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"BudgetAllocated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newBudget\",\"type\":\"uint256\"}],\"name\":\"BudgetUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"budget\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"manager\",\"type\":\"address\"}],\"name\":\"DepartmentCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"}],\"name\":\"DepartmentDeactivated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"}],\"name\":\"ExpenseRecorded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"requestId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"reason\",\"type\":\"string\"}],\"name\":\"FundRequested\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"FundsTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"requestId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approver\",\"type\":\"address\"}],\"name\":\"RequestApproved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"requestId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"rejector\",\"type\":\"address\"}],\"name\":\"RequestRejected\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"allExpenses\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"spentBy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_departmentId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"allocateFunds\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_requestId\",\"type\":\"uint256\"}],\"name\":\"approveFundRequest\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_budget\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_manager\",\"type\":\"address\"}],\"name\":\"createDepartment\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_departmentId\",\"type\":\"uint256\"}],\"name\":\"deactivateDepartment\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"departmentCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"departmentExpenses\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"spentBy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"departments\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"totalBudget\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"spentAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"availableBalance\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"manager\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"fundRequests\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"requester\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"reason\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"rejected\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"executed\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"requestedAt\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"approvedBy\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_departmentId\",\"type\":\"uint256\"}],\"name\":\"getDepartmentBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_departmentId\",\"type\":\"uint256\"}],\"name\":\"getDepartmentDetails\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"totalBudget\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"spentAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"availableBalance\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"manager\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_departmentId\",\"type\":\"uint256\"}],\"name\":\"getDepartmentExpenses\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"departmentId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"spentBy\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"internalType\":\"struct BudgetAllocator.Expense[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPendingRequests\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalBudget\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalSpent\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_departmentId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"_description\",\"type\":\"string\"}],\"name\":\"recordExpense\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_requestId\",\"type\":\"uint256\"}],\"name\":\"rejectFundRequest\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"requestCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_departmentId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"_reason\",\"type\":\"string\"}],\"name\":\"requestFunds\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_departmentId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"transferFunds\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"treasury\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_departmentId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_newManager\",\"type\":\"address\"}],\"name\":\"updateDepartmentManager\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"usdc\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"details\":\"Manages department budgets, spending, and fund requests\",\"kind\":\"dev\",\"methods\":{\"allocateFunds(uint256,uint256)\":{\"params\":{\"_amount\":\"Amount to allocate\",\"_departmentId\":\"Department ID\"}},\"approveFundRequest(uint256)\":{\"params\":{\"_requestId\":\"Request ID\"}},\"constructor\":{\"params\":{\"_treasury\":\"Treasury contract address\",\"_usdc\":\"USDC token address\"}},\"createDepartment(string,uint256,address)\":{\"params\":{\"_budget\":\"Initial budget allocation\",\"_manager\":\"Department manager address\",\"_name\":\"Department name\"},\"returns\":{\"_0\":\"departmentId New department ID\"}},\"deactivateDepartment(uint256)\":{\"params\":{\"_departmentId\":\"Department ID\"}},\"getBalance()\":{\"returns\":{\"_0\":\"balance Current USDC balance\"}},\"getDepartmentBalance(uint256)\":{\"params\":{\"_departmentId\":\"Department ID\"},\"returns\":{\"_0\":\"balance Available balance\"}},\"getDepartmentDetails(uint256)\":{\"params\":{\"_departmentId\":\"Department ID\"},\"returns\":{\"active\":\"Department active status\",\"availableBalance\":\"Available balance\",\"manager\":\"Department manager\",\"name\":\"Department name\",\"spentAmount\":\"Amount spent\",\"totalBudget\":\"Total budget allocated\"}},\"getDepartmentExpenses(uint256)\":{\"params\":{\"_departmentId\":\"Department ID\"},\"returns\":{\"_0\":\"expenses Array of expenses\"}},\"getPendingRequests()\":{\"returns\":{\"_0\":\"requests Array of pending request IDs\"}},\"getTotalBudget()\":{\"returns\":{\"_0\":\"total Total budget\"}},\"getTotalSpent()\":{\"returns\":{\"_0\":\"total Total spent\"}},\"recordExpense(uint256,uint256,string)\":{\"params\":{\"_amount\":\"Expense amount\",\"_departmentId\":\"Department ID\",\"_description\":\"Expense description\"}},\"rejectFundRequest(uint256)\":{\"params\":{\"_requestId\":\"Request ID\"}},\"requestFunds(uint256,uint256,string)\":{\"params\":{\"_amount\":\"Amount requested\",\"_departmentId\":\"Department ID\",\"_reason\":\"Reason for request\"},\"returns\":{\"_0\":\"requestId Fund request ID\"}},\"transferFunds(uint256,address,uint256)\":{\"params\":{\"_amount\":\"Amount to transfer\",\"_departmentId\":\"Department ID\",\"_recipient\":\"Recipient address\"}},\"updateDepartmentManager(uint256,address)\":{\"params\":{\"_departmentId\":\"Department ID\",\"_newManager\":\"New manager address\"}}},\"title\":\"BudgetAllocator\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"allocateFunds(uint256,uint256)\":{\"notice\":\"Allocate additional funds to a department\"},\"approveFundRequest(uint256)\":{\"notice\":\"Approve a fund request\"},\"constructor\":{\"notice\":\"Initialize budget allocator\"},\"createDepartment(string,uint256,address)\":{\"notice\":\"Create a new department\"},\"deactivateDepartment(uint256)\":{\"notice\":\"Deactivate a department\"},\"getBalance()\":{\"notice\":\"Get USDC balance of this contract\"},\"getDepartmentBalance(uint256)\":{\"notice\":\"Get department balance\"},\"getDepartmentDetails(uint256)\":{\"notice\":\"Get department details\"},\"getDepartmentExpenses(uint256)\":{\"notice\":\"Get department expenses\"},\"getPendingRequests()\":{\"notice\":\"Get pending fund requests\"},\"getTotalBudget()\":{\"notice\":\"Get total budget across all active departments\"},\"getTotalSpent()\":{\"notice\":\"Get total spent across all departments\"},\"recordExpense(uint256,uint256,string)\":{\"notice\":\"Record an expense for a department\"},\"rejectFundRequest(uint256)\":{\"notice\":\"Reject a fund request\"},\"requestFunds(uint256,uint256,string)\":{\"notice\":\"Request additional funds for a department\"},\"transferFunds(uint256,address,uint256)\":{\"notice\":\"Transfer funds from department budget\"},\"updateDepartmentManager(uint256,address)\":{\"notice\":\"Update department manager\"}},\"notice\":\"Department budget management and allocation system\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/BudgetAllocator.sol\":\"BudgetAllocator\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Interface of the ERC20 standard as defined in the EIP.\\n */\\ninterface IERC20 {\\n    /**\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\n     * another (`to`).\\n     *\\n     * Note that `value` may be zero.\\n     */\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\n\\n    /**\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\n     * a call to {approve}. `value` is the new allowance.\\n     */\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\n\\n    /**\\n     * @dev Returns the value of tokens in existence.\\n     */\\n    function totalSupply() external view returns (uint256);\\n\\n    /**\\n     * @dev Returns the value of tokens owned by `account`.\\n     */\\n    function balanceOf(address account) external view returns (uint256);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from the caller's account to `to`.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transfer(address to, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Returns the remaining number of tokens that `spender` will be\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\n     * zero by default.\\n     *\\n     * This value changes when {approve} or {transferFrom} are called.\\n     */\\n    function allowance(address owner, address spender) external view returns (uint256);\\n\\n    /**\\n     * @dev Sets a `value` amount of tokens as the allowance of `spender` over the\\n     * caller's tokens.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\n     * that someone may use both the old and the new allowance by unfortunate\\n     * transaction ordering. One possible solution to mitigate this race\\n     * condition is to first reduce the spender's allowance to 0 and set the\\n     * desired value afterwards:\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\n     *\\n     * Emits an {Approval} event.\\n     */\\n    function approve(address spender, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from `from` to `to` using the\\n     * allowance mechanism. `value` is then deducted from the caller's\\n     * allowance.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transferFrom(address from, address to, uint256 value) external returns (bool);\\n}\\n\",\"keccak256\":\"0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70\",\"license\":\"MIT\"},\"contracts/BudgetAllocator.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.30;\\n\\nimport \\\"./interfaces/IERC20.sol\\\";\\n\\n/**\\n * @title BudgetAllocator\\n * @notice Department budget management and allocation system\\n * @dev Manages department budgets, spending, and fund requests\\n */\\ncontract BudgetAllocator {\\n    // Structs\\n    struct Department {\\n        uint256 id;\\n        string name;\\n        uint256 totalBudget;\\n        uint256 spentAmount;\\n        uint256 availableBalance;\\n        address manager;\\n        bool active;\\n        uint256 createdAt;\\n    }\\n\\n    struct FundRequest {\\n        uint256 id;\\n        uint256 departmentId;\\n        address requester;\\n        uint256 amount;\\n        string reason;\\n        bool approved;\\n        bool rejected;\\n        bool executed;\\n        uint256 requestedAt;\\n        address approvedBy;\\n    }\\n\\n    struct Expense {\\n        uint256 id;\\n        uint256 departmentId;\\n        uint256 amount;\\n        string description;\\n        address spentBy;\\n        uint256 timestamp;\\n    }\\n\\n    // State variables\\n    address public treasury;\\n    address public admin;\\n    IERC20 public usdc;\\n\\n    mapping(uint256 => Department) public departments;\\n    uint256 public departmentCount;\\n\\n    mapping(uint256 => FundRequest) public fundRequests;\\n    uint256 public requestCount;\\n\\n    mapping(uint256 => Expense[]) public departmentExpenses;\\n    Expense[] public allExpenses;\\n\\n    // Events\\n    event DepartmentCreated(uint256 indexed departmentId, string name, uint256 budget, address manager);\\n    event BudgetAllocated(uint256 indexed departmentId, uint256 amount);\\n    event BudgetUpdated(uint256 indexed departmentId, uint256 newBudget);\\n    event FundRequested(uint256 indexed requestId, uint256 indexed departmentId, uint256 amount, string reason);\\n    event RequestApproved(uint256 indexed requestId, address indexed approver);\\n    event RequestRejected(uint256 indexed requestId, address indexed rejector);\\n    event FundsTransferred(uint256 indexed departmentId, address indexed recipient, uint256 amount);\\n    event ExpenseRecorded(uint256 indexed departmentId, uint256 amount, string description);\\n    event DepartmentDeactivated(uint256 indexed departmentId);\\n\\n    // Modifiers\\n    modifier onlyAdmin() {\\n        require(msg.sender == admin, \\\"Only admin can call\\\");\\n        _;\\n    }\\n\\n    modifier onlyTreasury() {\\n        require(msg.sender == treasury, \\\"Only treasury can call\\\");\\n        _;\\n    }\\n\\n    modifier departmentExists(uint256 _departmentId) {\\n        require(_departmentId < departmentCount, \\\"Department does not exist\\\");\\n        require(departments[_departmentId].active, \\\"Department is inactive\\\");\\n        _;\\n    }\\n\\n    modifier onlyDepartmentManager(uint256 _departmentId) {\\n        require(departments[_departmentId].manager == msg.sender, \\\"Only department manager\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @notice Initialize budget allocator\\n     * @param _treasury Treasury contract address\\n     * @param _usdc USDC token address\\n     */\\n    constructor(address _treasury, address _usdc) {\\n        require(_treasury != address(0), \\\"Invalid treasury\\\");\\n        require(_usdc != address(0), \\\"Invalid USDC address\\\");\\n\\n        treasury = _treasury;\\n        admin = msg.sender;\\n        usdc = IERC20(_usdc);\\n    }\\n\\n    /**\\n     * @notice Create a new department\\n     * @param _name Department name\\n     * @param _budget Initial budget allocation\\n     * @param _manager Department manager address\\n     * @return departmentId New department ID\\n     */\\n    function createDepartment(\\n        string memory _name,\\n        uint256 _budget,\\n        address _manager\\n    ) external onlyAdmin returns (uint256) {\\n        require(bytes(_name).length > 0, \\\"Name required\\\");\\n        require(_manager != address(0), \\\"Invalid manager\\\");\\n\\n        uint256 departmentId = departmentCount;\\n\\n        departments[departmentId] = Department({\\n            id: departmentId,\\n            name: _name,\\n            totalBudget: _budget,\\n            spentAmount: 0,\\n            availableBalance: _budget,\\n            manager: _manager,\\n            active: true,\\n            createdAt: block.timestamp\\n        });\\n\\n        departmentCount++;\\n\\n        emit DepartmentCreated(departmentId, _name, _budget, _manager);\\n\\n        return departmentId;\\n    }\\n\\n    /**\\n     * @notice Allocate additional funds to a department\\n     * @param _departmentId Department ID\\n     * @param _amount Amount to allocate\\n     */\\n    function allocateFunds(uint256 _departmentId, uint256 _amount)\\n        external\\n        onlyAdmin\\n        departmentExists(_departmentId)\\n    {\\n        require(_amount > 0, \\\"Amount must be greater than 0\\\");\\n\\n        Department storage dept = departments[_departmentId];\\n        dept.totalBudget += _amount;\\n        dept.availableBalance += _amount;\\n\\n        emit BudgetAllocated(_departmentId, _amount);\\n    }\\n\\n    /**\\n     * @notice Request additional funds for a department\\n     * @param _departmentId Department ID\\n     * @param _amount Amount requested\\n     * @param _reason Reason for request\\n     * @return requestId Fund request ID\\n     */\\n    function requestFunds(\\n        uint256 _departmentId,\\n        uint256 _amount,\\n        string memory _reason\\n    ) external departmentExists(_departmentId) returns (uint256) {\\n        require(_amount > 0, \\\"Amount must be greater than 0\\\");\\n        require(bytes(_reason).length > 0, \\\"Reason required\\\");\\n\\n        uint256 requestId = requestCount;\\n\\n        fundRequests[requestId] = FundRequest({\\n            id: requestId,\\n            departmentId: _departmentId,\\n            requester: msg.sender,\\n            amount: _amount,\\n            reason: _reason,\\n            approved: false,\\n            rejected: false,\\n            executed: false,\\n            requestedAt: block.timestamp,\\n            approvedBy: address(0)\\n        });\\n\\n        requestCount++;\\n\\n        emit FundRequested(requestId, _departmentId, _amount, _reason);\\n\\n        return requestId;\\n    }\\n\\n    /**\\n     * @notice Approve a fund request\\n     * @param _requestId Request ID\\n     */\\n    function approveFundRequest(uint256 _requestId) external onlyAdmin {\\n        require(_requestId < requestCount, \\\"Request does not exist\\\");\\n\\n        FundRequest storage request = fundRequests[_requestId];\\n        require(!request.approved && !request.rejected, \\\"Request already processed\\\");\\n        require(!request.executed, \\\"Request already executed\\\");\\n\\n        request.approved = true;\\n        request.approvedBy = msg.sender;\\n\\n        // Automatically allocate funds\\n        Department storage dept = departments[request.departmentId];\\n        dept.totalBudget += request.amount;\\n        dept.availableBalance += request.amount;\\n\\n        request.executed = true;\\n\\n        emit RequestApproved(_requestId, msg.sender);\\n        emit BudgetAllocated(request.departmentId, request.amount);\\n    }\\n\\n    /**\\n     * @notice Reject a fund request\\n     * @param _requestId Request ID\\n     */\\n    function rejectFundRequest(uint256 _requestId) external onlyAdmin {\\n        require(_requestId < requestCount, \\\"Request does not exist\\\");\\n\\n        FundRequest storage request = fundRequests[_requestId];\\n        require(!request.approved && !request.rejected, \\\"Request already processed\\\");\\n\\n        request.rejected = true;\\n\\n        emit RequestRejected(_requestId, msg.sender);\\n    }\\n\\n    /**\\n     * @notice Record an expense for a department\\n     * @param _departmentId Department ID\\n     * @param _amount Expense amount\\n     * @param _description Expense description\\n     */\\n    function recordExpense(\\n        uint256 _departmentId,\\n        uint256 _amount,\\n        string memory _description\\n    ) external departmentExists(_departmentId) onlyDepartmentManager(_departmentId) {\\n        require(_amount > 0, \\\"Amount must be greater than 0\\\");\\n\\n        Department storage dept = departments[_departmentId];\\n        require(dept.availableBalance >= _amount, \\\"Insufficient budget\\\");\\n\\n        dept.spentAmount += _amount;\\n        dept.availableBalance -= _amount;\\n\\n        Expense memory expense = Expense({\\n            id: allExpenses.length,\\n            departmentId: _departmentId,\\n            amount: _amount,\\n            description: _description,\\n            spentBy: msg.sender,\\n            timestamp: block.timestamp\\n        });\\n\\n        departmentExpenses[_departmentId].push(expense);\\n        allExpenses.push(expense);\\n\\n        emit ExpenseRecorded(_departmentId, _amount, _description);\\n    }\\n\\n    /**\\n     * @notice Transfer funds from department budget\\n     * @param _departmentId Department ID\\n     * @param _recipient Recipient address\\n     * @param _amount Amount to transfer\\n     */\\n    function transferFunds(\\n        uint256 _departmentId,\\n        address _recipient,\\n        uint256 _amount\\n    ) external departmentExists(_departmentId) onlyDepartmentManager(_departmentId) {\\n        require(_recipient != address(0), \\\"Invalid recipient\\\");\\n        require(_amount > 0, \\\"Amount must be greater than 0\\\");\\n\\n        Department storage dept = departments[_departmentId];\\n        require(dept.availableBalance >= _amount, \\\"Insufficient budget\\\");\\n        require(address(this).balance >= _amount, \\\"Insufficient contract balance\\\");\\n\\n        dept.spentAmount += _amount;\\n        dept.availableBalance -= _amount;\\n\\n        (bool success, ) = _recipient.call{value: _amount}(\\\"\\\");\\n        require(success, \\\"Transfer failed\\\");\\n\\n        emit FundsTransferred(_departmentId, _recipient, _amount);\\n    }\\n\\n    /**\\n     * @notice Get department details\\n     * @param _departmentId Department ID\\n     * @return name Department name\\n     * @return totalBudget Total budget allocated\\n     * @return spentAmount Amount spent\\n     * @return availableBalance Available balance\\n     * @return manager Department manager\\n     * @return active Department active status\\n     */\\n    function getDepartmentDetails(uint256 _departmentId)\\n        external\\n        view\\n        returns (\\n            string memory name,\\n            uint256 totalBudget,\\n            uint256 spentAmount,\\n            uint256 availableBalance,\\n            address manager,\\n            bool active\\n        )\\n    {\\n        Department memory dept = departments[_departmentId];\\n        return (\\n            dept.name,\\n            dept.totalBudget,\\n            dept.spentAmount,\\n            dept.availableBalance,\\n            dept.manager,\\n            dept.active\\n        );\\n    }\\n\\n    /**\\n     * @notice Get department balance\\n     * @param _departmentId Department ID\\n     * @return balance Available balance\\n     */\\n    function getDepartmentBalance(uint256 _departmentId)\\n        external\\n        view\\n        departmentExists(_departmentId)\\n        returns (uint256)\\n    {\\n        return departments[_departmentId].availableBalance;\\n    }\\n\\n    /**\\n     * @notice Get department expenses\\n     * @param _departmentId Department ID\\n     * @return expenses Array of expenses\\n     */\\n    function getDepartmentExpenses(uint256 _departmentId)\\n        external\\n        view\\n        returns (Expense[] memory)\\n    {\\n        return departmentExpenses[_departmentId];\\n    }\\n\\n    /**\\n     * @notice Get total budget across all active departments\\n     * @return total Total budget\\n     */\\n    function getTotalBudget() external view returns (uint256) {\\n        uint256 total = 0;\\n        for (uint256 i = 0; i < departmentCount; i++) {\\n            if (departments[i].active) {\\n                total += departments[i].totalBudget;\\n            }\\n        }\\n        return total;\\n    }\\n\\n    /**\\n     * @notice Get total spent across all departments\\n     * @return total Total spent\\n     */\\n    function getTotalSpent() external view returns (uint256) {\\n        uint256 total = 0;\\n        for (uint256 i = 0; i < departmentCount; i++) {\\n            if (departments[i].active) {\\n                total += departments[i].spentAmount;\\n            }\\n        }\\n        return total;\\n    }\\n\\n    /**\\n     * @notice Get pending fund requests\\n     * @return requests Array of pending request IDs\\n     */\\n    function getPendingRequests() external view returns (uint256[] memory) {\\n        uint256 pendingCount = 0;\\n\\n        // Count pending requests\\n        for (uint256 i = 0; i < requestCount; i++) {\\n            if (!fundRequests[i].approved && !fundRequests[i].rejected) {\\n                pendingCount++;\\n            }\\n        }\\n\\n        // Populate array\\n        uint256[] memory pending = new uint256[](pendingCount);\\n        uint256 index = 0;\\n\\n        for (uint256 i = 0; i < requestCount; i++) {\\n            if (!fundRequests[i].approved && !fundRequests[i].rejected) {\\n                pending[index] = i;\\n                index++;\\n            }\\n        }\\n\\n        return pending;\\n    }\\n\\n    /**\\n     * @notice Deactivate a department\\n     * @param _departmentId Department ID\\n     */\\n    function deactivateDepartment(uint256 _departmentId)\\n        external\\n        onlyAdmin\\n        departmentExists(_departmentId)\\n    {\\n        departments[_departmentId].active = false;\\n        emit DepartmentDeactivated(_departmentId);\\n    }\\n\\n    /**\\n     * @notice Update department manager\\n     * @param _departmentId Department ID\\n     * @param _newManager New manager address\\n     */\\n    function updateDepartmentManager(uint256 _departmentId, address _newManager)\\n        external\\n        onlyAdmin\\n        departmentExists(_departmentId)\\n    {\\n        require(_newManager != address(0), \\\"Invalid manager\\\");\\n        departments[_departmentId].manager = _newManager;\\n    }\\n\\n    /**\\n     * @notice Receive funds from treasury\\n     */\\n    receive() external payable {}\\n\\n    /**\\n     * @notice Get USDC balance of this contract\\n     * @return balance Current USDC balance\\n     */\\n    function getBalance() external view returns (uint256) {\\n        return usdc.balanceOf(address(this));\\n    }\\n}\\n\",\"keccak256\":\"0xb9340d3ab45d03d1f0b1b71d4a8cbb9603517e1c13256ad0c06728d94cbf1033\",\"license\":\"MIT\"},\"contracts/interfaces/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.30;\\n\\nimport \\\"@openzeppelin/contracts/token/ERC20/IERC20.sol\\\";\\n\",\"keccak256\":\"0xfa5783485783f404dd3d24313d198c518fedb23ffe9351214e7a54f2a9fc2e82\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60803461012d57601f6121d838819003918201601f19168301916001600160401b0383118484101761013257808492604094855283398101031261012d57610052602061004b83610148565b9201610148565b6001600160a01b039091169081156100f5576001600160a01b03169081156100b057600080546001600160a01b0319908116929092179055600180548216331790556002805490911691909117905560405161207b908161015d8239f35b60405162461bcd60e51b815260206004820152601460248201527f496e76616c6964205553444320616464726573730000000000000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601060248201526f496e76616c696420747265617375727960801b6044820152606490fd5b600080fd5b634e487b7160e01b600052604160045260246000fd5b51906001600160a01b038216820361012d5756fe608080604052600436101561001d575b50361561001b57600080fd5b005b60003560e01c90816312065fe014611a345750806314c4b0151461196a57806316e26dfb146118085780631d23e74b1461161b57806321464bfe1461148a578063328fb510146113d3578063396151ec1461133b5780633e413bee14611312578063513cac8014610eb957806358e9f12e14610e195780635badbe4c14610dfb57806361d027b314610dd25780636e3fee3f14610d5b5780637dfc64ca14610ce457806380a1f71214610b6057806380ee37fa14610a9c57806398de8b8714610a40578063aaa3cd4714610a22578063c3077a7d1461097f578063e8a4aa1414610917578063e8a568fa146105bf578063eaeb60e314610521578063f25b3740146104b1578063f851a440146104885763fe58ae121461013d573861000f565b346104835760603660031901126104835760043567ffffffffffffffff81116104835761016e903690600401611ba9565b604435906001600160a01b03821682036104835761019760018060a01b03600154163314611f0e565b80511561044e576101b26001600160a01b0383161515612007565b600454604051916101c283611b32565b8183526020830193818552604084019460243586526060850160008152602435608087015260a086019560018060a01b038416875260c08101906001825260e08101924284528760005260036020526040600020948251865551998a5167ffffffffffffffff81116104385761023b6001880154611c26565b9b601f8d116103ed575b60209c508c90601f831160011461034c579461031f9997948c9d94847f8f16a01810b9a64dfbff7363c06187959c425466ec4450aa78aff0b7020038869d9b999560809560069a600092610341575b50508160011b916000199060031b1c19161760018a01555b51600289015551600388015501516004808701919091559151600586018054925160ff60a01b90151560a01b166001600160a01b039092166001600160a81b031990931692909217179055905191909201555461030890611ff8565b600455604051928392606084526060840190611ac5565b602435838901526001600160a01b0390911660408301520390a2604051908152f35b015190503880610294565b9060018901600052806000209160005b601f19851681106103d65750948c9d946001856080957f8f16a01810b9a64dfbff7363c06187959c425466ec4450aa78aff0b7020038869f9d9b979561031f9f9d9a60069c97601f198116106103bd575b505050811b0160018a01556102ac565b015160001960f88460031b161c191690553880806103ad565b91928f60018192868501518155019401920161035c565b600188016000526020600020601f830160051c81019d6020841061042e575b601f0160051c019c5b8d81106104225750610245565b60008155600101610415565b909d508d9061040c565b634e487b7160e01b600052604160045260246000fd5b60405162461bcd60e51b815260206004820152600d60248201526c13985b59481c995c5d5a5c9959609a1b6044820152606490fd5b600080fd5b34610483576000366003190112610483576001546040516001600160a01b039091168152602090f35b34610483576104bf36611b1c565b9060005260076020526040600020908154811015610483576104e091611d04565b50805461051d6001830154926002810154906104fe60038201611c60565b600560018060a01b036004840154169201549260405196879687611d20565b0390f35b346104835760203660031901126104835760043560005260036020526040600020805461055060018301611c60565b9160028101549060ff6003820154916004810154600660058301549201549361058d604051988998895261010060208a0152610100890190611ac5565b9560408801526060870152608086015260018060a01b03811660a086015260a01c16151560c084015260e08301520390f35b34610483576105cd36611bf0565b916105db6004548210611d73565b8060005260036020526105fb60ff60056040600020015460a01c16611dbf565b610606821515611e50565b8251156108e0576006549160405190610140820182811067ffffffffffffffff821117610438576040528382526020820183815260408301338152606084019083825260808501888152600060a087015260c08601926000845260e0870192600084524261010089015260006101208901528960005260056020526040600020958851875551600187015560018060a01b03905116600286019060018060a01b03166bffffffffffffffffffffffff60a01b8254161790555160038501555180519067ffffffffffffffff8211610438576106e46004860154611c26565b601f8111610895575b50918895939160209a95938b90601f83116001146107f85791807f05f8e8cd994c08aadd8c8a7a08a75cf502fc801344f767642ec83d721d4d1bd2999a9492600796946000926107ed575b50508160011b916000199060031b1c19161760048601555b60a08301516005860180549351925162ff000090151560101b1661ff0093151560081b9390931691151560ff1662ffffff199094169390931717179055610100810151600680850191909155610120909101519190920180546001600160a01b039092166001600160a01b0319909216919091179055546107d090611ff8565b6006556107e260405192839283611fe1565b0390a3604051908152f35b015190508e80610738565b6004869a959493929a01600052896000209060005b601f198416811061087b5750916001917f05f8e8cd994c08aadd8c8a7a08a75cf502fc801344f767642ec83d721d4d1bd29a9b60079796959483601f19811610610862575b505050811b016004860155610750565b015160001960f88460031b161c191690558e8080610852565b818c015183559a8e019a8d9a506001909201918e0161080d565b600486016000526020600020601f840160051c810191602085106108d6575b601f0160051c01905b8181106108ca57506106ed565b600081556001016108bd565b90915081906108b4565b60405162461bcd60e51b815260206004820152600f60248201526e1499585cdbdb881c995c5d5a5c9959608a1b6044820152606490fd5b346104835760203660031901126104835760043560085481101561048357600060085482101561096b5760208160086006935220910201805461051d6001830154926002810154906104fe60038201611c60565b634e487b7160e01b81526032600452602490fd5b346104835760403660031901126104835760043561099b611b06565b906109b160018060a01b03600154163314611f0e565b6109be6004548210611d73565b8060005260036020526109de60ff60056040600020015460a01c16611dbf565b6109f26001600160a01b0383161515612007565b600090815260036020526040902060050180546001600160a01b0319166001600160a01b03909216919091179055005b34610483576000366003190112610483576020600454604051908152f35b3461048357602036600319011261048357600435610a616004548210611d73565b806000526003602052610a8160ff60056040600020015460a01c16611dbf565b60005260036020526020600460406000200154604051908152f35b346104835760203660031901126104835760043560005260056020526040600020805460018201549160018060a01b0360028201541660038201549160ff610b2d610ae960048401611c60565b600584015495600685015494600760018060a01b039101541695604051998a998a5260208a0152604089015260608801526101406080880152610140870190611ac5565b93818116151560a0870152818160081c16151560c087015260101c16151560e08501526101008401526101208301520390f35b3461048357600036600319011261048357600080600654905b818110610c885750610ba3610b8d83611d5b565b92610b9b6040519485611b6b565b808452611d5b565b602083019190601f190136833760009060005b818110610c025783856040519182916020830190602084525180915260408301919060005b818110610be9575050500390f35b8251845285945060209384019390920191600101610bdb565b80600052600560205260ff600560406000200154161580610c69575b610c2b575b600101610bb6565b918451811015610c5357610c4b8184602060019460051b89010152611ff8565b929050610c23565b634e487b7160e01b600052603260045260246000fd5b5080600052600560205260ff60056040600020015460081c1615610c1e565b80600052600560205260ff600560406000200154161580610cc5575b610cb1575b600101610b79565b91610cbd600191611ff8565b929050610ca9565b5080600052600560205260ff60056040600020015460081c1615610ca4565b3461048357600036600319011261048357600080600454905b818110610d0f57602083604051908152f35b80600052600360205260ff60056040600020015460a01c16610d34575b600101610cfd565b91610d5360019184600052600360205260026040600020015490611ede565b929050610d2c565b3461048357600036600319011261048357600080600454905b818110610d8657602083604051908152f35b80600052600360205260ff60056040600020015460a01c16610dab575b600101610d74565b91610dca60019184600052600360205260036040600020015490611ede565b929050610da3565b34610483576000366003190112610483576000546040516001600160a01b039091168152602090f35b34610483576000366003190112610483576020600654604051908152f35b3461048357602036600319011261048357600435610e4260018060a01b03600154163314611f0e565b610e4f6006548210611f50565b8060005260056020526005604060002001610100815460ff81161580610eaa575b610e7990611f95565b61ff00191617905533907f490ad67e4c8b3b9c1d11dfcd7f02e155190b8f6feff3a9d9e9df3721f0f74e57600080a3005b50600881901c60ff1615610e70565b3461048357610ec736611bf0565b610ed76004939293548310611d73565b816000526003602052610ef760ff60056040600020015460a01c16611dbf565b816000526003602052610f1b60018060a01b03600560406000200154163314611e04565b610f26831515611e50565b8160005260036020526040600020610f618460048301926003845491610f4e84841015611e9c565b01610f5a838254611ede565b9055611f01565b90556008549260405193610f7485611b4f565b8452602084019383855260408101948286526060820195848752608083019033825260a084019242845287600052600760205260406000208054600160401b81101561043857610fc991600182018155611d04565b61123957855181558151600182015582516002820155600381018a5180519067ffffffffffffffff82116104385781906110038454611c26565b601f81116112bf575b50602090601f831160011461125a5760009261124f575b50508160011b916000199060031b1c19161790555b83516004820180546001600160a01b0319166001600160a01b03929092169190911790558451600590910155600854600160401b8110156104385780600161108592016008556008611d04565b9590956112395751855551600185015551600284015560038301965196875167ffffffffffffffff8111610438576110bd8254611c26565b601f81116111f1575b506020601f82116001146111645790806005959493927f960cee7418379cb6f7889f9d98a98ebca71a5547cbe3da02e3c412f1c67fba639a9b600092611159575b50508160011b916000199060031b1c19161790555b516004840180546001600160a01b0319166001600160a01b039290921691909117905551910155604051918291611154919083611fe1565b0390a2005b015190508b80611107565b601f1982169983600052816000209a60005b8181106111d957509a60019284926005989796957f960cee7418379cb6f7889f9d98a98ebca71a5547cbe3da02e3c412f1c67fba639d9e106111c0575b505050811b01905561111c565b015160001960f88460031b161c191690558b80806111b3565b838301518d556001909c019b60209384019301611176565b826000526020600020601f830160051c8101916020841061122f575b601f0160051c01905b81811061122357506110c6565b60008155600101611216565b909150819061120d565b634e487b7160e01b600052600060045260246000fd5b015190508d80611023565b60008581528281209350601f198516905b8181106112a7575090846001959493921061128e575b505050811b019055611038565b015160001960f88460031b161c191690558d8080611281565b9293602060018192878601518155019501930161126b565b909150836000526020600020601f840160051c81019160208510611308575b90601f859493920160051c01905b8181106112f9575061100c565b600081558493506001016112ec565b90915081906112de565b34610483576000366003190112610483576002546040516001600160a01b039091168152602090f35b346104835760203660031901126104835760043561136460018060a01b03600154163314611f0e565b6113716004548210611d73565b80600052600360205261139160ff60056040600020015460a01c16611dbf565b6000818152600360205260408120600501805460ff60a01b191690557f6fb7612a293f02b652e051a94032c093dcb3edf44b3aaa8e5398647d2a0f6e6c9080a2005b346104835760207f871ed588425afa8e2438e966d1c8b18455f4ac5a6e6c72d7ed8b6ea6ebb0e82961140436611b1c565b61141c60018060a09694961b03600154163314611f0e565b6114296004548510611d73565b836000526003825261144860ff60056040600020015460a01c16611dbf565b611453811515611e50565b83600052600382526004604060002060028101611471848254611ede565b90550161147f828254611ede565b9055604051908152a2005b34610483576020366003190112610483576004356114b360018060a01b03600154163314611f0e565b6114c06006548210611f50565b806000526005602052604060002090600582019081549060ff8216158061160c575b6114eb90611f95565b60ff8260101c166115c7577f871ed588425afa8e2438e966d1c8b18455f4ac5a6e6c72d7ed8b6ea6ebb0e82992600160209360ff19161781556007850160018060a01b0333166bffffffffffffffffffffffff60a01b825416179055600185019081546000526003845260036040600020960195865461157060028301918254611ede565b9055611583600488549201918254611ede565b9055805462ff00001916620100001790556040519133907ff3dc904660a0ea05aba8dfa1e21fbc4fb2914be2a3029da7b0fdd3e5eee20ddb600080a35493548152a2005b60405162461bcd60e51b815260206004820152601860248201527f5265717565737420616c726561647920657865637574656400000000000000006044820152606490fd5b50600882901c60ff16156114e2565b3461048357606036600319011261048357600435611637611b06565b906044356116486004548310611d73565b81600052600360205261166860ff60056040600020015460a01c16611dbf565b81600052600360205261168c60018060a01b03600560406000200154163314611e04565b6001600160a01b0383169283156117cf576116a8821515611e50565b8260005260036020526040600020906004820180546116c985821015611e9c565b84471061178a5784600094938594936116ef838796956003889701610f5a838254611ede565b90555af13d15611785573d61170381611b8d565b906117116040519283611b6b565b8152600060203d92013e5b1561174e5760207fe90ae330e5aefc2a73ddff0dd88bcaf8f4a0629d6553a2a85b22cac3d5f4a19e91604051908152a3005b60405162461bcd60e51b815260206004820152600f60248201526e151c985b9cd9995c8819985a5b1959608a1b6044820152606490fd5b61171c565b60405162461bcd60e51b815260206004820152601d60248201527f496e73756666696369656e7420636f6e74726163742062616c616e63650000006044820152606490fd5b60405162461bcd60e51b8152602060048201526011602482015270125b9d985b1a59081c9958da5c1a595b9d607a1b6044820152606490fd5b34610483576020366003190112610483576004356000526007602052604060002080549061183582611d5b565b916118436040519384611b6b565b80835260208301809260005260206000206000915b83831061190757848660405191829160208301906020845251809152604083019060408160051b85010192916000905b82821061189757505050500390f35b919360019193955060208091603f198982030185528751908151815282820151838201526040820151604082015260a0806118e1606085015160c0606086015260c0850190611ac5565b938780831b03608082015116608085015201519101529601920192018594939192611888565b6006602060019260405161191a81611b4f565b8554815284860154838201526002860154604082015261193c60038701611c60565b6060820152848060a01b036004870154166080820152600586015460a0820152815201920192019190611858565b34610483576020366003190112610483576004356000526003602052611a16604060002060405161199a81611b32565b815481526119aa60018301611c60565b91826020830152600281015491826040820152600382015480606083015260048301549081608084015260058401549260e0600660ff60018060a01b038716968760a086015260a01c161515968760c0850152015491015260405196879660c0885260c0880190611ac5565b94602087015260408601526060850152608084015260a08301520390f35b34610483576000366003190112610483576002546370a0823160e01b8252306004830152602090829060249082906001600160a01b03165afa8015611ab957600090611a86575b602090604051908152f35b506020813d602011611ab1575b81611aa060209383611b6b565b810103126104835760209051611a7b565b3d9150611a93565b6040513d6000823e3d90fd5b919082519283825260005b848110611af1575050826000602080949584010152601f8019910116010190565b80602080928401015182828601015201611ad0565b602435906001600160a01b038216820361048357565b6040906003190112610483576004359060243590565b610100810190811067ffffffffffffffff82111761043857604052565b60c0810190811067ffffffffffffffff82111761043857604052565b90601f8019910116810190811067ffffffffffffffff82111761043857604052565b67ffffffffffffffff811161043857601f01601f191660200190565b81601f8201121561048357803590611bc082611b8d565b92611bce6040519485611b6b565b8284526020838301011161048357816000926020809301838601378301015290565b60606003198201126104835760043591602435916044359067ffffffffffffffff821161048357611c2391600401611ba9565b90565b90600182811c92168015611c56575b6020831014611c4057565b634e487b7160e01b600052602260045260246000fd5b91607f1691611c35565b9060405191826000825492611c7484611c26565b8084529360018116908115611ce25750600114611c9b575b50611c9992500383611b6b565b565b90506000929192526020600020906000915b818310611cc6575050906020611c999282010138611c8c565b6020919350806001915483858901015201910190918492611cad565b905060209250611c9994915060ff191682840152151560051b82010138611c8c565b8054821015610c53576000526006602060002091020190600090565b92611d4a9260a095929897969885526020850152604084015260c0606084015260c0830190611ac5565b94600180841b031660808201520152565b67ffffffffffffffff81116104385760051b60200190565b15611d7a57565b60405162461bcd60e51b815260206004820152601960248201527f4465706172746d656e7420646f6573206e6f74206578697374000000000000006044820152606490fd5b15611dc657565b60405162461bcd60e51b81526020600482015260166024820152754465706172746d656e7420697320696e61637469766560501b6044820152606490fd5b15611e0b57565b60405162461bcd60e51b815260206004820152601760248201527f4f6e6c79206465706172746d656e74206d616e616765720000000000000000006044820152606490fd5b15611e5757565b60405162461bcd60e51b815260206004820152601d60248201527f416d6f756e74206d7573742062652067726561746572207468616e20300000006044820152606490fd5b15611ea357565b60405162461bcd60e51b8152602060048201526013602482015272125b9cdd59999a58da595b9d08189d5919d95d606a1b6044820152606490fd5b91908201809211611eeb57565b634e487b7160e01b600052601160045260246000fd5b91908203918211611eeb57565b15611f1557565b60405162461bcd60e51b815260206004820152601360248201527213db9b1e4818591b5a5b8818d85b8818d85b1b606a1b6044820152606490fd5b15611f5757565b60405162461bcd60e51b815260206004820152601660248201527514995c5d595cdd08191bd95cc81b9bdd08195e1a5cdd60521b6044820152606490fd5b15611f9c57565b60405162461bcd60e51b815260206004820152601960248201527f5265717565737420616c72656164792070726f636573736564000000000000006044820152606490fd5b604090611c23939281528160208201520190611ac5565b6000198114611eeb5760010190565b1561200e57565b60405162461bcd60e51b815260206004820152600f60248201526e24b73b30b634b21036b0b730b3b2b960891b6044820152606490fdfea26469706673582212206b398574d8d251b06df3651fafd11671286247196d31adf598049fa1e76315fe64736f6c634300081e0033",
+  "deployedBytecode": "0x608080604052600436101561001d575b50361561001b57600080fd5b005b60003560e01c90816312065fe014611a345750806314c4b0151461196a57806316e26dfb146118085780631d23e74b1461161b57806321464bfe1461148a578063328fb510146113d3578063396151ec1461133b5780633e413bee14611312578063513cac8014610eb957806358e9f12e14610e195780635badbe4c14610dfb57806361d027b314610dd25780636e3fee3f14610d5b5780637dfc64ca14610ce457806380a1f71214610b6057806380ee37fa14610a9c57806398de8b8714610a40578063aaa3cd4714610a22578063c3077a7d1461097f578063e8a4aa1414610917578063e8a568fa146105bf578063eaeb60e314610521578063f25b3740146104b1578063f851a440146104885763fe58ae121461013d573861000f565b346104835760603660031901126104835760043567ffffffffffffffff81116104835761016e903690600401611ba9565b604435906001600160a01b03821682036104835761019760018060a01b03600154163314611f0e565b80511561044e576101b26001600160a01b0383161515612007565b600454604051916101c283611b32565b8183526020830193818552604084019460243586526060850160008152602435608087015260a086019560018060a01b038416875260c08101906001825260e08101924284528760005260036020526040600020948251865551998a5167ffffffffffffffff81116104385761023b6001880154611c26565b9b601f8d116103ed575b60209c508c90601f831160011461034c579461031f9997948c9d94847f8f16a01810b9a64dfbff7363c06187959c425466ec4450aa78aff0b7020038869d9b999560809560069a600092610341575b50508160011b916000199060031b1c19161760018a01555b51600289015551600388015501516004808701919091559151600586018054925160ff60a01b90151560a01b166001600160a01b039092166001600160a81b031990931692909217179055905191909201555461030890611ff8565b600455604051928392606084526060840190611ac5565b602435838901526001600160a01b0390911660408301520390a2604051908152f35b015190503880610294565b9060018901600052806000209160005b601f19851681106103d65750948c9d946001856080957f8f16a01810b9a64dfbff7363c06187959c425466ec4450aa78aff0b7020038869f9d9b979561031f9f9d9a60069c97601f198116106103bd575b505050811b0160018a01556102ac565b015160001960f88460031b161c191690553880806103ad565b91928f60018192868501518155019401920161035c565b600188016000526020600020601f830160051c81019d6020841061042e575b601f0160051c019c5b8d81106104225750610245565b60008155600101610415565b909d508d9061040c565b634e487b7160e01b600052604160045260246000fd5b60405162461bcd60e51b815260206004820152600d60248201526c13985b59481c995c5d5a5c9959609a1b6044820152606490fd5b600080fd5b34610483576000366003190112610483576001546040516001600160a01b039091168152602090f35b34610483576104bf36611b1c565b9060005260076020526040600020908154811015610483576104e091611d04565b50805461051d6001830154926002810154906104fe60038201611c60565b600560018060a01b036004840154169201549260405196879687611d20565b0390f35b346104835760203660031901126104835760043560005260036020526040600020805461055060018301611c60565b9160028101549060ff6003820154916004810154600660058301549201549361058d604051988998895261010060208a0152610100890190611ac5565b9560408801526060870152608086015260018060a01b03811660a086015260a01c16151560c084015260e08301520390f35b34610483576105cd36611bf0565b916105db6004548210611d73565b8060005260036020526105fb60ff60056040600020015460a01c16611dbf565b610606821515611e50565b8251156108e0576006549160405190610140820182811067ffffffffffffffff821117610438576040528382526020820183815260408301338152606084019083825260808501888152600060a087015260c08601926000845260e0870192600084524261010089015260006101208901528960005260056020526040600020958851875551600187015560018060a01b03905116600286019060018060a01b03166bffffffffffffffffffffffff60a01b8254161790555160038501555180519067ffffffffffffffff8211610438576106e46004860154611c26565b601f8111610895575b50918895939160209a95938b90601f83116001146107f85791807f05f8e8cd994c08aadd8c8a7a08a75cf502fc801344f767642ec83d721d4d1bd2999a9492600796946000926107ed575b50508160011b916000199060031b1c19161760048601555b60a08301516005860180549351925162ff000090151560101b1661ff0093151560081b9390931691151560ff1662ffffff199094169390931717179055610100810151600680850191909155610120909101519190920180546001600160a01b039092166001600160a01b0319909216919091179055546107d090611ff8565b6006556107e260405192839283611fe1565b0390a3604051908152f35b015190508e80610738565b6004869a959493929a01600052896000209060005b601f198416811061087b5750916001917f05f8e8cd994c08aadd8c8a7a08a75cf502fc801344f767642ec83d721d4d1bd29a9b60079796959483601f19811610610862575b505050811b016004860155610750565b015160001960f88460031b161c191690558e8080610852565b818c015183559a8e019a8d9a506001909201918e0161080d565b600486016000526020600020601f840160051c810191602085106108d6575b601f0160051c01905b8181106108ca57506106ed565b600081556001016108bd565b90915081906108b4565b60405162461bcd60e51b815260206004820152600f60248201526e1499585cdbdb881c995c5d5a5c9959608a1b6044820152606490fd5b346104835760203660031901126104835760043560085481101561048357600060085482101561096b5760208160086006935220910201805461051d6001830154926002810154906104fe60038201611c60565b634e487b7160e01b81526032600452602490fd5b346104835760403660031901126104835760043561099b611b06565b906109b160018060a01b03600154163314611f0e565b6109be6004548210611d73565b8060005260036020526109de60ff60056040600020015460a01c16611dbf565b6109f26001600160a01b0383161515612007565b600090815260036020526040902060050180546001600160a01b0319166001600160a01b03909216919091179055005b34610483576000366003190112610483576020600454604051908152f35b3461048357602036600319011261048357600435610a616004548210611d73565b806000526003602052610a8160ff60056040600020015460a01c16611dbf565b60005260036020526020600460406000200154604051908152f35b346104835760203660031901126104835760043560005260056020526040600020805460018201549160018060a01b0360028201541660038201549160ff610b2d610ae960048401611c60565b600584015495600685015494600760018060a01b039101541695604051998a998a5260208a0152604089015260608801526101406080880152610140870190611ac5565b93818116151560a0870152818160081c16151560c087015260101c16151560e08501526101008401526101208301520390f35b3461048357600036600319011261048357600080600654905b818110610c885750610ba3610b8d83611d5b565b92610b9b6040519485611b6b565b808452611d5b565b602083019190601f190136833760009060005b818110610c025783856040519182916020830190602084525180915260408301919060005b818110610be9575050500390f35b8251845285945060209384019390920191600101610bdb565b80600052600560205260ff600560406000200154161580610c69575b610c2b575b600101610bb6565b918451811015610c5357610c4b8184602060019460051b89010152611ff8565b929050610c23565b634e487b7160e01b600052603260045260246000fd5b5080600052600560205260ff60056040600020015460081c1615610c1e565b80600052600560205260ff600560406000200154161580610cc5575b610cb1575b600101610b79565b91610cbd600191611ff8565b929050610ca9565b5080600052600560205260ff60056040600020015460081c1615610ca4565b3461048357600036600319011261048357600080600454905b818110610d0f57602083604051908152f35b80600052600360205260ff60056040600020015460a01c16610d34575b600101610cfd565b91610d5360019184600052600360205260026040600020015490611ede565b929050610d2c565b3461048357600036600319011261048357600080600454905b818110610d8657602083604051908152f35b80600052600360205260ff60056040600020015460a01c16610dab575b600101610d74565b91610dca60019184600052600360205260036040600020015490611ede565b929050610da3565b34610483576000366003190112610483576000546040516001600160a01b039091168152602090f35b34610483576000366003190112610483576020600654604051908152f35b3461048357602036600319011261048357600435610e4260018060a01b03600154163314611f0e565b610e4f6006548210611f50565b8060005260056020526005604060002001610100815460ff81161580610eaa575b610e7990611f95565b61ff00191617905533907f490ad67e4c8b3b9c1d11dfcd7f02e155190b8f6feff3a9d9e9df3721f0f74e57600080a3005b50600881901c60ff1615610e70565b3461048357610ec736611bf0565b610ed76004939293548310611d73565b816000526003602052610ef760ff60056040600020015460a01c16611dbf565b816000526003602052610f1b60018060a01b03600560406000200154163314611e04565b610f26831515611e50565b8160005260036020526040600020610f618460048301926003845491610f4e84841015611e9c565b01610f5a838254611ede565b9055611f01565b90556008549260405193610f7485611b4f565b8452602084019383855260408101948286526060820195848752608083019033825260a084019242845287600052600760205260406000208054600160401b81101561043857610fc991600182018155611d04565b61123957855181558151600182015582516002820155600381018a5180519067ffffffffffffffff82116104385781906110038454611c26565b601f81116112bf575b50602090601f831160011461125a5760009261124f575b50508160011b916000199060031b1c19161790555b83516004820180546001600160a01b0319166001600160a01b03929092169190911790558451600590910155600854600160401b8110156104385780600161108592016008556008611d04565b9590956112395751855551600185015551600284015560038301965196875167ffffffffffffffff8111610438576110bd8254611c26565b601f81116111f1575b506020601f82116001146111645790806005959493927f960cee7418379cb6f7889f9d98a98ebca71a5547cbe3da02e3c412f1c67fba639a9b600092611159575b50508160011b916000199060031b1c19161790555b516004840180546001600160a01b0319166001600160a01b039290921691909117905551910155604051918291611154919083611fe1565b0390a2005b015190508b80611107565b601f1982169983600052816000209a60005b8181106111d957509a60019284926005989796957f960cee7418379cb6f7889f9d98a98ebca71a5547cbe3da02e3c412f1c67fba639d9e106111c0575b505050811b01905561111c565b015160001960f88460031b161c191690558b80806111b3565b838301518d556001909c019b60209384019301611176565b826000526020600020601f830160051c8101916020841061122f575b601f0160051c01905b81811061122357506110c6565b60008155600101611216565b909150819061120d565b634e487b7160e01b600052600060045260246000fd5b015190508d80611023565b60008581528281209350601f198516905b8181106112a7575090846001959493921061128e575b505050811b019055611038565b015160001960f88460031b161c191690558d8080611281565b9293602060018192878601518155019501930161126b565b909150836000526020600020601f840160051c81019160208510611308575b90601f859493920160051c01905b8181106112f9575061100c565b600081558493506001016112ec565b90915081906112de565b34610483576000366003190112610483576002546040516001600160a01b039091168152602090f35b346104835760203660031901126104835760043561136460018060a01b03600154163314611f0e565b6113716004548210611d73565b80600052600360205261139160ff60056040600020015460a01c16611dbf565b6000818152600360205260408120600501805460ff60a01b191690557f6fb7612a293f02b652e051a94032c093dcb3edf44b3aaa8e5398647d2a0f6e6c9080a2005b346104835760207f871ed588425afa8e2438e966d1c8b18455f4ac5a6e6c72d7ed8b6ea6ebb0e82961140436611b1c565b61141c60018060a09694961b03600154163314611f0e565b6114296004548510611d73565b836000526003825261144860ff60056040600020015460a01c16611dbf565b611453811515611e50565b83600052600382526004604060002060028101611471848254611ede565b90550161147f828254611ede565b9055604051908152a2005b34610483576020366003190112610483576004356114b360018060a01b03600154163314611f0e565b6114c06006548210611f50565b806000526005602052604060002090600582019081549060ff8216158061160c575b6114eb90611f95565b60ff8260101c166115c7577f871ed588425afa8e2438e966d1c8b18455f4ac5a6e6c72d7ed8b6ea6ebb0e82992600160209360ff19161781556007850160018060a01b0333166bffffffffffffffffffffffff60a01b825416179055600185019081546000526003845260036040600020960195865461157060028301918254611ede565b9055611583600488549201918254611ede565b9055805462ff00001916620100001790556040519133907ff3dc904660a0ea05aba8dfa1e21fbc4fb2914be2a3029da7b0fdd3e5eee20ddb600080a35493548152a2005b60405162461bcd60e51b815260206004820152601860248201527f5265717565737420616c726561647920657865637574656400000000000000006044820152606490fd5b50600882901c60ff16156114e2565b3461048357606036600319011261048357600435611637611b06565b906044356116486004548310611d73565b81600052600360205261166860ff60056040600020015460a01c16611dbf565b81600052600360205261168c60018060a01b03600560406000200154163314611e04565b6001600160a01b0383169283156117cf576116a8821515611e50565b8260005260036020526040600020906004820180546116c985821015611e9c565b84471061178a5784600094938594936116ef838796956003889701610f5a838254611ede565b90555af13d15611785573d61170381611b8d565b906117116040519283611b6b565b8152600060203d92013e5b1561174e5760207fe90ae330e5aefc2a73ddff0dd88bcaf8f4a0629d6553a2a85b22cac3d5f4a19e91604051908152a3005b60405162461bcd60e51b815260206004820152600f60248201526e151c985b9cd9995c8819985a5b1959608a1b6044820152606490fd5b61171c565b60405162461bcd60e51b815260206004820152601d60248201527f496e73756666696369656e7420636f6e74726163742062616c616e63650000006044820152606490fd5b60405162461bcd60e51b8152602060048201526011602482015270125b9d985b1a59081c9958da5c1a595b9d607a1b6044820152606490fd5b34610483576020366003190112610483576004356000526007602052604060002080549061183582611d5b565b916118436040519384611b6b565b80835260208301809260005260206000206000915b83831061190757848660405191829160208301906020845251809152604083019060408160051b85010192916000905b82821061189757505050500390f35b919360019193955060208091603f198982030185528751908151815282820151838201526040820151604082015260a0806118e1606085015160c0606086015260c0850190611ac5565b938780831b03608082015116608085015201519101529601920192018594939192611888565b6006602060019260405161191a81611b4f565b8554815284860154838201526002860154604082015261193c60038701611c60565b6060820152848060a01b036004870154166080820152600586015460a0820152815201920192019190611858565b34610483576020366003190112610483576004356000526003602052611a16604060002060405161199a81611b32565b815481526119aa60018301611c60565b91826020830152600281015491826040820152600382015480606083015260048301549081608084015260058401549260e0600660ff60018060a01b038716968760a086015260a01c161515968760c0850152015491015260405196879660c0885260c0880190611ac5565b94602087015260408601526060850152608084015260a08301520390f35b34610483576000366003190112610483576002546370a0823160e01b8252306004830152602090829060249082906001600160a01b03165afa8015611ab957600090611a86575b602090604051908152f35b506020813d602011611ab1575b81611aa060209383611b6b565b810103126104835760209051611a7b565b3d9150611a93565b6040513d6000823e3d90fd5b919082519283825260005b848110611af1575050826000602080949584010152601f8019910116010190565b80602080928401015182828601015201611ad0565b602435906001600160a01b038216820361048357565b6040906003190112610483576004359060243590565b610100810190811067ffffffffffffffff82111761043857604052565b60c0810190811067ffffffffffffffff82111761043857604052565b90601f8019910116810190811067ffffffffffffffff82111761043857604052565b67ffffffffffffffff811161043857601f01601f191660200190565b81601f8201121561048357803590611bc082611b8d565b92611bce6040519485611b6b565b8284526020838301011161048357816000926020809301838601378301015290565b60606003198201126104835760043591602435916044359067ffffffffffffffff821161048357611c2391600401611ba9565b90565b90600182811c92168015611c56575b6020831014611c4057565b634e487b7160e01b600052602260045260246000fd5b91607f1691611c35565b9060405191826000825492611c7484611c26565b8084529360018116908115611ce25750600114611c9b575b50611c9992500383611b6b565b565b90506000929192526020600020906000915b818310611cc6575050906020611c999282010138611c8c565b6020919350806001915483858901015201910190918492611cad565b905060209250611c9994915060ff191682840152151560051b82010138611c8c565b8054821015610c53576000526006602060002091020190600090565b92611d4a9260a095929897969885526020850152604084015260c0606084015260c0830190611ac5565b94600180841b031660808201520152565b67ffffffffffffffff81116104385760051b60200190565b15611d7a57565b60405162461bcd60e51b815260206004820152601960248201527f4465706172746d656e7420646f6573206e6f74206578697374000000000000006044820152606490fd5b15611dc657565b60405162461bcd60e51b81526020600482015260166024820152754465706172746d656e7420697320696e61637469766560501b6044820152606490fd5b15611e0b57565b60405162461bcd60e51b815260206004820152601760248201527f4f6e6c79206465706172746d656e74206d616e616765720000000000000000006044820152606490fd5b15611e5757565b60405162461bcd60e51b815260206004820152601d60248201527f416d6f756e74206d7573742062652067726561746572207468616e20300000006044820152606490fd5b15611ea357565b60405162461bcd60e51b8152602060048201526013602482015272125b9cdd59999a58da595b9d08189d5919d95d606a1b6044820152606490fd5b91908201809211611eeb57565b634e487b7160e01b600052601160045260246000fd5b91908203918211611eeb57565b15611f1557565b60405162461bcd60e51b815260206004820152601360248201527213db9b1e4818591b5a5b8818d85b8818d85b1b606a1b6044820152606490fd5b15611f5757565b60405162461bcd60e51b815260206004820152601660248201527514995c5d595cdd08191bd95cc81b9bdd08195e1a5cdd60521b6044820152606490fd5b15611f9c57565b60405162461bcd60e51b815260206004820152601960248201527f5265717565737420616c72656164792070726f636573736564000000000000006044820152606490fd5b604090611c23939281528160208201520190611ac5565b6000198114611eeb5760010190565b1561200e57565b60405162461bcd60e51b815260206004820152600f60248201526e24b73b30b634b21036b0b730b3b2b960891b6044820152606490fdfea26469706673582212206b398574d8d251b06df3651fafd11671286247196d31adf598049fa1e76315fe64736f6c634300081e0033",
+  "devdoc": {
+    "details": "Manages department budgets, spending, and fund requests",
+    "kind": "dev",
+    "methods": {
+      "allocateFunds(uint256,uint256)": {
+        "params": {
+          "_amount": "Amount to allocate",
+          "_departmentId": "Department ID"
+        }
+      },
+      "approveFundRequest(uint256)": {
+        "params": {
+          "_requestId": "Request ID"
+        }
+      },
+      "constructor": {
+        "params": {
+          "_treasury": "Treasury contract address",
+          "_usdc": "USDC token address"
+        }
+      },
+      "createDepartment(string,uint256,address)": {
+        "params": {
+          "_budget": "Initial budget allocation",
+          "_manager": "Department manager address",
+          "_name": "Department name"
+        },
+        "returns": {
+          "_0": "departmentId New department ID"
+        }
+      },
+      "deactivateDepartment(uint256)": {
+        "params": {
+          "_departmentId": "Department ID"
+        }
+      },
+      "getBalance()": {
+        "returns": {
+          "_0": "balance Current USDC balance"
+        }
+      },
+      "getDepartmentBalance(uint256)": {
+        "params": {
+          "_departmentId": "Department ID"
+        },
+        "returns": {
+          "_0": "balance Available balance"
+        }
+      },
+      "getDepartmentDetails(uint256)": {
+        "params": {
+          "_departmentId": "Department ID"
+        },
+        "returns": {
+          "active": "Department active status",
+          "availableBalance": "Available balance",
+          "manager": "Department manager",
+          "name": "Department name",
+          "spentAmount": "Amount spent",
+          "totalBudget": "Total budget allocated"
+        }
+      },
+      "getDepartmentExpenses(uint256)": {
+        "params": {
+          "_departmentId": "Department ID"
+        },
+        "returns": {
+          "_0": "expenses Array of expenses"
+        }
+      },
+      "getPendingRequests()": {
+        "returns": {
+          "_0": "requests Array of pending request IDs"
+        }
+      },
+      "getTotalBudget()": {
+        "returns": {
+          "_0": "total Total budget"
+        }
+      },
+      "getTotalSpent()": {
+        "returns": {
+          "_0": "total Total spent"
+        }
+      },
+      "recordExpense(uint256,uint256,string)": {
+        "params": {
+          "_amount": "Expense amount",
+          "_departmentId": "Department ID",
+          "_description": "Expense description"
+        }
+      },
+      "rejectFundRequest(uint256)": {
+        "params": {
+          "_requestId": "Request ID"
+        }
+      },
+      "requestFunds(uint256,uint256,string)": {
+        "params": {
+          "_amount": "Amount requested",
+          "_departmentId": "Department ID",
+          "_reason": "Reason for request"
+        },
+        "returns": {
+          "_0": "requestId Fund request ID"
+        }
+      },
+      "transferFunds(uint256,address,uint256)": {
+        "params": {
+          "_amount": "Amount to transfer",
+          "_departmentId": "Department ID",
+          "_recipient": "Recipient address"
+        }
+      },
+      "updateDepartmentManager(uint256,address)": {
+        "params": {
+          "_departmentId": "Department ID",
+          "_newManager": "New manager address"
+        }
+      }
+    },
+    "title": "BudgetAllocator",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "allocateFunds(uint256,uint256)": {
+        "notice": "Allocate additional funds to a department"
+      },
+      "approveFundRequest(uint256)": {
+        "notice": "Approve a fund request"
+      },
+      "constructor": {
+        "notice": "Initialize budget allocator"
+      },
+      "createDepartment(string,uint256,address)": {
+        "notice": "Create a new department"
+      },
+      "deactivateDepartment(uint256)": {
+        "notice": "Deactivate a department"
+      },
+      "getBalance()": {
+        "notice": "Get USDC balance of this contract"
+      },
+      "getDepartmentBalance(uint256)": {
+        "notice": "Get department balance"
+      },
+      "getDepartmentDetails(uint256)": {
+        "notice": "Get department details"
+      },
+      "getDepartmentExpenses(uint256)": {
+        "notice": "Get department expenses"
+      },
+      "getPendingRequests()": {
+        "notice": "Get pending fund requests"
+      },
+      "getTotalBudget()": {
+        "notice": "Get total budget across all active departments"
+      },
+      "getTotalSpent()": {
+        "notice": "Get total spent across all departments"
+      },
+      "recordExpense(uint256,uint256,string)": {
+        "notice": "Record an expense for a department"
+      },
+      "rejectFundRequest(uint256)": {
+        "notice": "Reject a fund request"
+      },
+      "requestFunds(uint256,uint256,string)": {
+        "notice": "Request additional funds for a department"
+      },
+      "transferFunds(uint256,address,uint256)": {
+        "notice": "Transfer funds from department budget"
+      },
+      "updateDepartmentManager(uint256,address)": {
+        "notice": "Update department manager"
+      }
+    },
+    "notice": "Department budget management and allocation system",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 765,
+        "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+        "label": "treasury",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 767,
+        "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+        "label": "admin",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      },
+      {
+        "astId": 770,
+        "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+        "label": "usdc",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_contract(IERC20)456"
+      },
+      {
+        "astId": 775,
+        "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+        "label": "departments",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_uint256,t_struct(Department)729_storage)"
+      },
+      {
+        "astId": 777,
+        "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+        "label": "departmentCount",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 782,
+        "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+        "label": "fundRequests",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_uint256,t_struct(FundRequest)750_storage)"
+      },
+      {
+        "astId": 784,
+        "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+        "label": "requestCount",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 790,
+        "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+        "label": "departmentExpenses",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_mapping(t_uint256,t_array(t_struct(Expense)763_storage)dyn_storage)"
+      },
+      {
+        "astId": 794,
+        "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+        "label": "allExpenses",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_array(t_struct(Expense)763_storage)dyn_storage"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_struct(Expense)763_storage)dyn_storage": {
+        "base": "t_struct(Expense)763_storage",
+        "encoding": "dynamic_array",
+        "label": "struct BudgetAllocator.Expense[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IERC20)456": {
+        "encoding": "inplace",
+        "label": "contract IERC20",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_uint256,t_array(t_struct(Expense)763_storage)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct BudgetAllocator.Expense[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_struct(Expense)763_storage)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_struct(Department)729_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct BudgetAllocator.Department)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Department)729_storage"
+      },
+      "t_mapping(t_uint256,t_struct(FundRequest)750_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct BudgetAllocator.FundRequest)",
+        "numberOfBytes": "32",
+        "value": "t_struct(FundRequest)750_storage"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Department)729_storage": {
+        "encoding": "inplace",
+        "label": "struct BudgetAllocator.Department",
+        "members": [
+          {
+            "astId": 714,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "id",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 716,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "name",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 718,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "totalBudget",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 720,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "spentAmount",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 722,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "availableBalance",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 724,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "manager",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_address"
+          },
+          {
+            "astId": 726,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "active",
+            "offset": 20,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 728,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "createdAt",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "224"
+      },
+      "t_struct(Expense)763_storage": {
+        "encoding": "inplace",
+        "label": "struct BudgetAllocator.Expense",
+        "members": [
+          {
+            "astId": 752,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "id",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 754,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "departmentId",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 756,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "amount",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 758,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "description",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 760,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "spentBy",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_address"
+          },
+          {
+            "astId": 762,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "192"
+      },
+      "t_struct(FundRequest)750_storage": {
+        "encoding": "inplace",
+        "label": "struct BudgetAllocator.FundRequest",
+        "members": [
+          {
+            "astId": 731,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "id",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 733,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "departmentId",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 735,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "requester",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_address"
+          },
+          {
+            "astId": 737,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "amount",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 739,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "reason",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 741,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "approved",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 743,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "rejected",
+            "offset": 1,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 745,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "executed",
+            "offset": 2,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 747,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "requestedAt",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 749,
+            "contract": "contracts/BudgetAllocator.sol:BudgetAllocator",
+            "label": "approvedBy",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_address"
+          }
+        ],
+        "numberOfBytes": "256"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { fetchUSDCTreasuryData, TreasuryData } from '../lib/usdcData';
 import { TrendingUp, ArrowUpRight, ArrowDownRight, DollarSign, Activity } from 'lucide-react';
@@ -20,18 +21,19 @@ const generateHistoricalData = (totalUSDC: number) => {
 };
 
 export function USDCTreasuryOverview() {
+  const { address, isConnected } = useAccount();
   const [data, setData] = useState<TreasuryData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      const treasuryData = await fetchUSDCTreasuryData();
+      const treasuryData = await fetchUSDCTreasuryData(address);
       setData(treasuryData);
       setLoading(false);
     }
     loadData();
-  }, []);
+  }, [address]);
 
   if (loading) {
     return (

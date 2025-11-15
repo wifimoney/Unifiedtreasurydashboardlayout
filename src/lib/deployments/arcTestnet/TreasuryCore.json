@@ -1,0 +1,874 @@
+{
+  "address": "0xcee3Bb02aE95E1Dbc2e5C51a502Ac6eC5deEFa81",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "_owners",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_threshold",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsDeposited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnerAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnerRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "by",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newThreshold",
+          "type": "uint256"
+        }
+      ],
+      "name": "ThresholdChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "txId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "approver",
+          "type": "address"
+        }
+      ],
+      "name": "TransactionApproved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "txId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "canceller",
+          "type": "address"
+        }
+      ],
+      "name": "TransactionCancelled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "txId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "executor",
+          "type": "address"
+        }
+      ],
+      "name": "TransactionExecuted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "txId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "proposer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "TransactionProposed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "by",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_txId",
+          "type": "uint256"
+        }
+      ],
+      "name": "approveTransaction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_txId",
+          "type": "uint256"
+        }
+      ],
+      "name": "cancelTransaction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_txId",
+          "type": "uint256"
+        }
+      ],
+      "name": "executeTransaction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getOwners",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_txId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTransaction",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bool",
+          "name": "executed",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "cancelled",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "approvalCount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTransactionCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "hasApproved",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_txId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "isApproved",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "isOwner",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "owners",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "proposeTransaction",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "threshold",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "transactionCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "transactions",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bool",
+          "name": "executed",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "cancelled",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "approvalCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "proposedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "proposer",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0x9dc051715082a35478e17ca0da72cf3a36e3e26caf45da035e31ba02a4a842e9",
+  "receipt": {
+    "to": null,
+    "from": "0x1484fb70070B7907af809EECc5eAE2ae2cd04C28",
+    "contractAddress": "0xcee3Bb02aE95E1Dbc2e5C51a502Ac6eC5deEFa81",
+    "transactionIndex": 3,
+    "gasUsed": "1215699",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x72c03cbc5184345844f7998d6d895c89be30a2f7ccfdeed64973dfaa4dc7c2ca",
+    "transactionHash": "0x9dc051715082a35478e17ca0da72cf3a36e3e26caf45da035e31ba02a4a842e9",
+    "logs": [],
+    "blockNumber": 11287977,
+    "cumulativeGasUsed": "1472007",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    [
+      "0x1484fb70070B7907af809EECc5eAE2ae2cd04C28",
+      "0x1234567890123456789012345678901234567890",
+      "0x2345678901234567890123456789012345678901"
+    ],
+    2
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "c8cc5f07fcb48433307ce8656020ab61",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.30+commit.73712a01\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"_owners\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"_threshold\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"FundsDeposited\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnerAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnerRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"by\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newThreshold\",\"type\":\"uint256\"}],\"name\":\"ThresholdChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"txId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approver\",\"type\":\"address\"}],\"name\":\"TransactionApproved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"txId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"canceller\",\"type\":\"address\"}],\"name\":\"TransactionCancelled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"txId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"executor\",\"type\":\"address\"}],\"name\":\"TransactionExecuted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"txId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"proposer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"TransactionProposed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"by\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_txId\",\"type\":\"uint256\"}],\"name\":\"approveTransaction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_txId\",\"type\":\"uint256\"}],\"name\":\"cancelTransaction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_txId\",\"type\":\"uint256\"}],\"name\":\"executeTransaction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getOwners\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_txId\",\"type\":\"uint256\"}],\"name\":\"getTransaction\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"executed\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"cancelled\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"approvalCount\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTransactionCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"hasApproved\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_txId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"isApproved\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"isOwner\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"owners\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"proposeTransaction\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"threshold\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"transactionCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"transactions\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"executed\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"cancelled\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"approvalCount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"proposedAt\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"proposer\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"details\":\"Manages treasury funds, proposals, and multi-sig approvals\",\"kind\":\"dev\",\"methods\":{\"approveTransaction(uint256)\":{\"params\":{\"_txId\":\"Transaction ID to approve\"}},\"cancelTransaction(uint256)\":{\"params\":{\"_txId\":\"Transaction ID to cancel\"}},\"constructor\":{\"params\":{\"_owners\":\"Array of owner addresses\",\"_threshold\":\"Number of approvals required for execution\"}},\"executeTransaction(uint256)\":{\"params\":{\"_txId\":\"Transaction ID to execute\"}},\"getBalance()\":{\"returns\":{\"_0\":\"balance Current balance in wei\"}},\"getOwners()\":{\"returns\":{\"_0\":\"Array of owner addresses\"}},\"getTransaction(uint256)\":{\"params\":{\"_txId\":\"Transaction ID\"},\"returns\":{\"amount\":\"Transaction amount\",\"approvalCount\":\"Number of approvals\",\"cancelled\":\"Cancellation status\",\"data\":\"Transaction data\",\"executed\":\"Execution status\",\"to\":\"Recipient address\"}},\"getTransactionCount()\":{\"returns\":{\"_0\":\"count Transaction count\"}},\"isApproved(uint256,address)\":{\"params\":{\"_owner\":\"Owner address\",\"_txId\":\"Transaction ID\"},\"returns\":{\"_0\":\"bool Approval status\"}},\"proposeTransaction(address,uint256,bytes)\":{\"params\":{\"_amount\":\"Amount to send\",\"_data\":\"Additional data for the transaction\",\"_to\":\"Recipient address\"},\"returns\":{\"_0\":\"txId Transaction ID\"}},\"transactionCount()\":{\"returns\":{\"_0\":\"count Total transactions\"}}},\"title\":\"TreasuryCore\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"approveTransaction(uint256)\":{\"notice\":\"Approve a proposed transaction\"},\"cancelTransaction(uint256)\":{\"notice\":\"Cancel a proposed transaction\"},\"constructor\":{\"notice\":\"Initialize the treasury with owners and approval threshold\"},\"executeTransaction(uint256)\":{\"notice\":\"Execute an approved transaction\"},\"getBalance()\":{\"notice\":\"Get the current treasury balance\"},\"getOwners()\":{\"notice\":\"Get all owners\"},\"getTransaction(uint256)\":{\"notice\":\"Get transaction details\"},\"getTransactionCount()\":{\"notice\":\"Get total number of transactions\"},\"isApproved(uint256,address)\":{\"notice\":\"Check if transaction is approved by an owner\"},\"pause()\":{\"notice\":\"Pause the contract (emergency)\"},\"proposeTransaction(address,uint256,bytes)\":{\"notice\":\"Propose a new transaction\"},\"transactionCount()\":{\"notice\":\"Get total number of transactions\"},\"unpause()\":{\"notice\":\"Unpause the contract\"}},\"notice\":\"Core treasury management contract with multi-signature functionality\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/TreasuryCore.sol\":\"TreasuryCore\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/TreasuryCore.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.30;\\n\\n/**\\n * @title TreasuryCore\\n * @notice Core treasury management contract with multi-signature functionality\\n * @dev Manages treasury funds, proposals, and multi-sig approvals\\n */\\ncontract TreasuryCore {\\n    // Events\\n    event FundsDeposited(address indexed from, uint256 amount, uint256 timestamp);\\n    event TransactionProposed(uint256 indexed txId, address indexed proposer, address to, uint256 amount);\\n    event TransactionApproved(uint256 indexed txId, address indexed approver);\\n    event TransactionExecuted(uint256 indexed txId, address indexed executor);\\n    event TransactionCancelled(uint256 indexed txId, address indexed canceller);\\n    event OwnerAdded(address indexed owner);\\n    event OwnerRemoved(address indexed owner);\\n    event ThresholdChanged(uint256 newThreshold);\\n    event Paused(address indexed by);\\n    event Unpaused(address indexed by);\\n\\n    // Structs\\n    struct Transaction {\\n        address to;\\n        uint256 amount;\\n        bytes data;\\n        bool executed;\\n        bool cancelled;\\n        uint256 approvalCount;\\n        uint256 proposedAt;\\n        address proposer;\\n    }\\n\\n    // State variables\\n    mapping(address => bool) public isOwner;\\n    address[] public owners;\\n    uint256 public threshold;\\n\\n    Transaction[] public transactions;\\n    mapping(uint256 => mapping(address => bool)) public hasApproved;\\n\\n    bool public paused;\\n\\n    // Modifiers\\n    modifier onlyOwner() {\\n        require(isOwner[msg.sender], \\\"Not an owner\\\");\\n        _;\\n    }\\n\\n    modifier txExists(uint256 _txId) {\\n        require(_txId < transactions.length, \\\"Transaction does not exist\\\");\\n        _;\\n    }\\n\\n    modifier notExecuted(uint256 _txId) {\\n        require(!transactions[_txId].executed, \\\"Transaction already executed\\\");\\n        _;\\n    }\\n\\n    modifier notCancelled(uint256 _txId) {\\n        require(!transactions[_txId].cancelled, \\\"Transaction cancelled\\\");\\n        _;\\n    }\\n\\n    modifier notApproved(uint256 _txId) {\\n        require(!hasApproved[_txId][msg.sender], \\\"Transaction already approved\\\");\\n        _;\\n    }\\n\\n    modifier whenNotPaused() {\\n        require(!paused, \\\"Contract is paused\\\");\\n        _;\\n    }\\n\\n    modifier whenPaused() {\\n        require(paused, \\\"Contract is not paused\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @notice Initialize the treasury with owners and approval threshold\\n     * @param _owners Array of owner addresses\\n     * @param _threshold Number of approvals required for execution\\n     */\\n    constructor(address[] memory _owners, uint256 _threshold) {\\n        require(_owners.length > 0, \\\"Owners required\\\");\\n        require(_threshold > 0 && _threshold <= _owners.length, \\\"Invalid threshold\\\");\\n\\n        for (uint256 i = 0; i < _owners.length; i++) {\\n            address owner = _owners[i];\\n            require(owner != address(0), \\\"Invalid owner\\\");\\n            require(!isOwner[owner], \\\"Duplicate owner\\\");\\n\\n            isOwner[owner] = true;\\n            owners.push(owner);\\n        }\\n\\n        threshold = _threshold;\\n    }\\n\\n    /**\\n     * @notice Receive USDC deposits\\n     */\\n    receive() external payable {\\n        emit FundsDeposited(msg.sender, msg.value, block.timestamp);\\n    }\\n\\n    /**\\n     * @notice Get the current treasury balance\\n     * @return balance Current balance in wei\\n     */\\n    function getBalance() external view returns (uint256) {\\n        return address(this).balance;\\n    }\\n\\n    /**\\n     * @notice Propose a new transaction\\n     * @param _to Recipient address\\n     * @param _amount Amount to send\\n     * @param _data Additional data for the transaction\\n     * @return txId Transaction ID\\n     */\\n    function proposeTransaction(\\n        address _to,\\n        uint256 _amount,\\n        bytes memory _data\\n    ) external onlyOwner whenNotPaused returns (uint256) {\\n        require(_to != address(0), \\\"Invalid recipient\\\");\\n\\n        uint256 txId = transactions.length;\\n\\n        transactions.push(Transaction({\\n            to: _to,\\n            amount: _amount,\\n            data: _data,\\n            executed: false,\\n            cancelled: false,\\n            approvalCount: 0,\\n            proposedAt: block.timestamp,\\n            proposer: msg.sender\\n        }));\\n\\n        emit TransactionProposed(txId, msg.sender, _to, _amount);\\n\\n        return txId;\\n    }\\n\\n    /**\\n     * @notice Approve a proposed transaction\\n     * @param _txId Transaction ID to approve\\n     */\\n    function approveTransaction(uint256 _txId)\\n        external\\n        onlyOwner\\n        txExists(_txId)\\n        notExecuted(_txId)\\n        notCancelled(_txId)\\n        notApproved(_txId)\\n        whenNotPaused\\n    {\\n        hasApproved[_txId][msg.sender] = true;\\n        transactions[_txId].approvalCount += 1;\\n\\n        emit TransactionApproved(_txId, msg.sender);\\n    }\\n\\n    /**\\n     * @notice Execute an approved transaction\\n     * @param _txId Transaction ID to execute\\n     */\\n    function executeTransaction(uint256 _txId)\\n        external\\n        onlyOwner\\n        txExists(_txId)\\n        notExecuted(_txId)\\n        notCancelled(_txId)\\n        whenNotPaused\\n    {\\n        Transaction storage txn = transactions[_txId];\\n\\n        require(txn.approvalCount >= threshold, \\\"Insufficient approvals\\\");\\n        require(address(this).balance >= txn.amount, \\\"Insufficient balance\\\");\\n\\n        txn.executed = true;\\n\\n        (bool success, ) = txn.to.call{value: txn.amount}(txn.data);\\n        require(success, \\\"Transaction execution failed\\\");\\n\\n        emit TransactionExecuted(_txId, msg.sender);\\n    }\\n\\n    /**\\n     * @notice Cancel a proposed transaction\\n     * @param _txId Transaction ID to cancel\\n     */\\n    function cancelTransaction(uint256 _txId)\\n        external\\n        onlyOwner\\n        txExists(_txId)\\n        notExecuted(_txId)\\n        notCancelled(_txId)\\n    {\\n        Transaction storage txn = transactions[_txId];\\n        require(txn.proposer == msg.sender, \\\"Only proposer can cancel\\\");\\n\\n        txn.cancelled = true;\\n\\n        emit TransactionCancelled(_txId, msg.sender);\\n    }\\n\\n    /**\\n     * @notice Pause the contract (emergency)\\n     */\\n    function pause() external onlyOwner whenNotPaused {\\n        paused = true;\\n        emit Paused(msg.sender);\\n    }\\n\\n    /**\\n     * @notice Unpause the contract\\n     */\\n    function unpause() external onlyOwner whenPaused {\\n        paused = false;\\n        emit Unpaused(msg.sender);\\n    }\\n\\n    /**\\n     * @notice Get transaction details\\n     * @param _txId Transaction ID\\n     * @return to Recipient address\\n     * @return amount Transaction amount\\n     * @return data Transaction data\\n     * @return executed Execution status\\n     * @return cancelled Cancellation status\\n     * @return approvalCount Number of approvals\\n     */\\n    function getTransaction(uint256 _txId)\\n        external\\n        view\\n        txExists(_txId)\\n        returns (\\n            address to,\\n            uint256 amount,\\n            bytes memory data,\\n            bool executed,\\n            bool cancelled,\\n            uint256 approvalCount\\n        )\\n    {\\n        Transaction memory txn = transactions[_txId];\\n        return (\\n            txn.to,\\n            txn.amount,\\n            txn.data,\\n            txn.executed,\\n            txn.cancelled,\\n            txn.approvalCount\\n        );\\n    }\\n\\n    /**\\n     * @notice Get total number of transactions\\n     * @return count Transaction count\\n     */\\n    function getTransactionCount() external view returns (uint256) {\\n        return transactions.length;\\n    }\\n\\n    /**\\n     * @notice Get all owners\\n     * @return Array of owner addresses\\n     */\\n    function getOwners() external view returns (address[] memory) {\\n        return owners;\\n    }\\n\\n    /**\\n     * @notice Check if transaction is approved by an owner\\n     * @param _txId Transaction ID\\n     * @param _owner Owner address\\n     * @return bool Approval status\\n     */\\n    function isApproved(uint256 _txId, address _owner) external view returns (bool) {\\n        return hasApproved[_txId][_owner];\\n    }\\n\\n    /**\\n     * @notice Get total number of transactions\\n     * @return count Total transactions\\n     */\\n    function transactionCount() external view returns (uint256) {\\n        return transactions.length;\\n    }\\n}\\n\",\"keccak256\":\"0x51821f0ba82a9e421c6bfb5fb1eee8853068c225e10226c98f0c610b33632634\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60806040523461029c5761146980380380610019816102b7565b92833981019060408183031261029c5780516001600160401b03811161029c57810182601f8201121561029c578051926001600160401b0384116102a1578360051b9160208061006a8186016102b7565b80978152019382010191821161029c57602001915b81831061027c57846020850151815115610245578015158061023a575b1561020157906000915b81518310156101ef57600583901b820160200151600093906001600160a01b031680156101ba578085528460205260ff604086205416610183578085528460205260408520600160ff198254161790556001546801000000000000000081101561016f57600181018060015581101561015b576001958690527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf60180546001600160a01b0319169091179055909201916100a6565b634e487b7160e01b86526032600452602486fd5b634e487b7160e01b86526041600452602486fd5b60405162461bcd60e51b815260206004820152600f60248201526e223ab83634b1b0ba329037bbb732b960891b6044820152606490fd5b60405162461bcd60e51b815260206004820152600d60248201526c24b73b30b634b21037bbb732b960991b6044820152606490fd5b60025560405161118c90816102dd8239f35b60405162461bcd60e51b8152602060048201526011602482015270125b9d985b1a59081d1a1c995cda1bdb19607a1b6044820152606490fd5b50815181111561009c565b60405162461bcd60e51b815260206004820152600f60248201526e13dddb995c9cc81c995c5d5a5c9959608a1b6044820152606490fd5b82516001600160a01b038116810361029c5781526020928301920161007f565b600080fd5b634e487b7160e01b600052604160045260246000fd5b6040519190601f01601f191682016001600160401b038111838210176102a15760405256fe608080604052600436101561004f575b50361561001b57600080fd5b6040513481524260208201527fbee4fe3675934fca827426c793623996a3079255089bda3a717019ffc5db276560403392a2005b60003560e01c908163025e7c2714610dac5750806312065fe014610d905780632358d5a81461090d578063242232d114610c425780632e7700f01461038c5780632f54bf6e14610c035780633380c0d814610b0a57806333ea3dc814610a1c5780633f4ba83a1461097857806342cde4e81461095a57806356c316371461090d5780635c975abb146108ea5780635e90852d1461057b5780638456cb591461050e5780639ace38c21461045d578063a0e67e2b14610391578063b77bf6001461038c5763ee22610b14610122573861000f565b346103875760203660031901126103875760043533600052600060205261015060ff60406000205416610ffe565b61015d6003548210611039565b61017760ff600361016d84610eeb565b5001541615611085565b61019460ff600361018784610eeb565b50015460081c16156110d1565b6101a360ff6005541615611115565b6101ac81610eeb565b506004810154600254116103495747600182015480911061030d5760038201805460ff191660011790558154604051600290930180546001600160a01b03929092169392916000916101fd82610f20565b91600181169081156102f657506001146102c1575b5050916000939181859403925af13d156102bc573d61023081610ecf565b9061023e6040519283610ead565b8152600060203d92013e5b156102775733907fefc13bdcf58f184ea7cae26b499fb33b539e01d0197cea456f3ada289b8cf19b600080a3005b60405162461bcd60e51b815260206004820152601c60248201527f5472616e73616374696f6e20657865637574696f6e206661696c6564000000006044820152606490fd5b610249565b90915060005260206000206000905b8282106102e257505082018183610212565b6001816020925484880152019101906102d0565b60ff19168652505080151502830190508183610212565b60405162461bcd60e51b8152602060048201526014602482015273496e73756666696369656e742062616c616e636560601b6044820152606490fd5b60405162461bcd60e51b8152602060048201526016602482015275496e73756666696369656e7420617070726f76616c7360501b6044820152606490fd5b600080fd5b610e31565b34610387576000366003190112610387576040518060206001549283815201809260016000527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf69060005b81811061043e57505050816103f2910382610ead565b6040519182916020830190602084525180915260408301919060005b81811061041c575050500390f35b82516001600160a01b031684528594506020938401939092019160010161040e565b82546001600160a01b03168452602090930192600192830192016103dc565b34610387576020366003190112610387576004356003548110156103875761048490610eeb565b5060018060a01b038154166001820154916104a160028201610f5a565b600382015491600481015460ff6104e5600584015493600660018060a01b039101541694604051988998895260208901526101006040890152610100880190610e4f565b948181161515606088015260081c161515608086015260a085015260c084015260e08301520390f35b346103875760003660031901126103875733600052600060205261053960ff60406000205416610ffe565b600160055461054b60ff821615611115565b60ff191617600555337f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258600080a2005b3461038757606036600319011261038757610594610e1b565b602435906044359067ffffffffffffffff821161038757366023830112156103875781600401356105c481610ecf565b926105d26040519485610ead565b81845236602483830101116103875781600092602460209301838701378401015233600052600060205261060d60ff60406000205416610ffe565b61061c60ff6005541615611115565b6001600160a01b031680156108b157600354906040519361063c85610e90565b81855260208501948186526040810194855260608101956000875260808201966000885260a083016000815260c084019142835260e085019333855268010000000000000000891015610885576001890160035561069989610eeb565b96909661089b575186546001600160a01b0319166001600160a01b03919091161786555160018601559751805190999098906002860167ffffffffffffffff8b11610885576106e88154610f20565b9b601f8d1161083c575b60209c508c90601f8d116001146107cf579b80916006999a9b9c9d6000926107c4575b50508160011b916000199060031b1c19161790555b600387019151151560ff8019845416911617825551151561ff0082549160081b169061ff00191617905551600485015551600584015560018060a01b0390511691019060018060a01b03166bffffffffffffffffffffffff60a01b82541617905560405191825283820152817f08754d66a328b07857be590cc17e0bb798e0ec9cb30ac8e5af7afd3481d1c6bd60403393a3604051908152f35b015190508e80610715565b90601f198d169183600052816000209260005b8181106108245750916001939160069b9c9d9e9f80941061080b575b505050811b01905561072a565b015160001960f88460031b161c191690558e80806107fe565b929360206001819287860151815501950193016107e2565b8b809d836000526020601f81600020930160051c83019f1061087b575b601f0160051c019c5b8d811061086f57506106f2565b60008155600101610862565b909d508d90610859565b634e487b7160e01b600052604160045260246000fd5b634e487b7160e01b600052600060045260246000fd5b60405162461bcd60e51b8152602060048201526011602482015270125b9d985b1a59081c9958da5c1a595b9d607a1b6044820152606490fd5b3461038757600036600319011261038757602060ff600554166040519015158152f35b3461038757604036600319011261038757610926610e05565b600435600052600460205260406000209060018060a01b0316600052602052602060ff604060002054166040519015158152f35b34610387576000366003190112610387576020600254604051908152f35b34610387576000366003190112610387573360005260006020526109a360ff60406000205416610ffe565b60055460ff8116156109de5760ff1916600555337f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa600080a2005b60405162461bcd60e51b815260206004820152601660248201527510dbdb9d1c9858dd081a5cc81b9bdd081c185d5cd95960521b6044820152606490fd5b3461038757602036600319011261038757610a45600435610a406003548210611039565b610eeb565b50604051610a5281610e90565b81546001600160a01b0316815260018201546020820190815290610a7860028401610f5a565b92836040830152600381015491610af660ff80851615159485606085015260081c161515918260808201526004840154938460a0830152600581015460c0830152600660018060a01b039101541660e082015260018060a01b039051169451956040519687968752602087015260c0604087015260c0860190610e4f565b926060850152608084015260a08301520390f35b3461038757602036600319011261038757600435336000526000602052610b3860ff60406000205416610ffe565b610b456003548210611039565b610b5560ff600361016d84610eeb565b610b6560ff600361018784610eeb565b610b6e81610eeb565b506006810154336001600160a01b0390911603610bbe57600301805461ff00191661010017905533907fbeed812a0535c283c6bc8eda32deb53df2603d7c1b518b07e2bec1df38da8393600080a3005b60405162461bcd60e51b815260206004820152601860248201527f4f6e6c792070726f706f7365722063616e2063616e63656c00000000000000006044820152606490fd5b34610387576020366003190112610387576001600160a01b03610c24610e1b565b166000526000602052602060ff604060002054166040519015158152f35b3461038757602036600319011261038757600435336000526000602052610c7060ff60406000205416610ffe565b610c7d6003548210611039565b610c8d60ff600361016d84610eeb565b610c9d60ff600361018784610eeb565b600081815260046020908152604080832033845290915290205460ff16610d4b57610ccd60ff6005541615611115565b6000818152600460208181526040808420338552909152909120805460ff19166001179055610cfb82610eeb565b500180549060018201809211610d35575533907f924813d717e221b5f46dcd8a56da1679e4612584ab3237d55e5faabf6f6a3079600080a3005b634e487b7160e01b600052601160045260246000fd5b60405162461bcd60e51b815260206004820152601c60248201527f5472616e73616374696f6e20616c726561647920617070726f766564000000006044820152606490fd5b3461038757600036600319011261038757602047604051908152f35b3461038757602036600319011261038757600435906001548210156103875760016000527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6909101546001600160a01b03168152602090f35b602435906001600160a01b038216820361038757565b600435906001600160a01b038216820361038757565b34610387576000366003190112610387576020600354604051908152f35b919082519283825260005b848110610e7b575050826000602080949584010152601f8019910116010190565b80602080928401015182828601015201610e5a565b610100810190811067ffffffffffffffff82111761088557604052565b90601f8019910116810190811067ffffffffffffffff82111761088557604052565b67ffffffffffffffff811161088557601f01601f191660200190565b600354811015610f0a5760036000526007602060002091020190600090565b634e487b7160e01b600052603260045260246000fd5b90600182811c92168015610f50575b6020831014610f3a57565b634e487b7160e01b600052602260045260246000fd5b91607f1691610f2f565b9060405191826000825492610f6e84610f20565b8084529360018116908115610fdc5750600114610f95575b50610f9392500383610ead565b565b90506000929192526020600020906000915b818310610fc0575050906020610f939282010138610f86565b6020919350806001915483858901015201910190918492610fa7565b905060209250610f9394915060ff191682840152151560051b82010138610f86565b1561100557565b60405162461bcd60e51b815260206004820152600c60248201526b2737ba1030b71037bbb732b960a11b6044820152606490fd5b1561104057565b60405162461bcd60e51b815260206004820152601a60248201527f5472616e73616374696f6e20646f6573206e6f742065786973740000000000006044820152606490fd5b1561108c57565b60405162461bcd60e51b815260206004820152601c60248201527f5472616e73616374696f6e20616c7265616479206578656375746564000000006044820152606490fd5b156110d857565b60405162461bcd60e51b8152602060048201526015602482015274151c985b9cd858dd1a5bdb8818d85b98d95b1b1959605a1b6044820152606490fd5b1561111c57565b60405162461bcd60e51b815260206004820152601260248201527110dbdb9d1c9858dd081a5cc81c185d5cd95960721b6044820152606490fdfea26469706673582212201930e20ad56d4fc13e2bd9471c801f24fb746615aa5f8789c14b5be26e38679964736f6c634300081e0033",
+  "deployedBytecode": "0x608080604052600436101561004f575b50361561001b57600080fd5b6040513481524260208201527fbee4fe3675934fca827426c793623996a3079255089bda3a717019ffc5db276560403392a2005b60003560e01c908163025e7c2714610dac5750806312065fe014610d905780632358d5a81461090d578063242232d114610c425780632e7700f01461038c5780632f54bf6e14610c035780633380c0d814610b0a57806333ea3dc814610a1c5780633f4ba83a1461097857806342cde4e81461095a57806356c316371461090d5780635c975abb146108ea5780635e90852d1461057b5780638456cb591461050e5780639ace38c21461045d578063a0e67e2b14610391578063b77bf6001461038c5763ee22610b14610122573861000f565b346103875760203660031901126103875760043533600052600060205261015060ff60406000205416610ffe565b61015d6003548210611039565b61017760ff600361016d84610eeb565b5001541615611085565b61019460ff600361018784610eeb565b50015460081c16156110d1565b6101a360ff6005541615611115565b6101ac81610eeb565b506004810154600254116103495747600182015480911061030d5760038201805460ff191660011790558154604051600290930180546001600160a01b03929092169392916000916101fd82610f20565b91600181169081156102f657506001146102c1575b5050916000939181859403925af13d156102bc573d61023081610ecf565b9061023e6040519283610ead565b8152600060203d92013e5b156102775733907fefc13bdcf58f184ea7cae26b499fb33b539e01d0197cea456f3ada289b8cf19b600080a3005b60405162461bcd60e51b815260206004820152601c60248201527f5472616e73616374696f6e20657865637574696f6e206661696c6564000000006044820152606490fd5b610249565b90915060005260206000206000905b8282106102e257505082018183610212565b6001816020925484880152019101906102d0565b60ff19168652505080151502830190508183610212565b60405162461bcd60e51b8152602060048201526014602482015273496e73756666696369656e742062616c616e636560601b6044820152606490fd5b60405162461bcd60e51b8152602060048201526016602482015275496e73756666696369656e7420617070726f76616c7360501b6044820152606490fd5b600080fd5b610e31565b34610387576000366003190112610387576040518060206001549283815201809260016000527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf69060005b81811061043e57505050816103f2910382610ead565b6040519182916020830190602084525180915260408301919060005b81811061041c575050500390f35b82516001600160a01b031684528594506020938401939092019160010161040e565b82546001600160a01b03168452602090930192600192830192016103dc565b34610387576020366003190112610387576004356003548110156103875761048490610eeb565b5060018060a01b038154166001820154916104a160028201610f5a565b600382015491600481015460ff6104e5600584015493600660018060a01b039101541694604051988998895260208901526101006040890152610100880190610e4f565b948181161515606088015260081c161515608086015260a085015260c084015260e08301520390f35b346103875760003660031901126103875733600052600060205261053960ff60406000205416610ffe565b600160055461054b60ff821615611115565b60ff191617600555337f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258600080a2005b3461038757606036600319011261038757610594610e1b565b602435906044359067ffffffffffffffff821161038757366023830112156103875781600401356105c481610ecf565b926105d26040519485610ead565b81845236602483830101116103875781600092602460209301838701378401015233600052600060205261060d60ff60406000205416610ffe565b61061c60ff6005541615611115565b6001600160a01b031680156108b157600354906040519361063c85610e90565b81855260208501948186526040810194855260608101956000875260808201966000885260a083016000815260c084019142835260e085019333855268010000000000000000891015610885576001890160035561069989610eeb565b96909661089b575186546001600160a01b0319166001600160a01b03919091161786555160018601559751805190999098906002860167ffffffffffffffff8b11610885576106e88154610f20565b9b601f8d1161083c575b60209c508c90601f8d116001146107cf579b80916006999a9b9c9d6000926107c4575b50508160011b916000199060031b1c19161790555b600387019151151560ff8019845416911617825551151561ff0082549160081b169061ff00191617905551600485015551600584015560018060a01b0390511691019060018060a01b03166bffffffffffffffffffffffff60a01b82541617905560405191825283820152817f08754d66a328b07857be590cc17e0bb798e0ec9cb30ac8e5af7afd3481d1c6bd60403393a3604051908152f35b015190508e80610715565b90601f198d169183600052816000209260005b8181106108245750916001939160069b9c9d9e9f80941061080b575b505050811b01905561072a565b015160001960f88460031b161c191690558e80806107fe565b929360206001819287860151815501950193016107e2565b8b809d836000526020601f81600020930160051c83019f1061087b575b601f0160051c019c5b8d811061086f57506106f2565b60008155600101610862565b909d508d90610859565b634e487b7160e01b600052604160045260246000fd5b634e487b7160e01b600052600060045260246000fd5b60405162461bcd60e51b8152602060048201526011602482015270125b9d985b1a59081c9958da5c1a595b9d607a1b6044820152606490fd5b3461038757600036600319011261038757602060ff600554166040519015158152f35b3461038757604036600319011261038757610926610e05565b600435600052600460205260406000209060018060a01b0316600052602052602060ff604060002054166040519015158152f35b34610387576000366003190112610387576020600254604051908152f35b34610387576000366003190112610387573360005260006020526109a360ff60406000205416610ffe565b60055460ff8116156109de5760ff1916600555337f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa600080a2005b60405162461bcd60e51b815260206004820152601660248201527510dbdb9d1c9858dd081a5cc81b9bdd081c185d5cd95960521b6044820152606490fd5b3461038757602036600319011261038757610a45600435610a406003548210611039565b610eeb565b50604051610a5281610e90565b81546001600160a01b0316815260018201546020820190815290610a7860028401610f5a565b92836040830152600381015491610af660ff80851615159485606085015260081c161515918260808201526004840154938460a0830152600581015460c0830152600660018060a01b039101541660e082015260018060a01b039051169451956040519687968752602087015260c0604087015260c0860190610e4f565b926060850152608084015260a08301520390f35b3461038757602036600319011261038757600435336000526000602052610b3860ff60406000205416610ffe565b610b456003548210611039565b610b5560ff600361016d84610eeb565b610b6560ff600361018784610eeb565b610b6e81610eeb565b506006810154336001600160a01b0390911603610bbe57600301805461ff00191661010017905533907fbeed812a0535c283c6bc8eda32deb53df2603d7c1b518b07e2bec1df38da8393600080a3005b60405162461bcd60e51b815260206004820152601860248201527f4f6e6c792070726f706f7365722063616e2063616e63656c00000000000000006044820152606490fd5b34610387576020366003190112610387576001600160a01b03610c24610e1b565b166000526000602052602060ff604060002054166040519015158152f35b3461038757602036600319011261038757600435336000526000602052610c7060ff60406000205416610ffe565b610c7d6003548210611039565b610c8d60ff600361016d84610eeb565b610c9d60ff600361018784610eeb565b600081815260046020908152604080832033845290915290205460ff16610d4b57610ccd60ff6005541615611115565b6000818152600460208181526040808420338552909152909120805460ff19166001179055610cfb82610eeb565b500180549060018201809211610d35575533907f924813d717e221b5f46dcd8a56da1679e4612584ab3237d55e5faabf6f6a3079600080a3005b634e487b7160e01b600052601160045260246000fd5b60405162461bcd60e51b815260206004820152601c60248201527f5472616e73616374696f6e20616c726561647920617070726f766564000000006044820152606490fd5b3461038757600036600319011261038757602047604051908152f35b3461038757602036600319011261038757600435906001548210156103875760016000527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6909101546001600160a01b03168152602090f35b602435906001600160a01b038216820361038757565b600435906001600160a01b038216820361038757565b34610387576000366003190112610387576020600354604051908152f35b919082519283825260005b848110610e7b575050826000602080949584010152601f8019910116010190565b80602080928401015182828601015201610e5a565b610100810190811067ffffffffffffffff82111761088557604052565b90601f8019910116810190811067ffffffffffffffff82111761088557604052565b67ffffffffffffffff811161088557601f01601f191660200190565b600354811015610f0a5760036000526007602060002091020190600090565b634e487b7160e01b600052603260045260246000fd5b90600182811c92168015610f50575b6020831014610f3a57565b634e487b7160e01b600052602260045260246000fd5b91607f1691610f2f565b9060405191826000825492610f6e84610f20565b8084529360018116908115610fdc5750600114610f95575b50610f9392500383610ead565b565b90506000929192526020600020906000915b818310610fc0575050906020610f939282010138610f86565b6020919350806001915483858901015201910190918492610fa7565b905060209250610f9394915060ff191682840152151560051b82010138610f86565b1561100557565b60405162461bcd60e51b815260206004820152600c60248201526b2737ba1030b71037bbb732b960a11b6044820152606490fd5b1561104057565b60405162461bcd60e51b815260206004820152601a60248201527f5472616e73616374696f6e20646f6573206e6f742065786973740000000000006044820152606490fd5b1561108c57565b60405162461bcd60e51b815260206004820152601c60248201527f5472616e73616374696f6e20616c7265616479206578656375746564000000006044820152606490fd5b156110d857565b60405162461bcd60e51b8152602060048201526015602482015274151c985b9cd858dd1a5bdb8818d85b98d95b1b1959605a1b6044820152606490fd5b1561111c57565b60405162461bcd60e51b815260206004820152601260248201527110dbdb9d1c9858dd081a5cc81c185d5cd95960721b6044820152606490fdfea26469706673582212201930e20ad56d4fc13e2bd9471c801f24fb746615aa5f8789c14b5be26e38679964736f6c634300081e0033",
+  "devdoc": {
+    "details": "Manages treasury funds, proposals, and multi-sig approvals",
+    "kind": "dev",
+    "methods": {
+      "approveTransaction(uint256)": {
+        "params": {
+          "_txId": "Transaction ID to approve"
+        }
+      },
+      "cancelTransaction(uint256)": {
+        "params": {
+          "_txId": "Transaction ID to cancel"
+        }
+      },
+      "constructor": {
+        "params": {
+          "_owners": "Array of owner addresses",
+          "_threshold": "Number of approvals required for execution"
+        }
+      },
+      "executeTransaction(uint256)": {
+        "params": {
+          "_txId": "Transaction ID to execute"
+        }
+      },
+      "getBalance()": {
+        "returns": {
+          "_0": "balance Current balance in wei"
+        }
+      },
+      "getOwners()": {
+        "returns": {
+          "_0": "Array of owner addresses"
+        }
+      },
+      "getTransaction(uint256)": {
+        "params": {
+          "_txId": "Transaction ID"
+        },
+        "returns": {
+          "amount": "Transaction amount",
+          "approvalCount": "Number of approvals",
+          "cancelled": "Cancellation status",
+          "data": "Transaction data",
+          "executed": "Execution status",
+          "to": "Recipient address"
+        }
+      },
+      "getTransactionCount()": {
+        "returns": {
+          "_0": "count Transaction count"
+        }
+      },
+      "isApproved(uint256,address)": {
+        "params": {
+          "_owner": "Owner address",
+          "_txId": "Transaction ID"
+        },
+        "returns": {
+          "_0": "bool Approval status"
+        }
+      },
+      "proposeTransaction(address,uint256,bytes)": {
+        "params": {
+          "_amount": "Amount to send",
+          "_data": "Additional data for the transaction",
+          "_to": "Recipient address"
+        },
+        "returns": {
+          "_0": "txId Transaction ID"
+        }
+      },
+      "transactionCount()": {
+        "returns": {
+          "_0": "count Total transactions"
+        }
+      }
+    },
+    "title": "TreasuryCore",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "approveTransaction(uint256)": {
+        "notice": "Approve a proposed transaction"
+      },
+      "cancelTransaction(uint256)": {
+        "notice": "Cancel a proposed transaction"
+      },
+      "constructor": {
+        "notice": "Initialize the treasury with owners and approval threshold"
+      },
+      "executeTransaction(uint256)": {
+        "notice": "Execute an approved transaction"
+      },
+      "getBalance()": {
+        "notice": "Get the current treasury balance"
+      },
+      "getOwners()": {
+        "notice": "Get all owners"
+      },
+      "getTransaction(uint256)": {
+        "notice": "Get transaction details"
+      },
+      "getTransactionCount()": {
+        "notice": "Get total number of transactions"
+      },
+      "isApproved(uint256,address)": {
+        "notice": "Check if transaction is approved by an owner"
+      },
+      "pause()": {
+        "notice": "Pause the contract (emergency)"
+      },
+      "proposeTransaction(address,uint256,bytes)": {
+        "notice": "Propose a new transaction"
+      },
+      "transactionCount()": {
+        "notice": "Get total number of transactions"
+      },
+      "unpause()": {
+        "notice": "Unpause the contract"
+      }
+    },
+    "notice": "Core treasury management contract with multi-signature functionality",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 6427,
+        "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+        "label": "isOwner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 6430,
+        "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+        "label": "owners",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_array(t_address)dyn_storage"
+      },
+      {
+        "astId": 6432,
+        "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+        "label": "threshold",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 6436,
+        "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+        "label": "transactions",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_array(t_struct(Transaction)6423_storage)dyn_storage"
+      },
+      {
+        "astId": 6442,
+        "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+        "label": "hasApproved",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_uint256,t_mapping(t_address,t_bool))"
+      },
+      {
+        "astId": 6444,
+        "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+        "label": "paused",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_bool"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_struct(Transaction)6423_storage)dyn_storage": {
+        "base": "t_struct(Transaction)6423_storage",
+        "encoding": "dynamic_array",
+        "label": "struct TreasuryCore.Transaction[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes_storage": {
+        "encoding": "bytes",
+        "label": "bytes",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_mapping(t_address,t_bool))": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => mapping(address => bool))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_bool)"
+      },
+      "t_struct(Transaction)6423_storage": {
+        "encoding": "inplace",
+        "label": "struct TreasuryCore.Transaction",
+        "members": [
+          {
+            "astId": 6408,
+            "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+            "label": "to",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 6410,
+            "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+            "label": "amount",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 6412,
+            "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+            "label": "data",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_bytes_storage"
+          },
+          {
+            "astId": 6414,
+            "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+            "label": "executed",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_bool"
+          },
+          {
+            "astId": 6416,
+            "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+            "label": "cancelled",
+            "offset": 1,
+            "slot": "3",
+            "type": "t_bool"
+          },
+          {
+            "astId": 6418,
+            "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+            "label": "approvalCount",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 6420,
+            "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+            "label": "proposedAt",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 6422,
+            "contract": "contracts/TreasuryCore.sol:TreasuryCore",
+            "label": "proposer",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_address"
+          }
+        ],
+        "numberOfBytes": "224"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

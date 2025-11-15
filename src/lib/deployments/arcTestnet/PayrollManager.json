@@ -1,0 +1,1081 @@
+{
+  "address": "0x4D2a7873Ab6CE048532d22f6D9D572E217c5e128",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_treasury",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_usdc",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "oldAdmin",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "AdminChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "employee",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "salary",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum PayrollManager.PaymentFrequency",
+          "name": "frequency",
+          "type": "uint8"
+        }
+      ],
+      "name": "EmployeeAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "employee",
+          "type": "address"
+        }
+      ],
+      "name": "EmployeeRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "employee",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "PaymentProcessed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "employeesPaid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "totalAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "PayrollExecuted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "employee",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "oldSalary",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newSalary",
+          "type": "uint256"
+        }
+      ],
+      "name": "SalaryUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "activeEmployees",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_employee",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_salary",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum PayrollManager.PaymentFrequency",
+          "name": "_frequency",
+          "type": "uint8"
+        }
+      ],
+      "name": "addEmployee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_employee",
+          "type": "address"
+        }
+      ],
+      "name": "calculatePaymentAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_newAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "changeAdmin",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "employeeList",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "employees",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "wallet",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "salary",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum PayrollManager.PaymentFrequency",
+          "name": "frequency",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastPaymentTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalPaid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "addedAt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getActiveEmployees",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_employee",
+          "type": "address"
+        }
+      ],
+      "name": "getEmployeeDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "salary",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum PayrollManager.PaymentFrequency",
+          "name": "frequency",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastPaymentTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalPaid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "employeeIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "getNextPaymentTime",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPaymentHistoryCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum PayrollManager.PaymentFrequency",
+          "name": "_frequency",
+          "type": "uint8"
+        }
+      ],
+      "name": "getPaymentInterval",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalActivePayrollCost",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_employee",
+          "type": "address"
+        }
+      ],
+      "name": "isPaymentDue",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "paymentHistory",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "employee",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "paymentId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_employee",
+          "type": "address"
+        }
+      ],
+      "name": "processEmployeePayment",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "processPayroll",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "employeesPaid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalPaid",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_employee",
+          "type": "address"
+        }
+      ],
+      "name": "removeEmployee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalEmployees",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalPaymentsMade",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalPayrollCost",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "treasury",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_employee",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_newSalary",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateSalary",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "usdc",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0xf7dfc7268da85893af5bb60e564172a34b914bc6df0ca361359b54d8776eac79",
+  "receipt": {
+    "to": null,
+    "from": "0x1484fb70070B7907af809EECc5eAE2ae2cd04C28",
+    "contractAddress": "0x4D2a7873Ab6CE048532d22f6D9D572E217c5e128",
+    "transactionIndex": 3,
+    "gasUsed": "1446089",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xc468c7c4595a746570fe25f5da0ac7b458ffee488920e1d08a235f4e3b4f3464",
+    "transactionHash": "0xf7dfc7268da85893af5bb60e564172a34b914bc6df0ca361359b54d8776eac79",
+    "logs": [],
+    "blockNumber": 11287980,
+    "cumulativeGasUsed": "1596760",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xcee3Bb02aE95E1Dbc2e5C51a502Ac6eC5deEFa81",
+    "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "c8cc5f07fcb48433307ce8656020ab61",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.30+commit.73712a01\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_treasury\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_usdc\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"oldAdmin\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"AdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"employee\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"salary\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"enum PayrollManager.PaymentFrequency\",\"name\":\"frequency\",\"type\":\"uint8\"}],\"name\":\"EmployeeAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"employee\",\"type\":\"address\"}],\"name\":\"EmployeeRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"employee\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"PaymentProcessed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"employeesPaid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"totalAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"PayrollExecuted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"employee\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"oldSalary\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newSalary\",\"type\":\"uint256\"}],\"name\":\"SalaryUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"activeEmployees\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_employee\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_salary\",\"type\":\"uint256\"},{\"internalType\":\"enum PayrollManager.PaymentFrequency\",\"name\":\"_frequency\",\"type\":\"uint8\"}],\"name\":\"addEmployee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_employee\",\"type\":\"address\"}],\"name\":\"calculatePaymentAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newAdmin\",\"type\":\"address\"}],\"name\":\"changeAdmin\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"employeeList\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"employees\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"wallet\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"salary\",\"type\":\"uint256\"},{\"internalType\":\"enum PayrollManager.PaymentFrequency\",\"name\":\"frequency\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"lastPaymentTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalPaid\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"addedAt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getActiveEmployees\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_employee\",\"type\":\"address\"}],\"name\":\"getEmployeeDetails\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"salary\",\"type\":\"uint256\"},{\"internalType\":\"enum PayrollManager.PaymentFrequency\",\"name\":\"frequency\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"lastPaymentTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalPaid\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"employeeIndex\",\"type\":\"uint256\"}],\"name\":\"getNextPaymentTime\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPaymentHistoryCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enum PayrollManager.PaymentFrequency\",\"name\":\"_frequency\",\"type\":\"uint8\"}],\"name\":\"getPaymentInterval\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalActivePayrollCost\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_employee\",\"type\":\"address\"}],\"name\":\"isPaymentDue\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"paymentHistory\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"employee\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"paymentId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_employee\",\"type\":\"address\"}],\"name\":\"processEmployeePayment\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"processPayroll\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"employeesPaid\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalPaid\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_employee\",\"type\":\"address\"}],\"name\":\"removeEmployee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalEmployees\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalPaymentsMade\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalPayrollCost\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"treasury\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_employee\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_newSalary\",\"type\":\"uint256\"}],\"name\":\"updateSalary\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"usdc\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"details\":\"Handles employee management, salary payments, and payment scheduling\",\"kind\":\"dev\",\"methods\":{\"addEmployee(address,string,uint256,uint8)\":{\"params\":{\"_employee\":\"Employee wallet address\",\"_frequency\":\"Payment frequency\",\"_name\":\"Employee name\",\"_salary\":\"Annual salary amount\"}},\"calculatePaymentAmount(address)\":{\"params\":{\"_employee\":\"Employee address\"},\"returns\":{\"_0\":\"amount Payment amount\"}},\"changeAdmin(address)\":{\"params\":{\"_newAdmin\":\"New admin address\"}},\"constructor\":{\"params\":{\"_treasury\":\"Treasury contract address\",\"_usdc\":\"USDC token address\"}},\"getActiveEmployees()\":{\"returns\":{\"_0\":\"addresses Array of active employee addresses\"}},\"getBalance()\":{\"returns\":{\"_0\":\"balance Current USDC balance\"}},\"getEmployeeDetails(address)\":{\"params\":{\"_employee\":\"Employee address\"},\"returns\":{\"active\":\"Employee active status\",\"frequency\":\"Payment frequency\",\"lastPaymentTime\":\"Last payment timestamp\",\"name\":\"Employee name\",\"salary\":\"Employee salary\",\"totalPaid\":\"Total amount paid\"}},\"getNextPaymentTime(uint256)\":{\"params\":{\"employeeIndex\":\"Index in employeeList\"},\"returns\":{\"_0\":\"nextPayment Time of next payment\"}},\"getPaymentHistoryCount()\":{\"returns\":{\"_0\":\"count Number of payments\"}},\"getPaymentInterval(uint8)\":{\"params\":{\"_frequency\":\"Payment frequency\"},\"returns\":{\"_0\":\"interval Interval in seconds\"}},\"getTotalActivePayrollCost()\":{\"returns\":{\"_0\":\"cost Total annual payroll cost\"}},\"isPaymentDue(address)\":{\"params\":{\"_employee\":\"Employee address\"},\"returns\":{\"_0\":\"bool Payment due status\"}},\"processEmployeePayment(address)\":{\"params\":{\"_employee\":\"Employee address\"}},\"processPayroll()\":{\"returns\":{\"employeesPaid\":\"Number of employees paid\",\"totalPaid\":\"Total amount paid\"}},\"removeEmployee(address)\":{\"params\":{\"_employee\":\"Employee address to remove\"}},\"totalPaymentsMade()\":{\"returns\":{\"_0\":\"total Total amount paid out\"}},\"updateSalary(address,uint256)\":{\"params\":{\"_employee\":\"Employee address\",\"_newSalary\":\"New salary amount\"}}},\"title\":\"PayrollManager\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"addEmployee(address,string,uint256,uint8)\":{\"notice\":\"Add a new employee\"},\"calculatePaymentAmount(address)\":{\"notice\":\"Calculate payment amount based on frequency\"},\"changeAdmin(address)\":{\"notice\":\"Change admin\"},\"constructor\":{\"notice\":\"Initialize payroll manager\"},\"getActiveEmployees()\":{\"notice\":\"Get all active employees\"},\"getBalance()\":{\"notice\":\"Get USDC balance of this contract\"},\"getEmployeeDetails(address)\":{\"notice\":\"Get employee details\"},\"getNextPaymentTime(uint256)\":{\"notice\":\"Calculate next payment time for an employee\"},\"getPaymentHistoryCount()\":{\"notice\":\"Get payment history count\"},\"getPaymentInterval(uint8)\":{\"notice\":\"Get payment interval in seconds\"},\"getTotalActivePayrollCost()\":{\"notice\":\"Get total active payroll cost (annual)\"},\"isPaymentDue(address)\":{\"notice\":\"Check if payment is due for an employee\"},\"processEmployeePayment(address)\":{\"notice\":\"Process payment for a specific employee\"},\"processPayroll()\":{\"notice\":\"Process payroll for all eligible employees\"},\"removeEmployee(address)\":{\"notice\":\"Remove an employee\"},\"totalPaymentsMade()\":{\"notice\":\"Get total payments made to all employees\"},\"updateSalary(address,uint256)\":{\"notice\":\"Update employee salary\"}},\"notice\":\"Automated payroll management for treasury operations\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/PayrollManager.sol\":\"PayrollManager\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Interface of the ERC20 standard as defined in the EIP.\\n */\\ninterface IERC20 {\\n    /**\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\n     * another (`to`).\\n     *\\n     * Note that `value` may be zero.\\n     */\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\n\\n    /**\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\n     * a call to {approve}. `value` is the new allowance.\\n     */\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\n\\n    /**\\n     * @dev Returns the value of tokens in existence.\\n     */\\n    function totalSupply() external view returns (uint256);\\n\\n    /**\\n     * @dev Returns the value of tokens owned by `account`.\\n     */\\n    function balanceOf(address account) external view returns (uint256);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from the caller's account to `to`.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transfer(address to, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Returns the remaining number of tokens that `spender` will be\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\n     * zero by default.\\n     *\\n     * This value changes when {approve} or {transferFrom} are called.\\n     */\\n    function allowance(address owner, address spender) external view returns (uint256);\\n\\n    /**\\n     * @dev Sets a `value` amount of tokens as the allowance of `spender` over the\\n     * caller's tokens.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\n     * that someone may use both the old and the new allowance by unfortunate\\n     * transaction ordering. One possible solution to mitigate this race\\n     * condition is to first reduce the spender's allowance to 0 and set the\\n     * desired value afterwards:\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\n     *\\n     * Emits an {Approval} event.\\n     */\\n    function approve(address spender, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from `from` to `to` using the\\n     * allowance mechanism. `value` is then deducted from the caller's\\n     * allowance.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transferFrom(address from, address to, uint256 value) external returns (bool);\\n}\\n\",\"keccak256\":\"0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70\",\"license\":\"MIT\"},\"contracts/PayrollManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.30;\\n\\nimport \\\"./interfaces/IERC20.sol\\\";\\n\\n/**\\n * @title PayrollManager\\n * @notice Automated payroll management for treasury operations\\n * @dev Handles employee management, salary payments, and payment scheduling\\n */\\ncontract PayrollManager {\\n    // Enums\\n    enum PaymentFrequency {\\n        WEEKLY,      // Every 7 days\\n        BIWEEKLY,    // Every 14 days\\n        MONTHLY,     // Every 30 days\\n        QUARTERLY    // Every 90 days\\n    }\\n\\n    // Structs\\n    struct Employee {\\n        address wallet;\\n        uint256 salary;\\n        PaymentFrequency frequency;\\n        uint256 lastPaymentTime;\\n        uint256 totalPaid;\\n        bool active;\\n        string name;\\n        uint256 addedAt;\\n    }\\n\\n    struct PaymentRecord {\\n        address employee;\\n        uint256 amount;\\n        uint256 timestamp;\\n        uint256 paymentId;\\n    }\\n\\n    // State variables\\n    address public treasury;\\n    address public admin;\\n    IERC20 public usdc;\\n\\n    mapping(address => Employee) public employees;\\n    address[] public employeeList;\\n    PaymentRecord[] public paymentHistory;\\n\\n    uint256 public totalEmployees;\\n    uint256 public activeEmployees;\\n    uint256 public totalPayrollCost;\\n\\n    // Events\\n    event EmployeeAdded(address indexed employee, string name, uint256 salary, PaymentFrequency frequency);\\n    event EmployeeRemoved(address indexed employee);\\n    event SalaryUpdated(address indexed employee, uint256 oldSalary, uint256 newSalary);\\n    event PaymentProcessed(address indexed employee, uint256 amount, uint256 timestamp);\\n    event PayrollExecuted(uint256 employeesPaid, uint256 totalAmount, uint256 timestamp);\\n    event AdminChanged(address indexed oldAdmin, address indexed newAdmin);\\n\\n    // Modifiers\\n    modifier onlyAdmin() {\\n        require(msg.sender == admin, \\\"Only admin can call\\\");\\n        _;\\n    }\\n\\n    modifier onlyTreasury() {\\n        require(msg.sender == treasury, \\\"Only treasury can call\\\");\\n        _;\\n    }\\n\\n    modifier employeeExists(address _employee) {\\n        require(employees[_employee].active, \\\"Employee does not exist\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @notice Initialize payroll manager\\n     * @param _treasury Treasury contract address\\n     * @param _usdc USDC token address\\n     */\\n    constructor(address _treasury, address _usdc) {\\n        require(_treasury != address(0), \\\"Invalid treasury\\\");\\n        require(_usdc != address(0), \\\"Invalid USDC address\\\");\\n\\n        treasury = _treasury;\\n        admin = msg.sender;\\n        usdc = IERC20(_usdc);\\n    }\\n\\n    /**\\n     * @notice Add a new employee\\n     * @param _employee Employee wallet address\\n     * @param _name Employee name\\n     * @param _salary Annual salary amount\\n     * @param _frequency Payment frequency\\n     */\\n    function addEmployee(\\n        address _employee,\\n        string memory _name,\\n        uint256 _salary,\\n        PaymentFrequency _frequency\\n    ) external onlyAdmin {\\n        require(_employee != address(0), \\\"Invalid employee address\\\");\\n        require(!employees[_employee].active, \\\"Employee already exists\\\");\\n        require(_salary > 0, \\\"Salary must be greater than 0\\\");\\n        require(bytes(_name).length > 0, \\\"Name required\\\");\\n\\n        employees[_employee] = Employee({\\n            wallet: _employee,\\n            salary: _salary,\\n            frequency: _frequency,\\n            lastPaymentTime: 0,\\n            totalPaid: 0,\\n            active: true,\\n            name: _name,\\n            addedAt: block.timestamp\\n        });\\n\\n        employeeList.push(_employee);\\n        totalEmployees++;\\n        activeEmployees++;\\n\\n        emit EmployeeAdded(_employee, _name, _salary, _frequency);\\n    }\\n\\n    /**\\n     * @notice Remove an employee\\n     * @param _employee Employee address to remove\\n     */\\n    function removeEmployee(address _employee) external onlyAdmin employeeExists(_employee) {\\n        employees[_employee].active = false;\\n        activeEmployees--;\\n\\n        emit EmployeeRemoved(_employee);\\n    }\\n\\n    /**\\n     * @notice Update employee salary\\n     * @param _employee Employee address\\n     * @param _newSalary New salary amount\\n     */\\n    function updateSalary(address _employee, uint256 _newSalary)\\n        external\\n        onlyAdmin\\n        employeeExists(_employee)\\n    {\\n        require(_newSalary > 0, \\\"Salary must be greater than 0\\\");\\n\\n        uint256 oldSalary = employees[_employee].salary;\\n        employees[_employee].salary = _newSalary;\\n\\n        emit SalaryUpdated(_employee, oldSalary, _newSalary);\\n    }\\n\\n    /**\\n     * @notice Process payroll for all eligible employees\\n     * @return employeesPaid Number of employees paid\\n     * @return totalPaid Total amount paid\\n     */\\n    function processPayroll() external returns (uint256 employeesPaid, uint256 totalPaid) {\\n        uint256 count = 0;\\n        uint256 total = 0;\\n\\n        for (uint256 i = 0; i < employeeList.length; i++) {\\n            address empAddress = employeeList[i];\\n            Employee storage emp = employees[empAddress];\\n\\n            if (emp.active && isPaymentDue(empAddress)) {\\n                uint256 paymentAmount = calculatePaymentAmount(empAddress);\\n\\n                if (address(this).balance >= paymentAmount) {\\n                    _processPayment(empAddress, paymentAmount);\\n                    count++;\\n                    total += paymentAmount;\\n                }\\n            }\\n        }\\n\\n        if (count > 0) {\\n            emit PayrollExecuted(count, total, block.timestamp);\\n        }\\n\\n        return (count, total);\\n    }\\n\\n    /**\\n     * @notice Process payment for a specific employee\\n     * @param _employee Employee address\\n     */\\n    function processEmployeePayment(address _employee)\\n        external\\n        employeeExists(_employee)\\n        returns (bool)\\n    {\\n        require(isPaymentDue(_employee), \\\"Payment not due yet\\\");\\n\\n        uint256 paymentAmount = calculatePaymentAmount(_employee);\\n        require(address(this).balance >= paymentAmount, \\\"Insufficient balance\\\");\\n\\n        _processPayment(_employee, paymentAmount);\\n        return true;\\n    }\\n\\n    /**\\n     * @notice Internal function to process payment\\n     * @param _employee Employee address\\n     * @param _amount Payment amount\\n     */\\n    function _processPayment(address _employee, uint256 _amount) internal {\\n        Employee storage emp = employees[_employee];\\n\\n        emp.lastPaymentTime = block.timestamp;\\n        emp.totalPaid += _amount;\\n        totalPayrollCost += _amount;\\n\\n        paymentHistory.push(PaymentRecord({\\n            employee: _employee,\\n            amount: _amount,\\n            timestamp: block.timestamp,\\n            paymentId: paymentHistory.length\\n        }));\\n\\n        (bool success, ) = _employee.call{value: _amount}(\\\"\\\");\\n        require(success, \\\"Payment failed\\\");\\n\\n        emit PaymentProcessed(_employee, _amount, block.timestamp);\\n    }\\n\\n    /**\\n     * @notice Check if payment is due for an employee\\n     * @param _employee Employee address\\n     * @return bool Payment due status\\n     */\\n    function isPaymentDue(address _employee) public view returns (bool) {\\n        Employee memory emp = employees[_employee];\\n\\n        if (!emp.active) return false;\\n        if (emp.lastPaymentTime == 0) return true;\\n\\n        uint256 timeElapsed = block.timestamp - emp.lastPaymentTime;\\n        uint256 paymentInterval = getPaymentInterval(emp.frequency);\\n\\n        return timeElapsed >= paymentInterval;\\n    }\\n\\n    /**\\n     * @notice Calculate payment amount based on frequency\\n     * @param _employee Employee address\\n     * @return amount Payment amount\\n     */\\n    function calculatePaymentAmount(address _employee) public view returns (uint256) {\\n        Employee memory emp = employees[_employee];\\n\\n        if (emp.frequency == PaymentFrequency.WEEKLY) {\\n            return emp.salary / 52; // Weekly\\n        } else if (emp.frequency == PaymentFrequency.BIWEEKLY) {\\n            return emp.salary / 26; // Bi-weekly\\n        } else if (emp.frequency == PaymentFrequency.MONTHLY) {\\n            return emp.salary / 12; // Monthly\\n        } else {\\n            return emp.salary / 4; // Quarterly\\n        }\\n    }\\n\\n    /**\\n     * @notice Get payment interval in seconds\\n     * @param _frequency Payment frequency\\n     * @return interval Interval in seconds\\n     */\\n    function getPaymentInterval(PaymentFrequency _frequency) public pure returns (uint256) {\\n        if (_frequency == PaymentFrequency.WEEKLY) {\\n            return 7 days;\\n        } else if (_frequency == PaymentFrequency.BIWEEKLY) {\\n            return 14 days;\\n        } else if (_frequency == PaymentFrequency.MONTHLY) {\\n            return 30 days;\\n        } else {\\n            return 90 days;\\n        }\\n    }\\n\\n    /**\\n     * @notice Get employee details\\n     * @param _employee Employee address\\n     * @return name Employee name\\n     * @return salary Employee salary\\n     * @return frequency Payment frequency\\n     * @return lastPaymentTime Last payment timestamp\\n     * @return totalPaid Total amount paid\\n     * @return active Employee active status\\n     */\\n    function getEmployeeDetails(address _employee)\\n        external\\n        view\\n        returns (\\n            string memory name,\\n            uint256 salary,\\n            PaymentFrequency frequency,\\n            uint256 lastPaymentTime,\\n            uint256 totalPaid,\\n            bool active\\n        )\\n    {\\n        Employee memory emp = employees[_employee];\\n        return (\\n            emp.name,\\n            emp.salary,\\n            emp.frequency,\\n            emp.lastPaymentTime,\\n            emp.totalPaid,\\n            emp.active\\n        );\\n    }\\n\\n    /**\\n     * @notice Get total active payroll cost (annual)\\n     * @return cost Total annual payroll cost\\n     */\\n    function getTotalActivePayrollCost() external view returns (uint256) {\\n        uint256 total = 0;\\n        for (uint256 i = 0; i < employeeList.length; i++) {\\n            if (employees[employeeList[i]].active) {\\n                total += employees[employeeList[i]].salary;\\n            }\\n        }\\n        return total;\\n    }\\n\\n    /**\\n     * @notice Get payment history count\\n     * @return count Number of payments\\n     */\\n    function getPaymentHistoryCount() external view returns (uint256) {\\n        return paymentHistory.length;\\n    }\\n\\n    /**\\n     * @notice Get all active employees\\n     * @return addresses Array of active employee addresses\\n     */\\n    function getActiveEmployees() external view returns (address[] memory) {\\n        address[] memory active = new address[](activeEmployees);\\n        uint256 index = 0;\\n\\n        for (uint256 i = 0; i < employeeList.length; i++) {\\n            if (employees[employeeList[i]].active) {\\n                active[index] = employeeList[i];\\n                index++;\\n            }\\n        }\\n\\n        return active;\\n    }\\n\\n    /**\\n     * @notice Receive funds from treasury\\n     */\\n    receive() external payable {}\\n\\n    /**\\n     * @notice Change admin\\n     * @param _newAdmin New admin address\\n     */\\n    function changeAdmin(address _newAdmin) external onlyAdmin {\\n        require(_newAdmin != address(0), \\\"Invalid admin\\\");\\n        address oldAdmin = admin;\\n        admin = _newAdmin;\\n        emit AdminChanged(oldAdmin, _newAdmin);\\n    }\\n\\n    /**\\n     * @notice Get USDC balance of this contract\\n     * @return balance Current USDC balance\\n     */\\n    function getBalance() external view returns (uint256) {\\n        return usdc.balanceOf(address(this));\\n    }\\n\\n    /**\\n     * @notice Get total payments made to all employees\\n     * @return total Total amount paid out\\n     */\\n    function totalPaymentsMade() external view returns (uint256) {\\n        return totalPayrollCost;\\n    }\\n\\n    /**\\n     * @notice Calculate next payment time for an employee\\n     * @param employeeIndex Index in employeeList\\n     * @return nextPayment Time of next payment\\n     */\\n    function getNextPaymentTime(uint256 employeeIndex) external view returns (uint256) {\\n        require(employeeIndex < employeeList.length, \\\"Invalid index\\\");\\n\\n        address empAddr = employeeList[employeeIndex];\\n        Employee storage emp = employees[empAddr];\\n\\n        if (!emp.active || emp.lastPaymentTime == 0) {\\n            return block.timestamp;\\n        }\\n\\n        uint256 interval;\\n        if (emp.frequency == PaymentFrequency.WEEKLY) {\\n            interval = 7 days;\\n        } else if (emp.frequency == PaymentFrequency.BIWEEKLY) {\\n            interval = 14 days;\\n        } else if (emp.frequency == PaymentFrequency.MONTHLY) {\\n            interval = 30 days;\\n        } else {\\n            interval = 90 days;\\n        }\\n\\n        return emp.lastPaymentTime + interval;\\n    }\\n}\\n\",\"keccak256\":\"0xbe9728837d15dc2aa0ac798798cad5621f1387db7d9938fcf3797915d96462d3\",\"license\":\"MIT\"},\"contracts/interfaces/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.30;\\n\\nimport \\\"@openzeppelin/contracts/token/ERC20/IERC20.sol\\\";\\n\",\"keccak256\":\"0xfa5783485783f404dd3d24313d198c518fedb23ffe9351214e7a54f2a9fc2e82\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60803461012d57601f61193d38819003918201601f19168301916001600160401b0383118484101761013257808492604094855283398101031261012d57610052602061004b83610148565b9201610148565b6001600160a01b039091169081156100f5576001600160a01b03169081156100b057600080546001600160a01b031990811692909217905560018054821633179055600280549091169190911790556040516117e0908161015d8239f35b60405162461bcd60e51b815260206004820152601460248201527f496e76616c6964205553444320616464726573730000000000000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601060248201526f496e76616c696420747265617375727960801b6044820152606490fd5b600080fd5b634e487b7160e01b600052604160045260246000fd5b51906001600160a01b038216820361012d5756fe608080604052600436101561001d575b50361561001b57600080fd5b005b60003560e01c90816312065fe014610f5f575080631b75624714610f415780631caafcf114610e3957806322003f1014610d8c5780633bd3961014610d645780633e413bee14610d3b57806347e23df914610c0957806352b9b97314610beb5780635cd359d51461079157806361d027b3146107685780636a2baf4a1461067e5780637234a1f91461016b578063774b25351461065b57806386f195b8146106355780638bf32e82146105955780638f283970146104e757806392b5883f146104c957806397ad7e021461049c578063a4c1fd081461039b578063a5e047b81461033e578063c3b2d07a146102fc578063d067894714610244578063d108177a14610189578063d59c27331461016b5763f851a4401461013d573861000f565b34610166576000366003190112610166576001546040516001600160a01b039091168152602090f35b600080fd5b34610166576000366003190112610166576020600854604051908152f35b34610166576020366003190112610166576101a2610ff0565b6101b760018060a01b036001541633146111e9565b6001600160a01b03166000818152600360205260409020600501546101de9060ff1661122b565b806000526003602052600560406000200160ff198154169055600754801561022e57600019016007557fabae6e64cb4315875c29d42347a312f5e9fce4ab564e9722b43dd78d0751135a600080a2005b634e487b7160e01b600052601160045260246000fd5b34610166576020366003190112610166576001600160a01b03610265610ff0565b166000526003602052604060002060018060a01b038154166001820154916102f260ff600283015416916003810154600482015460ff600584015416916102ce60076102b360068701611139565b95015496604051998a998a5260208a01526040890190611047565b60608701526080860152151560a085015261010060c0850152610100840190611006565b9060e08301520390f35b3461016657602036600319011261016657600435600454811015610166576103256020916110e4565b905460405160039290921b1c6001600160a01b03168152f35b3461016657602036600319011261016657600435600554811015610166576103676080916110c5565b5060018060a01b03815416906001810154906003600282015491015491604051938452602084015260408301526060820152f35b3461016657600036600319011261016657600080805b60045481101561044d576103c4816110e4565b60018060a01b0391549060031b1c1680600052600360205260ff600560406000200154168061043e575b6103fc575b506001016103b1565b61040581611325565b9081471015610415575b506103f3565b90610430600193959461042b836104369561161d565b611316565b93611437565b92908461040f565b506104488161154d565b6103ee565b5060409181610463575b82519182526020820152f35b7f9234700c4ee633a8b3712373ae90e66a131269de823aa11e607eada5c2e76cdc606084518481528360208201524286820152a1610457565b346101665760203660031901126101665760206104bf6104ba610ff0565b61154d565b6040519015158152f35b34610166576000366003190112610166576020600554604051908152f35b3461016657602036600319011261016657610500610ff0565b600154906001600160a01b0382169061051a3383146111e9565b6001600160a01b0316918215610560576001600160a01b03191682176001557f7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f600080a3005b60405162461bcd60e51b815260206004820152600d60248201526c24b73b30b634b21030b236b4b760991b6044820152606490fd5b3461016657600036600319011261016657600080600454905b8181106105c057602083604051908152f35b6105c9816110e4565b60018060a01b0391549060031b1c16600052600360205260ff600560406000200154166105f9575b6001016105ae565b9161062d600191610609856110e4565b848060a01b0391549060031b1c166000526003602052826040600020015490611437565b9290506105f1565b34610166576020366003190112610166576020610653600435611444565b604051908152f35b34610166576020366003190112610166576020610653610679610ff0565b611325565b3461016657602036600319011261016657610697610ff0565b6001600160a01b0381166000908152600360205260409020600501546106bf9060ff1661122b565b6106c88161154d565b1561072d576106d681611325565b8047106106f1576106e69161161d565b602060405160018152f35b60405162461bcd60e51b8152602060048201526014602482015273496e73756666696369656e742062616c616e636560601b6044820152606490fd5b60405162461bcd60e51b815260206004820152601360248201527214185e5b595b9d081b9bdd08191d59481e595d606a1b6044820152606490fd5b34610166576000366003190112610166576000546040516001600160a01b039091168152602090f35b34610166576080366003190112610166576107aa610ff0565b60243567ffffffffffffffff811161016657366023820112156101665780600401356107d5816110a9565b916107e36040519384611087565b818352366024838301011161016657816000926024602093018386013783010152604435906064359260048410156101665761082a60018060a01b036001541633146111e9565b6001600160a01b0316918215610ba65782600052600360205260ff60056040600020015416610b615761085e811515611277565b815115610b2c576040519361087285611054565b8385526020850194828652604081019561088c83886111dd565b60006060830181815260808401828152600160a0860181815260c087018a81524260e089019081528c875260036020526040909620975188546001600160a01b0319166001600160a01b0391909116178855955191870191909155995199929392916002860160048c1015610b165760009b60ff80198354169116179055516003860155516004850155600584019051151560ff8019835416911617905560068301905180519067ffffffffffffffff8211610b025761094c83546110ff565b601f8111610abd575b50602090601f8311600114610a56576007949392918b9183610a4b575b50508160011b916000199060031b1c19161790555b51910155600454600160401b811015610a375791610a317f3e78ec9cd96253020392a0cd4ec1237434bc8f97ca62c9f874d4fcdde0bdc67494926109d4856001610a2197016004556110e4565b81546001600160a01b0360039290921b91821b19169089901b1790556006546109fc90611316565b600655610a0a600754611316565b600755604051948594606086526060860190611006565b9260208501526040840190611047565b0390a280f35b634e487b7160e01b86526041600452602486fd5b015190508b80610972565b838b52818b209190601f1984168c5b818110610aa5575091600193918560079897969410610a8c575b505050811b019055610987565b015160001960f88460031b161c191690558b8080610a7f565b92936020600181928786015181550195019301610a65565b838b5260208b20601f840160051c81019160208510610af8575b601f0160051c01905b818110610aed5750610955565b8b8155600101610ae0565b9091508190610ad7565b634e487b7160e01b8a52604160045260248afd5b634e487b7160e01b600052602160045260246000fd5b60405162461bcd60e51b815260206004820152600d60248201526c13985b59481c995c5d5a5c9959609a1b6044820152606490fd5b60405162461bcd60e51b815260206004820152601760248201527f456d706c6f79656520616c7265616479206578697374730000000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601860248201527f496e76616c696420656d706c6f796565206164647265737300000000000000006044820152606490fd5b34610166576000366003190112610166576020600654604051908152f35b3461016657600036600319011261016657600754610c3f610c29826112fe565b91610c376040519384611087565b8083526112fe565b6020820190601f1901368237600080600454905b818110610ca85783856040519182916020830190602084525180915260408301919060005b818110610c86575050500390f35b82516001600160a01b0316845285945060209384019390920191600101610c78565b610cb1816110e4565b60018060a01b0391549060031b1c16600052600360205260ff60056040600020015416610ce1575b600101610c53565b91610ceb836110e4565b9054865160039290921b1c6001600160a01b031690821015610d255781610d1d91602060019460051b89010152611316565b929050610cd9565b634e487b7160e01b600052603260045260246000fd5b34610166576000366003190112610166576002546040516001600160a01b039091168152602090f35b34610166576020366003190112610166576004356004811015610166576106536020916112c3565b3461016657604036600319011261016657610da5610ff0565b7fe2afa2becb25a6b6b20ab1801bff38cd94018485e35ef475d844c8c3c6054144604060243592610de160018060a01b036001541633146111e9565b60018060a01b031692836000526003602052610e0660ff60058460002001541661122b565b610e11811515611277565b60008481526003602090815290839020600101805490839055835190815290810191909152a2005b34610166576020366003190112610166576001600160a01b03610e5a610ff0565b166000526003602052604060002060405190610e7582611054565b80546001600160a01b031682526001810154602083019081526002820154604084019190610ea69060ff16836111dd565b600383015493606081019485526004840154916080820192835260ff6005860154169160a08101921515835260e06007610ee260068901611139565b978860c08501520154910152519251916004831015610b1657610f2e610f1e96519151925115159360405197889760c0895260c0890190611006565b9560208801526040870190611047565b6060850152608084015260a08301520390f35b34610166576000366003190112610166576020600754604051908152f35b34610166576000366003190112610166576002546370a0823160e01b8252306004830152602090829060249082906001600160a01b03165afa8015610fe457600090610fb1575b602090604051908152f35b506020813d602011610fdc575b81610fcb60209383611087565b810103126101665760209051610fa6565b3d9150610fbe565b6040513d6000823e3d90fd5b600435906001600160a01b038216820361016657565b919082519283825260005b848110611032575050826000602080949584010152601f8019910116010190565b80602080928401015182828601015201611011565b906004821015610b165752565b610100810190811067ffffffffffffffff82111761107157604052565b634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff82111761107157604052565b67ffffffffffffffff811161107157601f01601f191660200190565b600554811015610d2557600560005260206000209060021b0190600090565b600454811015610d2557600460005260206000200190600090565b90600182811c9216801561112f575b602083101461111957565b634e487b7160e01b600052602260045260246000fd5b91607f169161110e565b906040519182600082549261114d846110ff565b80845293600181169081156111bb5750600114611174575b5061117292500383611087565b565b90506000929192526020600020906000915b81831061119f5750509060206111729282010138611165565b6020919350806001915483858901015201910190918492611186565b90506020925061117294915060ff191682840152151560051b82010138611165565b6004821015610b165752565b156111f057565b60405162461bcd60e51b815260206004820152601360248201527213db9b1e4818591b5a5b8818d85b8818d85b1b606a1b6044820152606490fd5b1561123257565b60405162461bcd60e51b815260206004820152601760248201527f456d706c6f79656520646f6573206e6f742065786973740000000000000000006044820152606490fd5b1561127e57565b60405162461bcd60e51b815260206004820152601d60248201527f53616c617279206d7573742062652067726561746572207468616e20300000006044820152606490fd5b6004811015610b1657806112d9575062093a8090565b600181036112e957506212750090565b6002036112f75762278d0090565b6276a70090565b67ffffffffffffffff81116110715760051b60200190565b600019811461022e5760010190565b60018060a01b0316600052600360205260406000206040519061134782611054565b60018060a01b0381541682526001810154916020810192835260e0600760ff6002850154169361137b6040850195866111dd565b600381015460608501526004810154608085015260ff600582015416151560a08501526113aa60068201611139565b60c085015201549101528051906004821015610b16576000916113d1575050603490510490565b80516004811015611423576001036113ed575050601a90510490565b5190600482101561140f575060020361140857600c90510490565b5160021c90565b634e487b7160e01b81526021600452602490fd5b634e487b7160e01b83526021600452602483fd5b9190820180921161022e57565b60045481101561151857611457906110e4565b60018060a01b0391549060031b1c16600052600360205260406000209060ff60058301541615801561150c575b6115075760009160ff60028201541660048110156114f35791926114b892806114bb575050600362093a80915b0154611437565b90565b600181036114d1575050600362127500916114b1565b6002141590506114e757600362278d00916114b1565b60036276a700916114b1565b634e487b7160e01b84526021600452602484fd5b429150565b50600382015415611484565b60405162461bcd60e51b815260206004820152600d60248201526c092dcecc2d8d2c840d2dcc8caf609b1b6044820152606490fd5b60018060a01b03166000526003602052604060002060405161156e81611054565b81546001600160a01b0316815260018201546020820152600282015460408201929061159d9060ff16846111dd565b600381015491606081019283526004820154608082015260e0600760ff6005850154169360a0840194151585526115d660068201611139565b60c0850152015491015251156116165751801561160f5742039042821161022e57516004811015610b165761160a906112c3565b111590565b5050600190565b5050600090565b9060018060a01b03821691826000526003602052600460406000204260038201550161164a838254611437565b905561165882600854611437565b600855600554604051906080820182811067ffffffffffffffff821117611071576040528482526020820184815260408301904282526060840192808452600160401b811015611071578060016116b292016005556110c5565b95909561179457935185546001600160a01b0319166001600160a01b03919091161785555160018501555160028401555160039092019190915560009081908190819085905af13d1561178f573d611709816110a9565b906117176040519283611087565b8152600060203d92013e5b156117595760407f7bd379b31566817ff79103ff210fc7d86fa755c249a8dc25f96618362789e191918151908152426020820152a2565b60405162461bcd60e51b815260206004820152600e60248201526d14185e5b595b9d0819985a5b195960921b6044820152606490fd5b611722565b634e487b7160e01b600052600060045260246000fdfea2646970667358221220ada2d1da941ee397626470c768f8c4f0c70f5f4da1bfd6d220ecefde0bbc5f3264736f6c634300081e0033",
+  "deployedBytecode": "0x608080604052600436101561001d575b50361561001b57600080fd5b005b60003560e01c90816312065fe014610f5f575080631b75624714610f415780631caafcf114610e3957806322003f1014610d8c5780633bd3961014610d645780633e413bee14610d3b57806347e23df914610c0957806352b9b97314610beb5780635cd359d51461079157806361d027b3146107685780636a2baf4a1461067e5780637234a1f91461016b578063774b25351461065b57806386f195b8146106355780638bf32e82146105955780638f283970146104e757806392b5883f146104c957806397ad7e021461049c578063a4c1fd081461039b578063a5e047b81461033e578063c3b2d07a146102fc578063d067894714610244578063d108177a14610189578063d59c27331461016b5763f851a4401461013d573861000f565b34610166576000366003190112610166576001546040516001600160a01b039091168152602090f35b600080fd5b34610166576000366003190112610166576020600854604051908152f35b34610166576020366003190112610166576101a2610ff0565b6101b760018060a01b036001541633146111e9565b6001600160a01b03166000818152600360205260409020600501546101de9060ff1661122b565b806000526003602052600560406000200160ff198154169055600754801561022e57600019016007557fabae6e64cb4315875c29d42347a312f5e9fce4ab564e9722b43dd78d0751135a600080a2005b634e487b7160e01b600052601160045260246000fd5b34610166576020366003190112610166576001600160a01b03610265610ff0565b166000526003602052604060002060018060a01b038154166001820154916102f260ff600283015416916003810154600482015460ff600584015416916102ce60076102b360068701611139565b95015496604051998a998a5260208a01526040890190611047565b60608701526080860152151560a085015261010060c0850152610100840190611006565b9060e08301520390f35b3461016657602036600319011261016657600435600454811015610166576103256020916110e4565b905460405160039290921b1c6001600160a01b03168152f35b3461016657602036600319011261016657600435600554811015610166576103676080916110c5565b5060018060a01b03815416906001810154906003600282015491015491604051938452602084015260408301526060820152f35b3461016657600036600319011261016657600080805b60045481101561044d576103c4816110e4565b60018060a01b0391549060031b1c1680600052600360205260ff600560406000200154168061043e575b6103fc575b506001016103b1565b61040581611325565b9081471015610415575b506103f3565b90610430600193959461042b836104369561161d565b611316565b93611437565b92908461040f565b506104488161154d565b6103ee565b5060409181610463575b82519182526020820152f35b7f9234700c4ee633a8b3712373ae90e66a131269de823aa11e607eada5c2e76cdc606084518481528360208201524286820152a1610457565b346101665760203660031901126101665760206104bf6104ba610ff0565b61154d565b6040519015158152f35b34610166576000366003190112610166576020600554604051908152f35b3461016657602036600319011261016657610500610ff0565b600154906001600160a01b0382169061051a3383146111e9565b6001600160a01b0316918215610560576001600160a01b03191682176001557f7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f600080a3005b60405162461bcd60e51b815260206004820152600d60248201526c24b73b30b634b21030b236b4b760991b6044820152606490fd5b3461016657600036600319011261016657600080600454905b8181106105c057602083604051908152f35b6105c9816110e4565b60018060a01b0391549060031b1c16600052600360205260ff600560406000200154166105f9575b6001016105ae565b9161062d600191610609856110e4565b848060a01b0391549060031b1c166000526003602052826040600020015490611437565b9290506105f1565b34610166576020366003190112610166576020610653600435611444565b604051908152f35b34610166576020366003190112610166576020610653610679610ff0565b611325565b3461016657602036600319011261016657610697610ff0565b6001600160a01b0381166000908152600360205260409020600501546106bf9060ff1661122b565b6106c88161154d565b1561072d576106d681611325565b8047106106f1576106e69161161d565b602060405160018152f35b60405162461bcd60e51b8152602060048201526014602482015273496e73756666696369656e742062616c616e636560601b6044820152606490fd5b60405162461bcd60e51b815260206004820152601360248201527214185e5b595b9d081b9bdd08191d59481e595d606a1b6044820152606490fd5b34610166576000366003190112610166576000546040516001600160a01b039091168152602090f35b34610166576080366003190112610166576107aa610ff0565b60243567ffffffffffffffff811161016657366023820112156101665780600401356107d5816110a9565b916107e36040519384611087565b818352366024838301011161016657816000926024602093018386013783010152604435906064359260048410156101665761082a60018060a01b036001541633146111e9565b6001600160a01b0316918215610ba65782600052600360205260ff60056040600020015416610b615761085e811515611277565b815115610b2c576040519361087285611054565b8385526020850194828652604081019561088c83886111dd565b60006060830181815260808401828152600160a0860181815260c087018a81524260e089019081528c875260036020526040909620975188546001600160a01b0319166001600160a01b0391909116178855955191870191909155995199929392916002860160048c1015610b165760009b60ff80198354169116179055516003860155516004850155600584019051151560ff8019835416911617905560068301905180519067ffffffffffffffff8211610b025761094c83546110ff565b601f8111610abd575b50602090601f8311600114610a56576007949392918b9183610a4b575b50508160011b916000199060031b1c19161790555b51910155600454600160401b811015610a375791610a317f3e78ec9cd96253020392a0cd4ec1237434bc8f97ca62c9f874d4fcdde0bdc67494926109d4856001610a2197016004556110e4565b81546001600160a01b0360039290921b91821b19169089901b1790556006546109fc90611316565b600655610a0a600754611316565b600755604051948594606086526060860190611006565b9260208501526040840190611047565b0390a280f35b634e487b7160e01b86526041600452602486fd5b015190508b80610972565b838b52818b209190601f1984168c5b818110610aa5575091600193918560079897969410610a8c575b505050811b019055610987565b015160001960f88460031b161c191690558b8080610a7f565b92936020600181928786015181550195019301610a65565b838b5260208b20601f840160051c81019160208510610af8575b601f0160051c01905b818110610aed5750610955565b8b8155600101610ae0565b9091508190610ad7565b634e487b7160e01b8a52604160045260248afd5b634e487b7160e01b600052602160045260246000fd5b60405162461bcd60e51b815260206004820152600d60248201526c13985b59481c995c5d5a5c9959609a1b6044820152606490fd5b60405162461bcd60e51b815260206004820152601760248201527f456d706c6f79656520616c7265616479206578697374730000000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601860248201527f496e76616c696420656d706c6f796565206164647265737300000000000000006044820152606490fd5b34610166576000366003190112610166576020600654604051908152f35b3461016657600036600319011261016657600754610c3f610c29826112fe565b91610c376040519384611087565b8083526112fe565b6020820190601f1901368237600080600454905b818110610ca85783856040519182916020830190602084525180915260408301919060005b818110610c86575050500390f35b82516001600160a01b0316845285945060209384019390920191600101610c78565b610cb1816110e4565b60018060a01b0391549060031b1c16600052600360205260ff60056040600020015416610ce1575b600101610c53565b91610ceb836110e4565b9054865160039290921b1c6001600160a01b031690821015610d255781610d1d91602060019460051b89010152611316565b929050610cd9565b634e487b7160e01b600052603260045260246000fd5b34610166576000366003190112610166576002546040516001600160a01b039091168152602090f35b34610166576020366003190112610166576004356004811015610166576106536020916112c3565b3461016657604036600319011261016657610da5610ff0565b7fe2afa2becb25a6b6b20ab1801bff38cd94018485e35ef475d844c8c3c6054144604060243592610de160018060a01b036001541633146111e9565b60018060a01b031692836000526003602052610e0660ff60058460002001541661122b565b610e11811515611277565b60008481526003602090815290839020600101805490839055835190815290810191909152a2005b34610166576020366003190112610166576001600160a01b03610e5a610ff0565b166000526003602052604060002060405190610e7582611054565b80546001600160a01b031682526001810154602083019081526002820154604084019190610ea69060ff16836111dd565b600383015493606081019485526004840154916080820192835260ff6005860154169160a08101921515835260e06007610ee260068901611139565b978860c08501520154910152519251916004831015610b1657610f2e610f1e96519151925115159360405197889760c0895260c0890190611006565b9560208801526040870190611047565b6060850152608084015260a08301520390f35b34610166576000366003190112610166576020600754604051908152f35b34610166576000366003190112610166576002546370a0823160e01b8252306004830152602090829060249082906001600160a01b03165afa8015610fe457600090610fb1575b602090604051908152f35b506020813d602011610fdc575b81610fcb60209383611087565b810103126101665760209051610fa6565b3d9150610fbe565b6040513d6000823e3d90fd5b600435906001600160a01b038216820361016657565b919082519283825260005b848110611032575050826000602080949584010152601f8019910116010190565b80602080928401015182828601015201611011565b906004821015610b165752565b610100810190811067ffffffffffffffff82111761107157604052565b634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff82111761107157604052565b67ffffffffffffffff811161107157601f01601f191660200190565b600554811015610d2557600560005260206000209060021b0190600090565b600454811015610d2557600460005260206000200190600090565b90600182811c9216801561112f575b602083101461111957565b634e487b7160e01b600052602260045260246000fd5b91607f169161110e565b906040519182600082549261114d846110ff565b80845293600181169081156111bb5750600114611174575b5061117292500383611087565b565b90506000929192526020600020906000915b81831061119f5750509060206111729282010138611165565b6020919350806001915483858901015201910190918492611186565b90506020925061117294915060ff191682840152151560051b82010138611165565b6004821015610b165752565b156111f057565b60405162461bcd60e51b815260206004820152601360248201527213db9b1e4818591b5a5b8818d85b8818d85b1b606a1b6044820152606490fd5b1561123257565b60405162461bcd60e51b815260206004820152601760248201527f456d706c6f79656520646f6573206e6f742065786973740000000000000000006044820152606490fd5b1561127e57565b60405162461bcd60e51b815260206004820152601d60248201527f53616c617279206d7573742062652067726561746572207468616e20300000006044820152606490fd5b6004811015610b1657806112d9575062093a8090565b600181036112e957506212750090565b6002036112f75762278d0090565b6276a70090565b67ffffffffffffffff81116110715760051b60200190565b600019811461022e5760010190565b60018060a01b0316600052600360205260406000206040519061134782611054565b60018060a01b0381541682526001810154916020810192835260e0600760ff6002850154169361137b6040850195866111dd565b600381015460608501526004810154608085015260ff600582015416151560a08501526113aa60068201611139565b60c085015201549101528051906004821015610b16576000916113d1575050603490510490565b80516004811015611423576001036113ed575050601a90510490565b5190600482101561140f575060020361140857600c90510490565b5160021c90565b634e487b7160e01b81526021600452602490fd5b634e487b7160e01b83526021600452602483fd5b9190820180921161022e57565b60045481101561151857611457906110e4565b60018060a01b0391549060031b1c16600052600360205260406000209060ff60058301541615801561150c575b6115075760009160ff60028201541660048110156114f35791926114b892806114bb575050600362093a80915b0154611437565b90565b600181036114d1575050600362127500916114b1565b6002141590506114e757600362278d00916114b1565b60036276a700916114b1565b634e487b7160e01b84526021600452602484fd5b429150565b50600382015415611484565b60405162461bcd60e51b815260206004820152600d60248201526c092dcecc2d8d2c840d2dcc8caf609b1b6044820152606490fd5b60018060a01b03166000526003602052604060002060405161156e81611054565b81546001600160a01b0316815260018201546020820152600282015460408201929061159d9060ff16846111dd565b600381015491606081019283526004820154608082015260e0600760ff6005850154169360a0840194151585526115d660068201611139565b60c0850152015491015251156116165751801561160f5742039042821161022e57516004811015610b165761160a906112c3565b111590565b5050600190565b5050600090565b9060018060a01b03821691826000526003602052600460406000204260038201550161164a838254611437565b905561165882600854611437565b600855600554604051906080820182811067ffffffffffffffff821117611071576040528482526020820184815260408301904282526060840192808452600160401b811015611071578060016116b292016005556110c5565b95909561179457935185546001600160a01b0319166001600160a01b03919091161785555160018501555160028401555160039092019190915560009081908190819085905af13d1561178f573d611709816110a9565b906117176040519283611087565b8152600060203d92013e5b156117595760407f7bd379b31566817ff79103ff210fc7d86fa755c249a8dc25f96618362789e191918151908152426020820152a2565b60405162461bcd60e51b815260206004820152600e60248201526d14185e5b595b9d0819985a5b195960921b6044820152606490fd5b611722565b634e487b7160e01b600052600060045260246000fdfea2646970667358221220ada2d1da941ee397626470c768f8c4f0c70f5f4da1bfd6d220ecefde0bbc5f3264736f6c634300081e0033",
+  "devdoc": {
+    "details": "Handles employee management, salary payments, and payment scheduling",
+    "kind": "dev",
+    "methods": {
+      "addEmployee(address,string,uint256,uint8)": {
+        "params": {
+          "_employee": "Employee wallet address",
+          "_frequency": "Payment frequency",
+          "_name": "Employee name",
+          "_salary": "Annual salary amount"
+        }
+      },
+      "calculatePaymentAmount(address)": {
+        "params": {
+          "_employee": "Employee address"
+        },
+        "returns": {
+          "_0": "amount Payment amount"
+        }
+      },
+      "changeAdmin(address)": {
+        "params": {
+          "_newAdmin": "New admin address"
+        }
+      },
+      "constructor": {
+        "params": {
+          "_treasury": "Treasury contract address",
+          "_usdc": "USDC token address"
+        }
+      },
+      "getActiveEmployees()": {
+        "returns": {
+          "_0": "addresses Array of active employee addresses"
+        }
+      },
+      "getBalance()": {
+        "returns": {
+          "_0": "balance Current USDC balance"
+        }
+      },
+      "getEmployeeDetails(address)": {
+        "params": {
+          "_employee": "Employee address"
+        },
+        "returns": {
+          "active": "Employee active status",
+          "frequency": "Payment frequency",
+          "lastPaymentTime": "Last payment timestamp",
+          "name": "Employee name",
+          "salary": "Employee salary",
+          "totalPaid": "Total amount paid"
+        }
+      },
+      "getNextPaymentTime(uint256)": {
+        "params": {
+          "employeeIndex": "Index in employeeList"
+        },
+        "returns": {
+          "_0": "nextPayment Time of next payment"
+        }
+      },
+      "getPaymentHistoryCount()": {
+        "returns": {
+          "_0": "count Number of payments"
+        }
+      },
+      "getPaymentInterval(uint8)": {
+        "params": {
+          "_frequency": "Payment frequency"
+        },
+        "returns": {
+          "_0": "interval Interval in seconds"
+        }
+      },
+      "getTotalActivePayrollCost()": {
+        "returns": {
+          "_0": "cost Total annual payroll cost"
+        }
+      },
+      "isPaymentDue(address)": {
+        "params": {
+          "_employee": "Employee address"
+        },
+        "returns": {
+          "_0": "bool Payment due status"
+        }
+      },
+      "processEmployeePayment(address)": {
+        "params": {
+          "_employee": "Employee address"
+        }
+      },
+      "processPayroll()": {
+        "returns": {
+          "employeesPaid": "Number of employees paid",
+          "totalPaid": "Total amount paid"
+        }
+      },
+      "removeEmployee(address)": {
+        "params": {
+          "_employee": "Employee address to remove"
+        }
+      },
+      "totalPaymentsMade()": {
+        "returns": {
+          "_0": "total Total amount paid out"
+        }
+      },
+      "updateSalary(address,uint256)": {
+        "params": {
+          "_employee": "Employee address",
+          "_newSalary": "New salary amount"
+        }
+      }
+    },
+    "title": "PayrollManager",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "addEmployee(address,string,uint256,uint8)": {
+        "notice": "Add a new employee"
+      },
+      "calculatePaymentAmount(address)": {
+        "notice": "Calculate payment amount based on frequency"
+      },
+      "changeAdmin(address)": {
+        "notice": "Change admin"
+      },
+      "constructor": {
+        "notice": "Initialize payroll manager"
+      },
+      "getActiveEmployees()": {
+        "notice": "Get all active employees"
+      },
+      "getBalance()": {
+        "notice": "Get USDC balance of this contract"
+      },
+      "getEmployeeDetails(address)": {
+        "notice": "Get employee details"
+      },
+      "getNextPaymentTime(uint256)": {
+        "notice": "Calculate next payment time for an employee"
+      },
+      "getPaymentHistoryCount()": {
+        "notice": "Get payment history count"
+      },
+      "getPaymentInterval(uint8)": {
+        "notice": "Get payment interval in seconds"
+      },
+      "getTotalActivePayrollCost()": {
+        "notice": "Get total active payroll cost (annual)"
+      },
+      "isPaymentDue(address)": {
+        "notice": "Check if payment is due for an employee"
+      },
+      "processEmployeePayment(address)": {
+        "notice": "Process payment for a specific employee"
+      },
+      "processPayroll()": {
+        "notice": "Process payroll for all eligible employees"
+      },
+      "removeEmployee(address)": {
+        "notice": "Remove an employee"
+      },
+      "totalPaymentsMade()": {
+        "notice": "Get total payments made to all employees"
+      },
+      "updateSalary(address,uint256)": {
+        "notice": "Update employee salary"
+      }
+    },
+    "notice": "Automated payroll management for treasury operations",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 3143,
+        "contract": "contracts/PayrollManager.sol:PayrollManager",
+        "label": "treasury",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 3145,
+        "contract": "contracts/PayrollManager.sol:PayrollManager",
+        "label": "admin",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      },
+      {
+        "astId": 3148,
+        "contract": "contracts/PayrollManager.sol:PayrollManager",
+        "label": "usdc",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_contract(IERC20)456"
+      },
+      {
+        "astId": 3153,
+        "contract": "contracts/PayrollManager.sol:PayrollManager",
+        "label": "employees",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_struct(Employee)3132_storage)"
+      },
+      {
+        "astId": 3156,
+        "contract": "contracts/PayrollManager.sol:PayrollManager",
+        "label": "employeeList",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_array(t_address)dyn_storage"
+      },
+      {
+        "astId": 3160,
+        "contract": "contracts/PayrollManager.sol:PayrollManager",
+        "label": "paymentHistory",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_array(t_struct(PaymentRecord)3141_storage)dyn_storage"
+      },
+      {
+        "astId": 3162,
+        "contract": "contracts/PayrollManager.sol:PayrollManager",
+        "label": "totalEmployees",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 3164,
+        "contract": "contracts/PayrollManager.sol:PayrollManager",
+        "label": "activeEmployees",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 3166,
+        "contract": "contracts/PayrollManager.sol:PayrollManager",
+        "label": "totalPayrollCost",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_struct(PaymentRecord)3141_storage)dyn_storage": {
+        "base": "t_struct(PaymentRecord)3141_storage",
+        "encoding": "dynamic_array",
+        "label": "struct PayrollManager.PaymentRecord[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IERC20)456": {
+        "encoding": "inplace",
+        "label": "contract IERC20",
+        "numberOfBytes": "20"
+      },
+      "t_enum(PaymentFrequency)3114": {
+        "encoding": "inplace",
+        "label": "enum PayrollManager.PaymentFrequency",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_struct(Employee)3132_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct PayrollManager.Employee)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Employee)3132_storage"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Employee)3132_storage": {
+        "encoding": "inplace",
+        "label": "struct PayrollManager.Employee",
+        "members": [
+          {
+            "astId": 3116,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "wallet",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 3118,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "salary",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3121,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "frequency",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_enum(PaymentFrequency)3114"
+          },
+          {
+            "astId": 3123,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "lastPaymentTime",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3125,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "totalPaid",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3127,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "active",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 3129,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "name",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 3131,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "addedAt",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "256"
+      },
+      "t_struct(PaymentRecord)3141_storage": {
+        "encoding": "inplace",
+        "label": "struct PayrollManager.PaymentRecord",
+        "members": [
+          {
+            "astId": 3134,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "employee",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 3136,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "amount",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3138,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3140,
+            "contract": "contracts/PayrollManager.sol:PayrollManager",
+            "label": "paymentId",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

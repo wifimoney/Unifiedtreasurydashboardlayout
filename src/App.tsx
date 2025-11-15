@@ -1,4 +1,10 @@
 import { useState } from "react";
+import { WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import '@rainbow-me/rainbowkit/styles.css';
+import { config } from './lib/wagmiConfig';
+import { arcTestnet } from './lib/chains';
 import { USDCTreasuryOverview } from "./components/USDCTreasuryOverview";
 import { CostEfficiencyPanel } from "./components/CostEfficiencyPanel";
 import { NetworkBalances } from "./components/NetworkBalances";
@@ -6,6 +12,7 @@ import { TransactionHistory } from "./components/TransactionHistory";
 import { AllocationRules } from "./components/AllocationRules";
 import { ComplianceSuite } from "./components/ComplianceSuite";
 import { ArcboardSettings } from "./components/ArcboardSettings";
+import { WalletBalances } from "./components/WalletBalances";
 import {
   Tabs,
   TabsContent,
@@ -21,9 +28,20 @@ import {
   Sun,
   GitBranch,
   Shield,
+  Wallet,
 } from "lucide-react";
 import { ThemeProvider, useTheme } from "./lib/ThemeContext";
 import { Button } from "./components/ui/button";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+    },
+  },
+});
 
 function DashboardContent() {
   const { theme, toggleTheme } = useTheme();
@@ -70,6 +88,7 @@ function DashboardContent() {
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 Live Data
               </div>
+              <ConnectButton />
               <Button
                 variant="ghost"
                 size="icon"
@@ -96,6 +115,13 @@ function DashboardContent() {
             >
               <Layers className="w-4 h-4" />
               Treasury Overview
+            </TabsTrigger>
+            <TabsTrigger
+              value="wallet"
+              className="flex items-center gap-2 dark:data-[state=active]:bg-gray-700 data-[state=active]:bg-blue-50"
+            >
+              <Wallet className="w-4 h-4" />
+              My Wallet
             </TabsTrigger>
             <TabsTrigger
               value="efficiency"
@@ -141,6 +167,10 @@ function DashboardContent() {
             <NetworkBalances key={`networks-${refreshKey}`} />
           </TabsContent>
 
+          <TabsContent value="wallet">
+            <WalletBalances />
+          </TabsContent>
+
           <TabsContent value="efficiency">
             <CostEfficiencyPanel />
           </TabsContent>
@@ -184,8 +214,14 @@ function DashboardContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <DashboardContent />
-    </ThemeProvider>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider initialChain={arcTestnet}>
+          <ThemeProvider>
+            <DashboardContent />
+          </ThemeProvider>
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }

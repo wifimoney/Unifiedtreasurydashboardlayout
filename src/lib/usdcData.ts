@@ -1,4 +1,5 @@
 // USDC-focused treasury data for ARCBOARD
+import { fetchAllChainBalances } from './circleGateway';
 
 export interface NetworkBalance {
   network: string;
@@ -28,81 +29,59 @@ export interface CostMetrics {
   efficiency: number;
 }
 
-export async function fetchUSDCTreasuryData(): Promise<TreasuryData> {
-  await new Promise(resolve => setTimeout(resolve, 700));
+// Mock data for transactions and gas costs (can be replaced with real data later)
+// Only for chains supported by Circle Gateway
+const MOCK_CHAIN_METRICS: Record<string, { transactions24h: number; avgGasCostUSDC: number }> = {
+  'Ethereum Sepolia': { transactions24h: 1247, avgGasCostUSDC: 0.012 },
+  'Avalanche Fuji': { transactions24h: 1123, avgGasCostUSDC: 0.011 },
+  'Base Sepolia': { transactions24h: 2890, avgGasCostUSDC: 0.007 },
+  'ARC Testnet': { transactions24h: 5600, avgGasCostUSDC: 0.001 },
+};
 
-  const networks: NetworkBalance[] = [
-    {
-      network: 'Ethereum',
-      chainId: '1',
-      usdcBalance: 4567890.45,
-      nativeToken: 'ETH',
-      transactions24h: 1247,
-      avgGasCostUSDC: 0.012,
-      explorerUrl: 'https://etherscan.io',
-      status: 'active',
-    },
-    {
-      network: 'Polygon',
-      chainId: '137',
-      usdcBalance: 2890123.78,
-      nativeToken: 'MATIC',
-      transactions24h: 3456,
-      avgGasCostUSDC: 0.008,
-      explorerUrl: 'https://polygonscan.com',
-      status: 'active',
-    },
-    {
-      network: 'Arbitrum',
-      chainId: '42161',
-      usdcBalance: 3456789.12,
-      nativeToken: 'ETH',
-      transactions24h: 2134,
-      avgGasCostUSDC: 0.009,
-      explorerUrl: 'https://arbiscan.io',
-      status: 'active',
-    },
-    {
-      network: 'Optimism',
-      chainId: '10',
-      usdcBalance: 1987654.32,
-      nativeToken: 'ETH',
-      transactions24h: 1678,
-      avgGasCostUSDC: 0.010,
-      explorerUrl: 'https://optimistic.etherscan.io',
-      status: 'active',
-    },
-    {
-      network: 'Base',
-      chainId: '8453',
-      usdcBalance: 1234567.89,
-      nativeToken: 'ETH',
-      transactions24h: 2890,
-      avgGasCostUSDC: 0.007,
-      explorerUrl: 'https://basescan.org',
-      status: 'active',
-    },
-    {
-      network: 'Avalanche',
-      chainId: '43114',
-      usdcBalance: 987654.21,
-      nativeToken: 'AVAX',
-      transactions24h: 1123,
-      avgGasCostUSDC: 0.011,
-      explorerUrl: 'https://snowtrace.io',
-      status: 'active',
-    },
-  ];
+export async function fetchUSDCTreasuryData(depositor?: string): Promise<TreasuryData> {
+  try {
+    // Only fetch real balances if depositor address is provided
+    if (!depositor) {
+      console.log('No depositor address provided, returning empty treasury data');
+      return {
+        totalUSDC: 0,
+        networks: [],
+        lastUpdated: new Date(),
+        monthlyChange: 0,
+        weeklyVolume: 0,
+      };
+    }
 
-  const totalUSDC = networks.reduce((sum, net) => sum + net.usdcBalance, 0);
+    // Fetch real balances from Circle Gateway
+    const chainBalances = await fetchAllChainBalances(depositor);
 
-  return {
-    totalUSDC,
-    networks,
-    lastUpdated: new Date(),
-    monthlyChange: 12.4,
-    weeklyVolume: 8456234.67,
-  };
+    // Enhance with mock metrics (transactions and gas costs)
+    const networks: NetworkBalance[] = chainBalances.map(chain => ({
+      ...chain,
+      transactions24h: MOCK_CHAIN_METRICS[chain.network]?.transactions24h || 0,
+      avgGasCostUSDC: MOCK_CHAIN_METRICS[chain.network]?.avgGasCostUSDC || 0,
+    }));
+
+    const totalUSDC = networks.reduce((sum, net) => sum + net.usdcBalance, 0);
+
+    return {
+      totalUSDC,
+      networks,
+      lastUpdated: new Date(),
+      monthlyChange: 12.4, // Can be calculated from historical data later
+      weeklyVolume: 8456234.67, // Can be fetched from on-chain data later
+    };
+  } catch (error) {
+    console.error('Error fetching treasury data:', error);
+    // Return empty data on error
+    return {
+      totalUSDC: 0,
+      networks: [],
+      lastUpdated: new Date(),
+      monthlyChange: 0,
+      weeklyVolume: 0,
+    };
+  }
 }
 
 export async function fetchCostMetrics(): Promise<CostMetrics> {

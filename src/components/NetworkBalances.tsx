@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { fetchUSDCTreasuryData, NetworkBalance } from '../lib/usdcData';
 import { Badge } from './ui/badge';
@@ -6,6 +7,7 @@ import { ExternalLink, Activity } from 'lucide-react';
 import { Progress } from './ui/progress';
 
 export function NetworkBalances() {
+  const { address, isConnected } = useAccount();
   const [networks, setNetworks] = useState<NetworkBalance[]>([]);
   const [totalUSDC, setTotalUSDC] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -13,13 +15,13 @@ export function NetworkBalances() {
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      const data = await fetchUSDCTreasuryData();
+      const data = await fetchUSDCTreasuryData(address);
       setNetworks(data.networks);
       setTotalUSDC(data.totalUSDC);
       setLoading(false);
     }
     loadData();
-  }, []);
+  }, [address]);
 
   if (loading) {
     return (
