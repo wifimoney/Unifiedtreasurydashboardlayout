@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.30;
 
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+
 /**
  * @title TreasuryCore
  * @notice Core treasury management contract with multi-signature functionality
  * @dev Manages treasury funds, proposals, and multi-sig approvals
  */
-contract TreasuryCore {
+contract TreasuryCore is ERC2771Context {
+    event TrustedForwarderUpdated(address indexed forwarder, address indexed updater);
     // Events
     event FundsDeposited(address indexed from, uint256 amount, uint256 timestamp);
     event TransactionProposed(uint256 indexed txId, address indexed proposer, address to, uint256 amount);
@@ -35,6 +38,7 @@ contract TreasuryCore {
     mapping(address => bool) public isOwner;
     address[] public owners;
     uint256 public threshold;
+    address private _trustedForwarder;
 
     Transaction[] public transactions;
     mapping(uint256 => mapping(address => bool)) public hasApproved;
@@ -79,7 +83,7 @@ contract TreasuryCore {
 
     // Internal modifier functions
     function _onlyOwner() internal view {
-        require(isOwner[msg.sender], "Not an owner");
+        require(isOwner[_msgSender()], "Not an owner");
     }
 
     function _txExists(uint256 _txId) internal view {
@@ -95,7 +99,7 @@ contract TreasuryCore {
     }
 
     function _notApproved(uint256 _txId) internal view {
-        require(!hasApproved[_txId][msg.sender], "Transaction already approved");
+        require(!hasApproved[_txId][_msgSender()], "Transaction already approved");
     }
 
     function _whenNotPaused() internal view {
@@ -109,17 +113,30 @@ contract TreasuryCore {
     /**
      * @notice Initialize the treasury with deployer as owner
      */
-    constructor() {
-        isOwner[msg.sender] = true;
-        owners.push(msg.sender);
+    constructor(address trustedForwarder) ERC2771Context(trustedForwarder) {
+        require(trustedForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = trustedForwarder;
+        address sender = _msgSender();
+        isOwner[sender] = true;
+        owners.push(sender);
         threshold = 1;
+    }
+
+    function setTrustedForwarder(address newForwarder) external onlyOwner {
+        require(newForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = newForwarder;
+        emit TrustedForwarderUpdated(newForwarder, _msgSender());
+    }
+
+    function trustedForwarder() external view returns (address) {
+        return _trustedForwarder;
     }
 
     /**
      * @notice Receive USDC deposits
      */
     receive() external payable {
-        emit FundsDeposited(msg.sender, msg.value, block.timestamp);
+        emit FundsDeposited(_msgSender(), msg.value, block.timestamp);
     }
 
     /**
@@ -154,10 +171,10 @@ contract TreasuryCore {
             cancelled: false,
             approvalCount: 0,
             proposedAt: block.timestamp,
-            proposer: msg.sender
+            proposer: _msgSender()
         }));
 
-        emit TransactionProposed(txId, msg.sender, _to, _amount);
+        emit TransactionProposed(txId, _msgSender(), _to, _amount);
 
         return txId;
     }
@@ -175,10 +192,10 @@ contract TreasuryCore {
         notApproved(_txId)
         whenNotPaused
     {
-        hasApproved[_txId][msg.sender] = true;
+        hasApproved[_txId][_msgSender()] = true;
         transactions[_txId].approvalCount += 1;
 
-        emit TransactionApproved(_txId, msg.sender);
+        emit TransactionApproved(_txId, _msgSender());
     }
 
     /**
@@ -203,7 +220,7 @@ contract TreasuryCore {
         (bool success, ) = txn.to.call{value: txn.amount}(txn.data);
         require(success, "Transaction execution failed");
 
-        emit TransactionExecuted(_txId, msg.sender);
+        emit TransactionExecuted(_txId, _msgSender());
     }
 
     /**
@@ -218,11 +235,11 @@ contract TreasuryCore {
         notCancelled(_txId)
     {
         Transaction storage txn = transactions[_txId];
-        require(txn.proposer == msg.sender, "Only proposer can cancel");
+        require(txn.proposer == _msgSender(), "Only proposer can cancel");
 
         txn.cancelled = true;
 
-        emit TransactionCancelled(_txId, msg.sender);
+        emit TransactionCancelled(_txId, _msgSender());
     }
 
     /**
@@ -230,7 +247,7 @@ contract TreasuryCore {
      */
     function pause() external onlyOwner whenNotPaused {
         paused = true;
-        emit Paused(msg.sender);
+        emit Paused(_msgSender());
     }
 
     /**
@@ -238,7 +255,7 @@ contract TreasuryCore {
      */
     function unpause() external onlyOwner whenPaused {
         paused = false;
-        emit Unpaused(msg.sender);
+        emit Unpaused(_msgSender());
     }
 
     /**
@@ -307,5 +324,27 @@ contract TreasuryCore {
      */
     function transactionCount() external view returns (uint256) {
         return transactions.length;
+    }
+
+    function _msgSender()
+        internal
+        view
+        override
+        returns (address sender)
+    {
+        return ERC2771Context._msgSender();
+    }
+
+    function _msgData()
+        internal
+        view
+        override
+        returns (bytes calldata)
+    {
+        return ERC2771Context._msgData();
+    }
+
+    function isTrustedForwarder(address forwarder) public view override returns (bool) {
+        return forwarder == _trustedForwarder;
     }
 }

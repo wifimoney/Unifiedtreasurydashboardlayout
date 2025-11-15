@@ -2,13 +2,15 @@
 pragma solidity ^0.8.30;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
 /**
  * @title ScheduledPayments
  * @notice Automated scheduled payment system for treasury operations
  * @dev Handles one-time and recurring payments with time-based execution
  */
-contract ScheduledPayments {
+contract ScheduledPayments is ERC2771Context {
+    event TrustedForwarderUpdated(address indexed forwarder, address indexed updater);
     // Enums
     enum PaymentStatus {
         PENDING,
@@ -38,6 +40,7 @@ contract ScheduledPayments {
     address public treasury;
     address public admin;
     IERC20 public usdc;
+    address private _trustedForwarder;
 
     mapping(uint256 => ScheduledPayment) public payments;
     uint256 public paymentCount;
@@ -76,11 +79,11 @@ contract ScheduledPayments {
 
     // Internal modifier functions
     function _onlyAdmin() internal view {
-        require(msg.sender == admin, "Only admin can call");
+        require(_msgSender() == admin, "Only admin can call");
     }
 
     function _onlyTreasury() internal view {
-        require(msg.sender == treasury, "Only treasury can call");
+        require(_msgSender() == treasury, "Only treasury can call");
     }
 
     function _paymentExists(uint256 _paymentId) internal view {
@@ -90,8 +93,20 @@ contract ScheduledPayments {
     /**
      * @notice Initialize scheduled payments
      */
-    constructor() {
-        admin = msg.sender;
+    constructor(address trustedForwarder) ERC2771Context(trustedForwarder) {
+        require(trustedForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = trustedForwarder;
+        admin = _msgSender();
+    }
+
+    function setTrustedForwarder(address newForwarder) external onlyAdmin {
+        require(newForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = newForwarder;
+        emit TrustedForwarderUpdated(newForwarder, _msgSender());
+    }
+
+    function trustedForwarder() external view returns (address) {
+        return _trustedForwarder;
     }
 
     /**
@@ -152,7 +167,7 @@ contract ScheduledPayments {
             executionCount: 0,
             maxExecutions: _maxExecutions,
             status: PaymentStatus.PENDING,
-            creator: msg.sender,
+            creator: _msgSender(),
             createdAt: block.timestamp,
             lastExecutedAt: 0,
             description: _description
@@ -262,7 +277,7 @@ contract ScheduledPayments {
         payment.status = PaymentStatus.CANCELLED;
         _removePendingPayment(_paymentId);
 
-        emit PaymentCancelled(_paymentId, msg.sender);
+        emit PaymentCancelled(_paymentId, _msgSender());
     }
 
     /**
@@ -437,5 +452,17 @@ contract ScheduledPayments {
      */
     function getBalance() external view returns (uint256) {
         return usdc.balanceOf(address(this));
+    }
+
+    function _msgSender() internal view override returns (address sender) {
+        return ERC2771Context._msgSender();
+    }
+
+    function _msgData() internal view override returns (bytes calldata) {
+        return ERC2771Context._msgData();
+    }
+
+    function isTrustedForwarder(address forwarder) public view override returns (bool) {
+        return forwarder == _trustedForwarder;
     }
 }

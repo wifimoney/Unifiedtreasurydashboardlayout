@@ -2,13 +2,15 @@
 pragma solidity ^0.8.30;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
 /**
  * @title PayrollManager
  * @notice Automated payroll management for treasury operations
  * @dev Handles employee management, salary payments, and payment scheduling
  */
-contract PayrollManager {
+contract PayrollManager is ERC2771Context {
+    event TrustedForwarderUpdated(address indexed forwarder, address indexed updater);
     // Enums
     enum PaymentFrequency {
         WEEKLY,      // Every 7 days
@@ -40,6 +42,7 @@ contract PayrollManager {
     address public treasury;
     address public admin;
     IERC20 public usdc;
+    address private _trustedForwarder;
 
     mapping(address => Employee) public employees;
     address[] public employeeList;
@@ -75,11 +78,11 @@ contract PayrollManager {
 
     // Internal modifier functions
     function _onlyAdmin() internal view {
-        require(msg.sender == admin, "Only admin can call");
+        require(_msgSender() == admin, "Only admin can call");
     }
 
     function _onlyTreasury() internal view {
-        require(msg.sender == treasury, "Only treasury can call");
+        require(_msgSender() == treasury, "Only treasury can call");
     }
 
     function _employeeExists(address _employee) internal view {
@@ -89,8 +92,20 @@ contract PayrollManager {
     /**
      * @notice Initialize payroll manager
      */
-    constructor() {
-        admin = msg.sender;
+    constructor(address trustedForwarder) ERC2771Context(trustedForwarder) {
+        require(trustedForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = trustedForwarder;
+        admin = _msgSender();
+    }
+
+    function setTrustedForwarder(address newForwarder) external onlyAdmin {
+        require(newForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = newForwarder;
+        emit TrustedForwarderUpdated(newForwarder, _msgSender());
+    }
+
+    function trustedForwarder() external view returns (address) {
+        return _trustedForwarder;
     }
 
     /**
@@ -435,5 +450,17 @@ contract PayrollManager {
         }
 
         return emp.lastPaymentTime + interval;
+    }
+
+    function _msgSender() internal view override returns (address sender) {
+        return ERC2771Context._msgSender();
+    }
+
+    function _msgData() internal view override returns (bytes calldata) {
+        return ERC2771Context._msgData();
+    }
+
+    function isTrustedForwarder(address forwarder) public view override returns (bool) {
+        return forwarder == _trustedForwarder;
     }
 }

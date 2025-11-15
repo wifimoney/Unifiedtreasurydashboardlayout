@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useChainId } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract, useChainId, useWalletClient } from 'wagmi';
 import { parseEther, formatEther } from 'viem';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Label } from './ui/label';
@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getUserContracts, RuleType, RuleStatus, getExplorerUrl } from '../lib/contracts';
+import { signSetAllocationRule } from '../utils/eip712Signatures';
 
 // Interface matching contract Rule struct
 interface ContractRule {
@@ -84,11 +85,16 @@ const ruleTypeLabels = {
   3: 'Hybrid',
 };
 
+const RELAYER_ENDPOINT = '/api/relayer/set-allocation-rule';
+
 export function AllocationRules() {
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
+  const { data: walletClient } = useWalletClient();
   const [rules, setRules] = useState<AllocationRule[]>([]);
   const [isLoadingRules, setIsLoadingRules] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionPhase, setSubmissionPhase] = useState<'idle' | 'awaiting-signature' | 'relayer-processing'>('idle');
   const [formData, setFormData] = useState({
     recipientWallet: '',
     recipientName: '',
@@ -109,15 +115,6 @@ export function AllocationRules() {
     functionName: 'getRuleCount',
   });
 
-  // Contract writes (wagmi v2)
-  const {
-    data: createRuleHash,
-    writeContract: writeCreateRule,
-    isPending: isCreating,
-    error: createRuleError,
-    isError: isCreateError,
-  } = useWriteContract();
-
   const {
     data: executeRuleHash,
     writeContract: writeExecuteRule,
@@ -128,82 +125,6 @@ export function AllocationRules() {
     data: updateStatusHash,
     writeContract: writeUpdateStatus
   } = useWriteContract();
-
-  // Debug contract setup
-  useEffect(() => {
-    console.log('🔧 Contract Setup:', {
-      ruleEngineAddress: contracts.RuleEngine.address,
-      writeContractAvailable: !!writeCreateRule,
-      isWalletConnected: isConnected,
-      walletAddress: address,
-    });
-  }, [writeCreateRule, isConnected, address]);
-
-  // Track transaction pending state
-  useEffect(() => {
-    if (isCreating) {
-      console.log('⏳ Transaction is pending - wallet should be prompting...');
-    }
-  }, [isCreating]);
-
-  // Handle errors
-  useEffect(() => {
-    if (isCreateError && createRuleError) {
-      console.error('❌ Contract write error:', {
-        error: createRuleError,
-        message: createRuleError.message,
-        cause: createRuleError.cause,
-      });
-
-      // Deep inspect the error to find rate limit source
-      console.log('🔍 Error details:', {
-        errorType: createRuleError.constructor.name,
-        message: createRuleError.message,
-        stack: createRuleError.stack?.split('\n').slice(0, 3),
-      });
-
-      // Show user-friendly error messages
-      const errorMessage = createRuleError.message?.toLowerCase() || '';
-      const causeMessage = (createRuleError.cause as any)?.message?.toLowerCase() || '';
-      const errorDetails = (createRuleError as any)?.details?.toLowerCase() || '';
-
-      // Check all error sources for rate limit
-      const isRateLimit = errorMessage.includes('rate limit') ||
-                         causeMessage.includes('rate limit') ||
-                         errorDetails.includes('rate limit');
-
-      if (isRateLimit) {
-        console.error('⚠️ RATE LIMIT DETECTED - This is from your WALLET\'S RPC, not Alchemy!');
-        toast.error('Wallet RPC Rate Limit', {
-          description: 'Your wallet (MetaMask/RainbowKit) has its own RPC that is rate limited. Wait 60 seconds and try again. The Alchemy endpoint is fine.',
-          duration: 10000,
-        });
-      } else if (errorMessage.includes('user rejected') || errorMessage.includes('user denied')) {
-        toast.error('Transaction rejected', {
-          description: 'You declined the transaction in your wallet'
-        });
-      } else if (errorMessage.includes('insufficient funds') || errorMessage.includes('insufficient balance')) {
-        toast.error('Insufficient funds for gas', {
-          description: 'You need more USDC to pay for transaction gas'
-        });
-      } else if (errorMessage.includes('nonce')) {
-        toast.error('Transaction nonce error', {
-          description: 'Please try again or reset your wallet'
-        });
-      } else {
-        // Extract meaningful error from the message
-        const shortMessage = errorMessage.split('\n')[0].substring(0, 100);
-        toast.error('Transaction failed', {
-          description: shortMessage || 'Please try again'
-        });
-      }
-    }
-  }, [isCreateError, createRuleError]);
-
-  // Wait for create rule transaction (wagmi v2)
-  const { isLoading: isWaitingForTx, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({
-    hash: createRuleHash,
-  });
 
   // Wait for execute rule transaction
   const { isSuccess: isExecuteSuccess } = useWaitForTransactionReceipt({
@@ -267,42 +188,6 @@ export function AllocationRules() {
 
     fetchRules();
   }, [ruleCount]);
-
-  // Handle create rule success
-  useEffect(() => {
-    if (isTxSuccess) {
-      console.log('🎉 Rule created successfully!');
-      console.log('Transaction hash:', createRuleHash);
-      console.log('Explorer URL:', createRuleHash ? getExplorerUrl(createRuleHash) : 'N/A');
-
-      toast.success(
-        <div className="flex items-center gap-2">
-          <span>Rule created on-chain!</span>
-          {createRuleHash && (
-            <a
-              href={getExplorerUrl(createRuleHash)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-blue-600 hover:underline"
-            >
-              View <ExternalLink className="w-3 h-3" />
-            </a>
-          )}
-        </div>
-      );
-      refetchCount();
-
-      // Reset form
-      setFormData({
-        recipientWallet: '',
-        recipientName: '',
-        usdcAmount: '',
-        ruleType: '',
-        interval: '',
-        maxExecutions: '100',
-      });
-    }
-  }, [isTxSuccess, createRuleHash, refetchCount]);
 
   // Handle execute rule success
   useEffect(() => {
@@ -383,31 +268,25 @@ export function AllocationRules() {
       return;
     }
 
-    if (!writeCreateRule) {
-      console.error('❌ writeContract function not available');
-      toast.error('Contract write function not ready. Please try again.');
-      return;
-    }
-
-    console.log('✅ Wallet state:', {
-      isConnected,
-      address,
-      contractAddress: contracts.RuleEngine.address,
-      ruleCount: ruleCount?.toString() || 'not loaded',
-    });
-
-    // Verify contract is accessible
-    if (ruleCount === undefined) {
-      console.error('❌ Cannot read from RuleEngine contract. It may not exist on this network.');
-      toast.error('Contract Not Found', {
-        description: 'The RuleEngine contract cannot be found. Make sure you are on Arc Testnet.',
-        duration: 10000,
-      });
-      return;
-    }
-
     try {
+      if (!walletClient) {
+        toast.error('Wallet client unavailable');
+        return;
+      }
+
+      if (ruleCount === undefined) {
+        console.error('❌ Cannot read from RuleEngine contract. It may not exist on this network.');
+        toast.error('Contract Not Found', {
+          description: 'The RuleEngine contract cannot be found. Make sure you are on Arc Testnet.',
+          duration: 10000,
+        });
+        return;
+      }
+
+      setIsSubmitting(true);
+      setSubmissionPhase('awaiting-signature');
       const amount = parseEther(formData.usdcAmount);
+      const recipient = formData.recipientWallet as `0x${string}`;
 
       // Calculate interval in seconds (0 for on-demand)
       let intervalSeconds = 0;
@@ -434,58 +313,84 @@ export function AllocationRules() {
         maxPerExecution: '0',
       });
 
-      // Contract expects these parameters in this exact order:
-      // createRule(name, description, ruleType, triggerAmount, checkInterval, minExecutionGap, recipients, values, usePercentages, maxPerExecution)
-      const txParams = {
-        address: contracts.RuleEngine.address,
-        abi: contracts.RuleEngine.abi,
-        functionName: 'createRule',
-        args: [
-          ruleName,  // name (string)
-          ruleDescription, // description (string)
-          parseInt(formData.ruleType),  // ruleType (uint8)
-          amount,  // triggerAmount (uint256)
-          BigInt(intervalSeconds),  // checkInterval (uint256)
-          BigInt(intervalSeconds),  // minExecutionGap (uint256) - same as interval for simplicity
-          [formData.recipientWallet as `0x${string}`], // recipients (address[])
-          [amount],  // values (uint256[]) - full amount to single recipient
-          false,  // usePercentages (bool) - false means fixed amounts
-          0n,  // maxPerExecution (uint256) - 0 means unlimited
-        ],
-        account: address,
-      } as const;
+      const ruleId = ruleCount ?? 0n;
+      const nonce = BigInt(Date.now());
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 15 * 60);
 
-      console.log('📝 Transaction parameters:', txParams);
-
-      toast.loading('Preparing transaction...', {
-        description: 'Please wait a moment...',
-        id: 'preparing-tx',
+      toast.loading('Preparing relayer payload...', {
+        description: 'Signing EIP-712 payload',
+        id: 'relayer-tx',
       });
 
-      // Add a small delay to avoid hitting rate limits immediately
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const signature = await signSetAllocationRule({
+        walletClient,
+        signerAddress: address as `0x${string}`,
+        chainId,
+        treasuryAddress: contracts.TreasuryCore.address,
+        ruleId,
+        target: recipient,
+        amount,
+        nonce,
+        deadline,
+      });
 
-      try {
-        console.log('🎯 Calling writeCreateRule...');
-        writeCreateRule(txParams);
-        console.log('✅ createRule transaction initiated');
+      setSubmissionPhase('relayer-processing');
 
-        toast.loading('Creating rule on-chain...', {
-          description: 'Please confirm the transaction in your wallet',
-          id: 'creating-rule',
-        });
-      } catch (writeError) {
-        console.error('❌ Error calling writeCreateRule:', writeError);
-        toast.error('Failed to initiate transaction', {
-          description: writeError instanceof Error ? writeError.message : 'Unknown error'
-        });
-        return;
+      const response = await fetch(RELAYER_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          signature,
+          payload: {
+            ruleId: ruleId.toString(),
+            target: recipient,
+            amount: amount.toString(),
+            nonce: nonce.toString(),
+            deadline: deadline.toString(),
+            metadata: {
+              name: ruleName,
+              description: ruleDescription,
+              ruleType: formData.ruleType,
+              checkInterval: intervalSeconds,
+              minExecutionGap: intervalSeconds,
+              recipients: [recipient],
+              values: [amount.toString()],
+              usePercentages: false,
+              maxPerExecution: '0',
+            },
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorPayload = await response.json().catch(() => ({}));
+        throw new Error(errorPayload?.message || 'Relayer request failed');
       }
+
+      toast.success('Rule submitted to relayer', {
+        description: 'The relayer will finalize this transaction shortly.',
+      });
+
+      setFormData({
+        recipientWallet: '',
+        recipientName: '',
+        usdcAmount: '',
+        ruleType: '',
+        interval: '',
+        maxExecutions: '100',
+      });
+      refetchCount();
     } catch (error) {
       console.error('💥 Error in handleSubmit:', error);
       toast.error('Failed to prepare transaction', {
         description: error instanceof Error ? error.message : 'Unknown error'
       });
+    } finally {
+      setIsSubmitting(false);
+      setSubmissionPhase('idle');
+      toast.dismiss('relayer-tx');
     }
   };
 
@@ -735,7 +640,7 @@ export function AllocationRules() {
                 type="submit"
                 size="lg"
                 className="flex-1"
-                disabled={isCreating || isWaitingForTx || !isConnected}
+                disabled={isSubmitting || !isConnected}
                 onClick={(e) => {
                   console.log('🖱️ Button clicked!');
                   console.log('Wallet connected:', isConnected);
@@ -746,10 +651,15 @@ export function AllocationRules() {
                   }
                 }}
               >
-                {isCreating || isWaitingForTx ? (
+                {submissionPhase === 'awaiting-signature' ? (
                   <>
                     <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
-                    {isCreating ? 'Confirm in Wallet...' : 'Creating Rule...'}
+                    Awaiting Signature...
+                  </>
+                ) : submissionPhase === 'relayer-processing' ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                    Relayer Processing Transaction...
                   </>
                 ) : (
                   <>

@@ -5,6 +5,8 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {TreasuryCore} from "./TreasuryCore.sol";
 
 /**
@@ -12,7 +14,8 @@ import {TreasuryCore} from "./TreasuryCore.sol";
  * @notice Automated rule-based distribution system for treasury management
  * @dev Allows creation of rules that automatically distribute funds based on conditions
  */
-contract RuleEngine is AccessControl, Pausable, ReentrancyGuard {
+contract RuleEngine is AccessControl, Pausable, ReentrancyGuard, ERC2771Context {
+    event TrustedForwarderUpdated(address indexed forwarder, address indexed updater);
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
@@ -62,6 +65,7 @@ contract RuleEngine is AccessControl, Pausable, ReentrancyGuard {
     uint256 public ruleCount;
     mapping(uint256 => Rule) public rules;
     mapping(uint256 => bool) public ruleExists;
+    address private _trustedForwarder;
 
     // Events
     event RuleCreated(
@@ -94,10 +98,22 @@ contract RuleEngine is AccessControl, Pausable, ReentrancyGuard {
         string reason
     );
 
-    constructor() {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(ADMIN_ROLE, msg.sender);
-        _grantRole(OPERATOR_ROLE, msg.sender);
+    constructor(address trustedForwarder) ERC2771Context(trustedForwarder) {
+        require(trustedForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = trustedForwarder;
+        _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _grantRole(ADMIN_ROLE, _msgSender());
+        _grantRole(OPERATOR_ROLE, _msgSender());
+    }
+
+    function setTrustedForwarder(address newForwarder) external onlyRole(ADMIN_ROLE) {
+        require(newForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = newForwarder;
+        emit TrustedForwarderUpdated(newForwarder, _msgSender());
+    }
+
+    function trustedForwarder() external view returns (address) {
+        return _trustedForwarder;
     }
 
     /**
@@ -172,7 +188,7 @@ contract RuleEngine is AccessControl, Pausable, ReentrancyGuard {
         newRule.usePercentages = usePercentages;
         newRule.maxPerExecution = maxPerExecution;
         newRule.createdAt = block.timestamp;
-        newRule.creator = msg.sender;
+        newRule.creator = _msgSender();
 
         if (usePercentages) {
             newRule.percentages = values;
@@ -182,7 +198,7 @@ contract RuleEngine is AccessControl, Pausable, ReentrancyGuard {
 
         ruleExists[ruleId] = true;
 
-        emit RuleCreated(ruleId, name, ruleType, msg.sender);
+        emit RuleCreated(ruleId, name, ruleType, _msgSender());
 
         return ruleId;
     }
@@ -405,5 +421,32 @@ contract RuleEngine is AccessControl, Pausable, ReentrancyGuard {
      */
     function unpause() external onlyRole(ADMIN_ROLE) {
         _unpause();
+    }
+
+    function _msgSender()
+        internal
+        view
+        override(Context, ERC2771Context)
+        returns (address sender)
+    {
+        return ERC2771Context._msgSender();
+    }
+
+    function _msgData()
+        internal
+        view
+        override(Context, ERC2771Context)
+        returns (bytes calldata)
+    {
+        return ERC2771Context._msgData();
+    }
+
+    function isTrustedForwarder(address forwarder)
+        public
+        view
+        override
+        returns (bool)
+    {
+        return forwarder == _trustedForwarder;
     }
 }

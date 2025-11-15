@@ -2,13 +2,15 @@
 pragma solidity ^0.8.30;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
 /**
  * @title BudgetAllocator
  * @notice Department budget management and allocation system
  * @dev Manages department budgets, spending, and fund requests
  */
-contract BudgetAllocator {
+contract BudgetAllocator is ERC2771Context {
+    event TrustedForwarderUpdated(address indexed forwarder, address indexed updater);
     // Structs
     struct Department {
         uint256 id;
@@ -47,6 +49,7 @@ contract BudgetAllocator {
     address public treasury;
     address public admin;
     IERC20 public usdc;
+    address private _trustedForwarder;
 
     mapping(uint256 => Department) public departments;
     uint256 public departmentCount;
@@ -91,11 +94,11 @@ contract BudgetAllocator {
 
     // Internal modifier functions
     function _onlyAdmin() internal view {
-        require(msg.sender == admin, "Only admin can call");
+        require(_msgSender() == admin, "Only admin can call");
     }
 
     function _onlyTreasury() internal view {
-        require(msg.sender == treasury, "Only treasury can call");
+        require(_msgSender() == treasury, "Only treasury can call");
     }
 
     function _departmentExists(uint256 _departmentId) internal view {
@@ -104,14 +107,26 @@ contract BudgetAllocator {
     }
 
     function _onlyDepartmentManager(uint256 _departmentId) internal view {
-        require(departments[_departmentId].manager == msg.sender, "Only department manager");
+        require(departments[_departmentId].manager == _msgSender(), "Only department manager");
     }
 
     /**
      * @notice Initialize budget allocator
      */
-    constructor() {
-        admin = msg.sender;
+    constructor(address trustedForwarder) ERC2771Context(trustedForwarder) {
+        require(trustedForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = trustedForwarder;
+        admin = _msgSender();
+    }
+
+    function setTrustedForwarder(address newForwarder) external onlyAdmin {
+        require(newForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = newForwarder;
+        emit TrustedForwarderUpdated(newForwarder, _msgSender());
+    }
+
+    function trustedForwarder() external view returns (address) {
+        return _trustedForwarder;
     }
 
     /**
@@ -206,7 +221,7 @@ contract BudgetAllocator {
         fundRequests[requestId] = FundRequest({
             id: requestId,
             departmentId: _departmentId,
-            requester: msg.sender,
+            requester: _msgSender(),
             amount: _amount,
             reason: _reason,
             approved: false,
@@ -235,7 +250,7 @@ contract BudgetAllocator {
         require(!request.executed, "Request already executed");
 
         request.approved = true;
-        request.approvedBy = msg.sender;
+        request.approvedBy = _msgSender();
 
         // Automatically allocate funds
         Department storage dept = departments[request.departmentId];
@@ -244,7 +259,7 @@ contract BudgetAllocator {
 
         request.executed = true;
 
-        emit RequestApproved(_requestId, msg.sender);
+        emit RequestApproved(_requestId, _msgSender());
         emit BudgetAllocated(request.departmentId, request.amount);
     }
 
@@ -260,7 +275,7 @@ contract BudgetAllocator {
 
         request.rejected = true;
 
-        emit RequestRejected(_requestId, msg.sender);
+        emit RequestRejected(_requestId, _msgSender());
     }
 
     /**
@@ -287,7 +302,7 @@ contract BudgetAllocator {
             departmentId: _departmentId,
             amount: _amount,
             description: _description,
-            spentBy: msg.sender,
+            spentBy: _msgSender(),
             timestamp: block.timestamp
         });
 
@@ -478,5 +493,17 @@ contract BudgetAllocator {
      */
     function getBalance() external view returns (uint256) {
         return usdc.balanceOf(address(this));
+    }
+
+    function _msgSender() internal view override returns (address sender) {
+        return ERC2771Context._msgSender();
+    }
+
+    function _msgData() internal view override returns (bytes calldata) {
+        return ERC2771Context._msgData();
+    }
+
+    function isTrustedForwarder(address forwarder) public view override returns (bool) {
+        return forwarder == _trustedForwarder;
     }
 }

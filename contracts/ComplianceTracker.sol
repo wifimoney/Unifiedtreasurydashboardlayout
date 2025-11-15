@@ -3,13 +3,16 @@ pragma solidity ^0.8.30;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
+import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 
 /**
  * @title ComplianceTracker
  * @notice Tracks compliance metadata for all treasury transactions
  * @dev Provides categorization, tagging, and reporting for regulatory compliance
  */
-contract ComplianceTracker is AccessControl, Pausable {
+contract ComplianceTracker is AccessControl, Pausable, ERC2771Context {
+    event TrustedForwarderUpdated(address indexed forwarder, address indexed updater);
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant COMPLIANCE_OFFICER_ROLE = keccak256("COMPLIANCE_OFFICER_ROLE");
 
@@ -67,6 +70,7 @@ contract ComplianceTracker is AccessControl, Pausable {
     mapping(bytes32 => uint256) public transactionHashToEntry;  // Quick lookup by tx hash
     mapping(address => uint256[]) public entriesByContract;     // Entries by contract
     mapping(TransactionCategory => uint256[]) public entriesByCategory;  // Entries by category
+    address private _trustedForwarder;
 
     // Policy configuration
     uint256 public highRiskThreshold = 50000 * 10**6;  // $50k in USDC (6 decimals)
@@ -99,10 +103,22 @@ contract ComplianceTracker is AccessControl, Pausable {
     event AddressBlacklisted(address indexed account, string reason);
     event AddressWhitelisted(address indexed account);
 
-    constructor() {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(ADMIN_ROLE, msg.sender);
-        _grantRole(COMPLIANCE_OFFICER_ROLE, msg.sender);
+    constructor(address trustedForwarder) ERC2771Context(trustedForwarder) {
+        require(trustedForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = trustedForwarder;
+        _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _grantRole(ADMIN_ROLE, _msgSender());
+        _grantRole(COMPLIANCE_OFFICER_ROLE, _msgSender());
+    }
+
+    function setTrustedForwarder(address newForwarder) external onlyRole(ADMIN_ROLE) {
+        require(newForwarder != address(0), "Invalid forwarder");
+        _trustedForwarder = newForwarder;
+        emit TrustedForwarderUpdated(newForwarder, _msgSender());
+    }
+
+    function trustedForwarder() external view returns (address) {
+        return _trustedForwarder;
     }
 
     /**
@@ -137,7 +153,7 @@ contract ComplianceTracker is AccessControl, Pausable {
         entry.purpose = purpose;
         entry.jurisdiction = jurisdiction;
         entry.timestamp = block.timestamp;
-        entry.recordedBy = msg.sender;
+        entry.recordedBy = _msgSender();
 
         // Auto-calculate risk level
         entry.riskLevel = calculateRiskLevel(amount, to, jurisdiction);
@@ -166,7 +182,7 @@ contract ComplianceTracker is AccessControl, Pausable {
         emit EntryRecorded(entryId, transactionHash, contractAddress, category, amount);
 
         if (entry.flagged) {
-            emit EntryFlagged(entryId, entry.flagReason, msg.sender);
+            emit EntryFlagged(entryId, entry.flagReason, _msgSender());
         }
 
         return entryId;
@@ -246,7 +262,7 @@ contract ComplianceTracker is AccessControl, Pausable {
         entry.flagged = true;
         entry.flagReason = reason;
 
-        emit EntryFlagged(entryId, reason, msg.sender);
+        emit EntryFlagged(entryId, reason, _msgSender());
     }
 
     /**
@@ -261,7 +277,7 @@ contract ComplianceTracker is AccessControl, Pausable {
 
         ComplianceEntry storage entry = entries[entryId];
         entry.reviewed = true;
-        entry.reviewedBy = msg.sender;
+        entry.reviewedBy = _msgSender();
         entry.reviewedAt = block.timestamp;
         entry.reviewNotes = notes;
 
@@ -269,7 +285,7 @@ contract ComplianceTracker is AccessControl, Pausable {
             entry.flagged = false;
         }
 
-        emit EntryReviewed(entryId, msg.sender, approved);
+        emit EntryReviewed(entryId, _msgSender(), approved);
     }
 
     /**
@@ -498,5 +514,32 @@ contract ComplianceTracker is AccessControl, Pausable {
      */
     function unpause() external onlyRole(ADMIN_ROLE) {
         _unpause();
+    }
+
+    function _msgSender()
+        internal
+        view
+        override(Context, ERC2771Context)
+        returns (address sender)
+    {
+        return ERC2771Context._msgSender();
+    }
+
+    function _msgData()
+        internal
+        view
+        override(Context, ERC2771Context)
+        returns (bytes calldata)
+    {
+        return ERC2771Context._msgData();
+    }
+
+    function isTrustedForwarder(address forwarder)
+        public
+        view
+        override
+        returns (bool)
+    {
+        return forwarder == _trustedForwarder;
     }
 }
