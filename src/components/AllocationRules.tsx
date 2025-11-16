@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { parseEther, formatEther } from 'viem';
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, usePublicClient, useWalletClient } from 'wagmi';
+import { parseEther, formatEther, encodeFunctionData, parseGwei } from 'viem';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
-import { Separator } from './ui/separator';
-import { Switch } from './ui/switch';
 import {
   Plus,
   CheckCircle2,
@@ -17,17 +15,15 @@ import {
   Calendar,
   TrendingUp,
   Zap,
-  Shield,
   AlertCircle,
-  MoreVertical,
   Pause,
   Play,
   Trash2,
   ExternalLink,
   RefreshCw
 } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
-import { contracts, RuleType, RuleStatus, getExplorerUrl } from '../lib/contracts';
+import { toast } from 'sonner';
+import { contracts, getExplorerUrl } from '../lib/contracts';
 
 // Interface matching contract Rule struct
 interface ContractRule {
@@ -86,8 +82,11 @@ const ruleTypeLabels = {
 
 export function AllocationRules() {
   const { address, isConnected } = useAccount();
+  const publicClient = usePublicClient() as any; // Type assertion for wagmi v2 compatibility
+  const { data: walletClient } = useWalletClient();
   const [rules, setRules] = useState<AllocationRule[]>([]);
   const [isLoadingRules, setIsLoadingRules] = useState(true);
+  const [isCreatingRule, setIsCreatingRule] = useState(false);
   const [formData, setFormData] = useState({
     recipientWallet: '',
     recipientName: '',
@@ -100,11 +99,10 @@ export function AllocationRules() {
   // Read rule count from contract (wagmi v2)
   const { data: ruleCount, refetch: refetchCount } = useReadContract({
     ...contracts.RuleEngine,
-    functionName: 'getRuleCount',
+    functionName: 'ruleCount',
   });
 
-  // Contract writes (wagmi v2)
-  const { data: createRuleHash, writeContract: writeCreateRule, isPending: isCreating, error: createRuleError } = useWriteContract();
+  // Contract writes (wagmi v2) - keeping for executeRule and updateStatus
   const { data: executeRuleHash, writeContract: writeExecuteRule, isPending: isExecuting } = useWriteContract();
   const { data: updateStatusHash, writeContract: writeUpdateStatus } = useWriteContract();
 
@@ -112,19 +110,12 @@ export function AllocationRules() {
   useEffect(() => {
     console.log('🔧 Contract Setup:', {
       ruleEngineAddress: contracts.RuleEngine.address,
-      writeContractAvailable: !!writeCreateRule,
       isWalletConnected: isConnected,
       walletAddress: address,
+      publicClientAvailable: !!publicClient,
+      walletClientAvailable: !!walletClient,
     });
-    if (createRuleError) {
-      console.error('❌ createRule error:', createRuleError);
-    }
-  }, [writeCreateRule, isConnected, address, createRuleError]);
-
-  // Wait for create rule transaction (wagmi v2)
-  const { isLoading: isWaitingForTx, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({
-    hash: createRuleHash,
-  });
+  }, [isConnected, address, publicClient, walletClient]);
 
   // Wait for execute rule transaction
   const { isSuccess: isExecuteSuccess } = useWaitForTransactionReceipt({
@@ -139,47 +130,81 @@ export function AllocationRules() {
   // Fetch all rules from contract
   useEffect(() => {
     async function fetchRules() {
+      if (!publicClient) {
+        console.log('⏳ Waiting for publicClient...');
+        return;
+      }
+
       if (!ruleCount || ruleCount === 0n) {
+        console.log('📭 No rules found (count:', ruleCount, ')');
         setRules([]);
         setIsLoadingRules(false);
         return;
       }
 
       setIsLoadingRules(true);
+      console.log(`🔍 Fetching ${ruleCount} rules from contract...`);
+
       try {
         const rulesData: AllocationRule[] = [];
         const count = Number(ruleCount);
 
         for (let i = 0; i < count; i++) {
           try {
-            // @ts-ignore - wagmi types can be finicky
-            const rule = await contracts.RuleEngine.abi.find((f: any) => f.name === 'rules');
-            // This would normally use publicClient.readContract() but simplified for now
-            // In production, you'd batch these reads
+            console.log(`📝 Fetching rule ${i}...`);
+
+            // Fetch rule basic info - returns array: [name, description, ruleType, status, triggerAmount, timesExecuted, totalDistributed, lastExecuted]
+            const ruleData = await publicClient.readContract({
+              address: contracts.RuleEngine.address,
+              abi: contracts.RuleEngine.abi,
+              functionName: 'getRule',
+              args: [BigInt(i)],
+            }) as any;
+
+            // Fetch rule distribution - returns array: [recipients[], values[], usePercentages]
+            const distribution = await publicClient.readContract({
+              address: contracts.RuleEngine.address,
+              abi: contracts.RuleEngine.abi,
+              functionName: 'getRuleDistribution',
+              args: [BigInt(i)],
+            }) as any;
+
+            // Parse the array responses
+            const [name, description, ruleType, status, triggerAmount, timesExecuted, totalDistributed, lastExecuted] = ruleData;
+            const [recipients, values, usePercentages] = distribution;
+
+            console.log(`✅ Rule ${i} data:`, {
+              name,
+              type: ruleType,
+              status,
+              recipients: recipients.length,
+            });
+
             rulesData.push({
               id: i,
-              name: `Rule ${i + 1}`,
-              description: 'Allocation Rule',
-              ruleType: 0,
-              triggerAmount: 0n,
-              recipients: [],
-              percentages: [],
-              interval: 0,
-              lastExecuted: 0,
-              executionCount: 0,
-              maxExecutions: 0,
-              status: 0,
-              creator: '0x0' as `0x${string}`,
-              createdAt: 0,
+              name: name || `Rule ${i + 1}`,
+              description: description || 'Allocation Rule',
+              ruleType: Number(ruleType),
+              triggerAmount: triggerAmount,
+              recipients: recipients || [],
+              percentages: values || [],
+              interval: 0, // Not in current struct, will use checkInterval if needed
+              lastExecuted: Number(lastExecuted || 0),
+              executionCount: Number(timesExecuted || 0),
+              maxExecutions: 0, // Not in current struct
+              status: Number(status),
+              creator: '0x0000000000000000000000000000000000000000' as `0x${string}`, // Not in current struct
+              createdAt: 0, // Not in current struct
             });
           } catch (error) {
-            console.error(`Error fetching rule ${i}:`, error);
+            console.error(`❌ Error fetching rule ${i}:`, error);
           }
         }
 
+        console.log(`✅ Loaded ${rulesData.length} rules:`, rulesData);
         setRules(rulesData);
       } catch (error) {
-        console.error('Error fetching rules:', error);
+        console.error('❌ Error fetching rules:', error);
         toast.error('Failed to load rules from contract');
       } finally {
         setIsLoadingRules(false);
@@ -187,43 +212,7 @@ export function AllocationRules() {
     }
 
     fetchRules();
-  }, [ruleCount]);
-
-  // Handle create rule success
-  useEffect(() => {
-    if (isTxSuccess) {
-      console.log('🎉 Rule created successfully!');
-      console.log('Transaction hash:', createRuleHash);
-      console.log('Explorer URL:', createRuleHash ? getExplorerUrl(createRuleHash) : 'N/A');
-
-      toast.success(
-        <div className="flex items-center gap-2">
-          <span>Rule created on-chain!</span>
-          {createRuleHash && (
-            <a
-              href={getExplorerUrl(createRuleHash)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-blue-600 hover:underline"
-            >
-              View <ExternalLink className="w-3 h-3" />
-            </a>
-          )}
-        </div>
-      );
-      refetchCount();
-
-      // Reset form
-      setFormData({
-        recipientWallet: '',
-        recipientName: '',
-        usdcAmount: '',
-        ruleType: '',
-        interval: '',
-        maxExecutions: '100',
-      });
-    }
-  }, [isTxSuccess, createRuleHash, refetchCount]);
+  }, [ruleCount, publicClient]);
 
   // Handle execute rule success
   useEffect(() => {
@@ -269,11 +258,11 @@ export function AllocationRules() {
     }
   }, [isUpdateStatusSuccess, updateStatusHash, refetchCount]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('🚀 Form submitted!');
 
-    if (!isConnected) {
+    if (!isConnected || !address) {
       console.warn('⚠️ Wallet not connected');
       toast.error('Please connect your wallet');
       return;
@@ -285,11 +274,16 @@ export function AllocationRules() {
       return;
     }
 
-    if (!writeCreateRule) {
-      console.error('❌ writeContract function not available');
-      toast.error('Contract write function not ready. Please try again.');
+    if (!publicClient || !walletClient) {
+      console.error('❌ Client not available');
+      toast.error('Wallet client not ready. Please try again.');
       return;
     }
+
+    setIsCreatingRule(true);
+    const toastId = toast.loading('Preparing transaction...', {
+      description: 'Building transaction object',
+    });
 
     try {
       const amount = parseEther(formData.usdcAmount);
@@ -300,7 +294,6 @@ export function AllocationRules() {
       else if (formData.interval === 'biweekly') intervalSeconds = 14 * 24 * 60 * 60;
       else if (formData.interval === 'monthly') intervalSeconds = 30 * 24 * 60 * 60;
       else if (formData.interval === 'quarterly') intervalSeconds = 90 * 24 * 60 * 60;
-      // else 0 for on-demand or not set
 
       const ruleName = formData.recipientName || 'Allocation Rule';
       const ruleDescription = `${ruleTypeLabels[parseInt(formData.ruleType) as keyof typeof ruleTypeLabels]} rule - ${formData.usdcAmount} USDC`;
@@ -319,33 +312,136 @@ export function AllocationRules() {
         maxPerExecution: '0',
       });
 
-      // Contract expects these parameters in this exact order:
-      // createRule(name, description, ruleType, triggerAmount, checkInterval, minExecutionGap, recipients, values, usePercentages, maxPerExecution)
-      writeCreateRule({
-        ...contracts.RuleEngine,
+      // Encode the function call
+      const data = encodeFunctionData({
+        abi: contracts.RuleEngine.abi,
         functionName: 'createRule',
         args: [
           ruleName,  // name (string)
           ruleDescription, // description (string)
           parseInt(formData.ruleType),  // ruleType (uint8)
           amount,  // triggerAmount (uint256)
-          intervalSeconds,  // checkInterval (uint256)
-          intervalSeconds,  // minExecutionGap (uint256) - same as interval for simplicity
+          BigInt(intervalSeconds),  // checkInterval (uint256)
+          BigInt(intervalSeconds),  // minExecutionGap (uint256)
           [formData.recipientWallet as `0x${string}`], // recipients (address[])
-          [amount],  // values (uint256[]) - full amount to single recipient
-          false,  // usePercentages (bool) - false means fixed amounts
-          0n,  // maxPerExecution (uint256) - 0 means unlimited
+          [amount],  // values (uint256[])
+          false,  // usePercentages (bool)
+          0n,  // maxPerExecution (uint256)
         ],
       });
 
-      console.log('✅ createRule transaction initiated');
-
-      toast.loading('Creating rule on-chain...', {
-        description: 'Please confirm the transaction in your wallet',
+      toast.loading('Estimating gas...', {
+        id: toastId,
+        description: 'Calculating optimal gas parameters',
       });
-    } catch (error) {
-      console.error('Error creating rule:', error);
-      toast.error('Failed to create rule');
+
+      // Estimate gas for the transaction
+      const gasEstimate = await publicClient.estimateGas({
+        account: address,
+        to: contracts.RuleEngine.address,
+        data,
+      });
+
+      // Get current gas price
+      const gasPrice = await publicClient.getGasPrice();
+
+      // Calculate max fees with premium for faster confirmation
+      const maxFeePerGas = (gasPrice * 120n) / 100n; // Add 20% premium
+      const maxPriorityFeePerGas = parseGwei('2'); // Fixed priority fee
+
+      // Get nonce
+      const nonce = await publicClient.getTransactionCount({
+        address: address,
+      });
+
+      console.log('⛽ Gas parameters:', {
+        gasEstimate: gasEstimate.toString(),
+        gasPrice: gasPrice.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        nonce,
+      });
+
+      toast.loading('Confirm transaction in wallet...', {
+        id: toastId,
+        description: 'Please approve the transaction',
+      });
+
+      // Send transaction using wallet client
+      const hash = await walletClient.sendTransaction({
+        account: address,
+        to: contracts.RuleEngine.address,
+        data,
+        gas: gasEstimate,
+        maxFeePerGas,
+        maxPriorityFeePerGas,
+        nonce,
+        chain: walletClient.chain,
+      });
+
+      console.log('✅ Transaction sent:', hash);
+
+      toast.loading('Waiting for confirmation...', {
+        id: toastId,
+        description: `Transaction: ${hash.slice(0, 10)}...${hash.slice(-8)}`,
+      });
+
+      // Wait for transaction receipt
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash,
+        confirmations: 1,
+      });
+
+      console.log('✅ Transaction confirmed:', receipt);
+
+      if (receipt.status === 'success') {
+        toast.success('Rule created successfully!', {
+          id: toastId,
+          description: 'Your allocation rule is now active',
+        });
+
+        // Reset form
+        setFormData({
+          recipientWallet: '',
+          recipientName: '',
+          usdcAmount: '',
+          ruleType: '',
+          interval: '',
+          maxExecutions: '100',
+        });
+
+        // Refetch rules
+        await refetchCount();
+      } else {
+        toast.error('Transaction failed', {
+          id: toastId,
+          description: 'The transaction was reverted',
+        });
+      }
+    } catch (error: any) {
+      console.error('❌ Error creating rule:', error);
+
+      let errorMessage = 'Failed to create rule';
+      let errorDescription = error?.message || 'Unknown error';
+
+      // Handle specific error types
+      if (error?.message?.includes('User rejected') || error?.message?.includes('user rejected')) {
+        errorMessage = 'Transaction cancelled';
+        errorDescription = 'You rejected the transaction';
+      } else if (error?.message?.includes('insufficient funds')) {
+        errorMessage = 'Insufficient funds';
+        errorDescription = 'Not enough balance to cover gas fees';
+      } else if (error?.message?.includes('rate limit')) {
+        errorMessage = 'Rate limited';
+        errorDescription = 'Too many requests. Please wait a moment.';
+      }
+
+      toast.error(errorMessage, {
+        id: toastId,
+        description: errorDescription,
+      });
+    } finally {
+      setIsCreatingRule(false);
     }
   };
 
@@ -363,19 +459,27 @@ export function AllocationRules() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold dark:text-white mb-2">Allocation Rules</h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Automate USDC distributions with smart contract rules
+        </p>
+      </div>
+
       {/* Header Stats */}
-      <div className="grid gap-6 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm text-gray-600 dark:text-gray-400">Active Rules</CardTitle>
             <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl dark:text-white">
+            <div className="text-3xl font-bold dark:text-white">
               {isLoadingRules ? '-' : rules.filter(r => r.status === 0).length}
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Executing automatically</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Currently active</p>
           </CardContent>
         </Card>
 
@@ -385,7 +489,7 @@ export function AllocationRules() {
             <Pause className="w-4 h-4 text-gray-600 dark:text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl dark:text-white">
+            <div className="text-3xl font-bold dark:text-white">
               {isLoadingRules ? '-' : rules.filter(r => r.status === 1).length}
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Temporarily disabled</p>
@@ -398,43 +502,26 @@ export function AllocationRules() {
             <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl dark:text-white">
+            <div className="text-3xl font-bold dark:text-white">
               {isLoadingRules ? '-' : rules.reduce((sum, r) => sum + r.executionCount, 0)}
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Times executed</p>
           </CardContent>
         </Card>
-
-        <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm text-gray-600 dark:text-gray-400">Avg Finality</CardTitle>
-            <Zap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl dark:text-white">~2.4s</div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Near-instant settlement</p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Create New Rule Form */}
-      <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-lg">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-2xl dark:text-white flex items-center gap-2">
-                <Plus className="w-6 h-6" />
-                Create New Allocation Rule
-              </CardTitle>
-              <CardDescription className="dark:text-gray-400 mt-2">
-                Configure automated USDC distributions based on conditions
-              </CardDescription>
+      <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-sm">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-xl dark:text-white flex items-center gap-2">
+            <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
+              <Plus className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-lg">
-              <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              <span className="text-xs text-blue-700 dark:text-blue-300">Instant Settlement</span>
-            </div>
-          </div>
+            Create New Rule
+          </CardTitle>
+          <CardDescription className="dark:text-gray-400">
+            Set up automated USDC distributions
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -595,7 +682,7 @@ export function AllocationRules() {
                 type="submit"
                 size="lg"
                 className="flex-1"
-                disabled={isCreating || isWaitingForTx || !isConnected}
+                disabled={isCreatingRule || !isConnected}
                 onClick={(e) => {
                   console.log('🖱️ Button clicked!');
                   console.log('Wallet connected:', isConnected);
@@ -606,10 +693,10 @@ export function AllocationRules() {
                   }
                 }}
               >
-                {isCreating || isWaitingForTx ? (
+                {isCreatingRule ? (
                   <>
                     <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
-                    {isCreating ? 'Confirm in Wallet...' : 'Creating Rule...'}
+                    Creating Rule...
                   </>
                 ) : (
                   <>
@@ -624,8 +711,7 @@ export function AllocationRules() {
             <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-xl">
               <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-blue-800 dark:text-blue-300">
-                <p className="mb-1">Your rule will be created on-chain and can be executed immediately once conditions are met.</p>
-                <p>Transactions execute with deterministic, near-instant finality (~2-3 seconds on Arc Testnet).</p>
+                <p>Your rule will be created on-chain and can be executed immediately once conditions are met.</p>
               </div>
             </div>
           </form>
@@ -633,12 +719,28 @@ export function AllocationRules() {
       </Card>
 
       {/* Active Rules Table */}
-      <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-lg">
+      <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-2xl dark:text-white">Active Rules</CardTitle>
-          <CardDescription className="dark:text-gray-400">
-            Manage and monitor all allocation rules on-chain
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <CardTitle className="text-xl dark:text-white">Your Rules</CardTitle>
+              <CardDescription className="dark:text-gray-400">
+                Manage your allocation rules
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                refetchCount();
+                toast.success('Refreshing rules...');
+              }}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoadingRules ? (
@@ -647,18 +749,24 @@ export function AllocationRules() {
               <span className="ml-3 text-gray-600 dark:text-gray-400">Loading rules from blockchain...</span>
             </div>
           ) : rules.length === 0 ? (
-            <div className="text-center py-12">
-              <Calendar className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-600 dark:text-gray-400 mb-2">No allocation rules yet</p>
-              <p className="text-sm text-gray-500 dark:text-gray-500">Create your first rule above to automate distributions</p>
+            <div className="text-center py-16">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+                <Calendar className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No rules yet</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
+                Create your first allocation rule above to start automating USDC distributions
+              </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {rules.map((rule) => {
                 const StatusIcon = statusConfig[rule.status as keyof typeof statusConfig]?.icon || CheckCircle2;
                 const TriggerIcon = ruleTypeIcons[rule.ruleType as keyof typeof ruleTypeIcons] || Calendar;
                 const recipient = rule.recipients[0] || '0x0...';
                 const amountInUsdc = formatEther(rule.triggerAmount);
+                // Use the actual distribution value for the first recipient
+                const distributionAmount = rule.percentages[0] ? formatEther(rule.percentages[0]) : amountInUsdc;
                 const intervalDays = Math.floor(rule.interval / (24 * 60 * 60));
                 const nextExecution = rule.lastExecuted + rule.interval;
                 const daysUntilNext = Math.floor((nextExecution - Date.now() / 1000) / (24 * 60 * 60));
@@ -666,7 +774,7 @@ export function AllocationRules() {
                 return (
                   <div
                     key={rule.id}
-                    className="p-5 border dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    className="p-6 border dark:border-gray-700 rounded-lg hover:shadow-md dark:hover:bg-gray-700/30 transition-all"
                   >
                     <div className="flex items-start justify-between gap-4">
                       {/* Main Info */}
@@ -729,27 +837,26 @@ export function AllocationRules() {
                           </div>
                         </div>
 
-                        {/* Creator Info */}
-                        <div className="pl-13 pt-3 border-t dark:border-gray-700">
-                          <div className="flex items-center justify-between">
+                        {/* Rule Metadata */}
+                        {(rule.creator !== '0x0000000000000000000000000000000000000000' || rule.createdAt > 0) && (
+                          <div className="pl-13 pt-3 border-t dark:border-gray-700">
                             <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                              <Users className="w-3.5 h-3.5" />
-                              <span>Created by: {rule.creator.slice(0, 8)}...{rule.creator.slice(-6)}</span>
-                              <span className="mx-2">•</span>
-                              <Clock className="w-3.5 h-3.5" />
-                              <span>{new Date(rule.createdAt * 1000).toLocaleDateString()}</span>
+                              {rule.creator !== '0x0000000000000000000000000000000000000000' && (
+                                <>
+                                  <Users className="w-3.5 h-3.5" />
+                                  <span>Created by: {rule.creator.slice(0, 8)}...{rule.creator.slice(-6)}</span>
+                                </>
+                              )}
+                              {rule.createdAt > 0 && (
+                                <>
+                                  <span className="mx-2">•</span>
+                                  <Clock className="w-3.5 h-3.5" />
+                                  <span>{new Date(rule.createdAt * 1000).toLocaleDateString()}</span>
+                                </>
+                              )}
                             </div>
-
-                            {rule.status === 0 && (
-                              <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-lg">
-                                <Zap className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-                                <span className="text-xs text-green-700 dark:text-green-400">
-                                  Near-instant finality (~2.4s)
-                                </span>
-                              </div>
-                            )}
                           </div>
-                        </div>
+                        )}
                       </div>
 
                       {/* Actions */}

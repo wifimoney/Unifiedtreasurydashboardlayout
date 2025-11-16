@@ -10,7 +10,10 @@ export const arcTestnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://arc-testnet.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4'],
+      http: [
+        'https://arc-testnet.g.alchemy.com/v2/x9KWnxVYhNfjC0Yr8llKf',
+        'https://rpc-testnet.arc.xyz', // Fallback RPC (if available)
+      ],
     },
   },
   blockExplorers: {

@@ -112,7 +112,7 @@ const CHAIN_CONFIGS = [
     chainId: '5042002',
     nativeToken: 'USDC',
     explorerUrl: 'https://testnet.arcscan.app',
-    rpcUrl: 'https://arc-testnet.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4',
+    rpcUrl: 'https://arc-testnet.g.alchemy.com/v2/x9KWnxVYhNfjC0Yr8llKf',
     usdcAddress: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
   },
 ];
