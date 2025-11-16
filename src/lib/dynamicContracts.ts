@@ -1,11 +1,11 @@
 import { useTreasury } from '../contexts/TreasuryContext';
 
 // Import compiled ABIs (these are the same for all treasuries)
-import TreasuryCoreCompiled from './compiled/TreasuryCore.json';
-import BudgetAllocatorCompiled from './compiled/BudgetAllocator.json';
-import PayrollManagerCompiled from './compiled/PayrollManager.json';
-import ComplianceTrackerCompiled from './compiled/ComplianceTracker.json';
-import RuleEngineCompiled from './compiled/RuleEngine.json';
+import TreasuryCoreCompiled from '../../../backend/out/TreasuryCore.sol/TreasuryCore.json';
+import BudgetAllocatorCompiled from '../../../backend/out/BudgetAllocator.sol/BudgetAllocator.json';
+import PayrollManagerCompiled from '../../../backend/out/PayrollManager.sol/PayrollManager.json';
+import ComplianceTrackerCompiled from '../../../backend/out/ComplianceTracker.sol/ComplianceTracker.json';
+import RuleEngineCompiled from '../../../backend/out/RuleEngine.sol/RuleEngine.json';
 
 export interface ContractConfig {
   address: `0x${string}`;

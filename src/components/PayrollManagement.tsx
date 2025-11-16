@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAccount, useReadContract, usePublicClient, useWalletClient } from 'wagmi';
 import { parseEther, formatEther, encodeFunctionData, parseGwei, getAddress } from 'viem';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -79,16 +79,22 @@ export function PayrollManagement() {
     departmentId: '0', // Default to first department
   });
 
+  // Use refs to prevent multiple fetches
+  const hasFetchedDepartments = useRef(false);
+  const hasFetchedEmployees = useRef(false);
+
   if (!contracts) {
     return <div className="text-center py-12"><p className="text-gray-600 dark:text-gray-400">No treasury selected</p></div>;
   }
 
-  // Fetch departments for the dropdown (only once on mount)
+  // Fetch departments for the dropdown (only once ever)
   useEffect(() => {
-    let mounted = true;
+    if (hasFetchedDepartments.current) return;
 
     async function fetchDepartments() {
-      if (!publicClient || !contracts || !mounted) return;
+      if (!publicClient || !contracts) return;
+
+      hasFetchedDepartments.current = true;
 
       try {
         const deptCount = await publicClient.readContract({
@@ -96,8 +102,6 @@ export function PayrollManagement() {
           abi: contracts.BudgetAllocator.abi,
           functionName: 'departmentCount',
         });
-
-        if (!mounted) return;
 
         const depts = [];
         for (let i = 0; i < Number(deptCount); i++) {
@@ -108,27 +112,19 @@ export function PayrollManagement() {
             args: [BigInt(i)],
           }) as any;
 
-          if (!mounted) return;
-
           const [id, name, , , , , active] = dept;
           if (active) {
             depts.push({ id: Number(id), name });
           }
         }
-        if (mounted) {
-          setDepartments(depts);
-        }
+        setDepartments(depts);
       } catch (error) {
         console.error('Error fetching departments:', error);
       }
     }
 
     fetchDepartments();
-
-    return () => {
-      mounted = false;
-    };
-  }, []); // Empty deps - only on mount
+  }, [publicClient, contracts]); // Will only run once because of ref guard
 
   const fetchEmployees = async () => {
     if (!publicClient || !contracts) {
@@ -195,11 +191,11 @@ export function PayrollManagement() {
       console.log(`✅ Loaded ${employeesData.length} active employees`);
       setEmployees(employeesData);
 
-      // Fetch payment history
+      // Fetch payment history (limit to last 10 for performance)
       try {
         const historyData: PaymentRecord[] = [];
-        // Try to fetch up to 50 payment records
-        for (let i = 0; i < 50; i++) {
+        // Only fetch last 10 payment records to reduce RPC calls
+        for (let i = 0; i < 10; i++) {
           try {
             const record = await publicClient.readContract({
               address: contracts.PayrollManager.address,
@@ -234,22 +230,17 @@ export function PayrollManagement() {
     }
   };
 
-  // Only fetch on mount
+  // Only fetch on mount (using ref to prevent double fetch)
   useEffect(() => {
-    let mounted = true;
+    if (hasFetchedEmployees.current) return;
 
     const loadInitial = async () => {
-      if (mounted) {
-        await fetchEmployees();
-      }
+      hasFetchedEmployees.current = true;
+      await fetchEmployees();
     };
 
     loadInitial();
-
-    return () => {
-      mounted = false;
-    };
-  }, []); // Empty deps - only on mount, manual refresh via button
+  }, [publicClient, contracts]); // Will only run once because of ref guard
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -846,9 +837,14 @@ export function PayrollManagement() {
             <Button
               variant="outline"
               size="sm"
-              onClick={fetchEmployees}
+              onClick={() => {
+                console.log('🔄 Manual refresh clicked');
+                hasFetchedEmployees.current = false; // Reset so it fetches again
+                fetchEmployees();
+              }}
+              disabled={isLoadingEmployees}
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className={`w-4 h-4 ${isLoadingEmployees ? 'animate-spin' : ''}`} />
             </Button>
             </div>
           </div>
