@@ -343,7 +343,7 @@ function DashboardContent() {
         <div className="mx-auto w-full max-w-[1440px] px-5 py-6 sm:px-10 lg:px-20">
           <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-gray-600 dark:text-gray-400">
             <div>
-              © 2024 ARCBOARD. Enterprise Treasury Platform.
+              © 2025 ARCBOARD. Enterprise Treasury Platform.
             </div>
             <div className="flex items-center gap-2">
               <span>Data provided by</span>
