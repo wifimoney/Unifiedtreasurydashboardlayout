@@ -308,12 +308,9 @@ export function SystemSetup() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold dark:text-white mb-2 flex items-center gap-3">
-          <Settings className="w-8 h-8" />
-          System Setup & Configuration
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold dark:text-white mb-1">System Setup</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Configure contract permissions and integrations
         </p>
       </div>

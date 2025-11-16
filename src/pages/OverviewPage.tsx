@@ -1,12 +1,6 @@
-import { USDCTreasuryOverview } from "../components/USDCTreasuryOverview";
-import { NetworkBalances } from "../components/NetworkBalances";
+import { TreasuryDashboard } from "../components/TreasuryDashboard";
 
 export function OverviewPage() {
-  return (
-    <div className="space-y-8">
-      <USDCTreasuryOverview />
-      <NetworkBalances />
-    </div>
-  );
+  return <TreasuryDashboard />;
 }
 

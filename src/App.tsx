@@ -12,7 +12,11 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 // Pages
 import { LandingPage } from "./pages/LandingPage";
 import { OverviewPage } from "./pages/OverviewPage";
+import { VaultPage } from "./pages/VaultPage";
 import { WalletPage } from "./pages/WalletPage";
+import { WalletModalPage } from "./pages/WalletModalPage";
+import { BudgetsPage } from "./pages/BudgetsPage";
+import { PayrollPage } from "./pages/PayrollPage";
 import { RulesPage } from "./pages/RulesPage";
 import { TransactionsPage } from "./pages/TransactionsPage";
 import { SetupPage } from "./pages/SetupPage";
@@ -42,10 +46,38 @@ function DashboardContent() {
             </Layout>
           </ProtectedRoute>
         } />
+        <Route path="/vault" element={
+          <ProtectedRoute>
+            <Layout>
+              <VaultPage />
+            </Layout>
+          </ProtectedRoute>
+        } />
         <Route path="/wallet" element={
           <ProtectedRoute>
             <Layout>
               <WalletPage />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/my-wallet" element={
+          <ProtectedRoute>
+            <Layout>
+              <WalletModalPage />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/budgets" element={
+          <ProtectedRoute>
+            <Layout>
+              <BudgetsPage />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/payroll" element={
+          <ProtectedRoute>
+            <Layout>
+              <PayrollPage />
             </Layout>
           </ProtectedRoute>
         } />

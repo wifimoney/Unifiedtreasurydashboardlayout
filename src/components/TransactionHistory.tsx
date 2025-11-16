@@ -197,15 +197,21 @@ export function TransactionHistory() {
   }
 
   return (
-    <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-sm">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-xl dark:text-white">Transaction History</CardTitle>
-            <CardDescription className="dark:text-gray-400">
-              On-chain transaction records from ComplianceTracker
-            </CardDescription>
-          </div>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold dark:text-white mb-1">Transactions</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          On-chain transaction records from ComplianceTracker
+        </p>
+      </div>
+
+      <Card className="dark:bg-gray-800/50 dark:border-gray-700 border-0 shadow-sm">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <CardTitle className="text-lg dark:text-white">All Transactions</CardTitle>
+            </div>
           <Button
             variant="outline"
             size="sm"
@@ -367,5 +373,6 @@ export function TransactionHistory() {
         )}
       </CardContent>
     </Card>
+    </div>
   );
 }

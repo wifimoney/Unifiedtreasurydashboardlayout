@@ -461,9 +461,9 @@ export function AllocationRules() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold dark:text-white mb-2">Allocation Rules</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold dark:text-white mb-1">Allocation Rules</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Automate USDC distributions with smart contract rules
         </p>
       </div>
