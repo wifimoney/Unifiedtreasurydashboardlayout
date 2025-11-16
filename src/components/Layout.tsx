@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button } from './ui/button';
 import { useTheme } from '../lib/ThemeContext';
+import { TreasurySwitcher } from './TreasurySwitcher';
 import {
   Layers,
   Activity,
@@ -99,6 +100,9 @@ export function Layout({ children }: LayoutProps) {
 
             {/* Right side content */}
             <div className="flex items-center gap-3 pr-4">
+              {/* Treasury Switcher */}
+              <TreasurySwitcher />
+
               {/* Wallet Button */}
               <Link to="/my-wallet" className="cursor-pointer">
                 <Button

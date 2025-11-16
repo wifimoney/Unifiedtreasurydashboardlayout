@@ -22,7 +22,7 @@ import {
   Edit,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { contracts, getExplorerUrl } from '../lib/contracts';
+import { useContracts, getExplorerUrl } from '../lib/contracts';
 
 interface Employee {
   wallet: string;
@@ -60,6 +60,7 @@ export function PayrollManagement() {
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient() as any;
   const { data: walletClient } = useWalletClient();
+  const contracts = useContracts();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [isLoadingEmployees, setIsLoadingEmployees] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
@@ -69,12 +70,18 @@ export function PayrollManagement() {
   const [editingAddress, setEditingAddress] = useState<string | null>(null);
   const [editSalary, setEditSalary] = useState('');
   const [paymentHistory, setPaymentHistory] = useState<PaymentRecord[]>([]);
+  const [departments, setDepartments] = useState<Array<{id: number, name: string}>>([]);
   const [formData, setFormData] = useState({
     name: '',
     wallet: '',
     salary: '',
     frequency: '2', // Default to MONTHLY
+    departmentId: '0', // Default to first department
   });
+
+  if (!contracts) {
+    return <div className="text-center py-12"><p className="text-gray-600 dark:text-gray-400">No treasury selected</p></div>;
+  }
 
   // Read active employee count
   const { data: employeeCount, refetch: refetchCount } = useReadContract({
@@ -82,16 +89,49 @@ export function PayrollManagement() {
     functionName: 'activeEmployees',
   });
 
-  // Fetch all employees
+  // Fetch departments for the dropdown
   useEffect(() => {
-    async function fetchEmployees() {
-      if (!publicClient) {
-        console.log('⏳ Waiting for publicClient...');
-        return;
-      }
+    async function fetchDepartments() {
+      if (!publicClient || !contracts) return;
 
-      setIsLoadingEmployees(true);
-      console.log('👥 Fetching employees...');
+      try {
+        const deptCount = await publicClient.readContract({
+          address: contracts.BudgetAllocator.address,
+          abi: contracts.BudgetAllocator.abi,
+          functionName: 'departmentCount',
+        });
+
+        const depts = [];
+        for (let i = 0; i < Number(deptCount); i++) {
+          const dept = await publicClient.readContract({
+            address: contracts.BudgetAllocator.address,
+            abi: contracts.BudgetAllocator.abi,
+            functionName: 'departments',
+            args: [BigInt(i)],
+          }) as any;
+
+          const [id, name, , , , , active] = dept;
+          if (active) {
+            depts.push({ id: Number(id), name });
+          }
+        }
+        setDepartments(depts);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
+    }
+
+    fetchDepartments();
+  }, [publicClient, contracts]);
+
+  const fetchEmployees = async () => {
+    if (!publicClient || !contracts) {
+      console.log('⏳ Waiting for publicClient...');
+      return;
+    }
+
+    setIsLoadingEmployees(true);
+    console.log('👥 Fetching employees...');
 
       try {
         const employeesData: Employee[] = [];
@@ -146,50 +186,52 @@ export function PayrollManagement() {
           }
         }
 
-        console.log(`✅ Loaded ${employeesData.length} active employees`);
-        setEmployees(employeesData);
+      console.log(`✅ Loaded ${employeesData.length} active employees`);
+      setEmployees(employeesData);
 
-        // Fetch payment history
-        try {
-          const historyData: PaymentRecord[] = [];
-          // Try to fetch up to 50 payment records
-          for (let i = 0; i < 50; i++) {
-            try {
-              const record = await publicClient.readContract({
-                address: contracts.PayrollManager.address,
-                abi: contracts.PayrollManager.abi,
-                functionName: 'paymentHistory',
-                args: [BigInt(i)],
-              }) as any;
+      // Fetch payment history
+      try {
+        const historyData: PaymentRecord[] = [];
+        // Try to fetch up to 50 payment records
+        for (let i = 0; i < 50; i++) {
+          try {
+            const record = await publicClient.readContract({
+              address: contracts.PayrollManager.address,
+              abi: contracts.PayrollManager.abi,
+              functionName: 'paymentHistory',
+              args: [BigInt(i)],
+            }) as any;
 
-              const [employee, amount, timestamp, paymentId] = record;
+            const [employee, amount, timestamp, paymentId] = record;
 
-              historyData.push({
-                employee,
-                amount,
-                timestamp,
-                paymentId,
-              });
-            } catch {
-              break; // No more records
-            }
+            historyData.push({
+              employee,
+              amount,
+              timestamp,
+              paymentId,
+            });
+          } catch {
+            break; // No more records
           }
-          console.log(`✅ Loaded ${historyData.length} payment records`);
-          setPaymentHistory(historyData.reverse()); // Most recent first
-        } catch (error) {
-          console.error('Error fetching payment history:', error);
         }
-
+        console.log(`✅ Loaded ${historyData.length} payment records`);
+        setPaymentHistory(historyData.reverse()); // Most recent first
       } catch (error) {
-        console.error('❌ Error fetching employees:', error);
-        toast.error('Failed to load employees');
-      } finally {
-        setIsLoadingEmployees(false);
+        console.error('Error fetching payment history:', error);
       }
-    }
 
+    } catch (error) {
+      console.error('❌ Error fetching employees:', error);
+      toast.error('Failed to load employees');
+    } finally {
+      setIsLoadingEmployees(false);
+    }
+  };
+
+  // Only fetch on mount, not on every employeeCount change
+  useEffect(() => {
     fetchEmployees();
-  }, [employeeCount, publicClient]);
+  }, []); // Empty dependency array - only on mount
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -219,7 +261,13 @@ export function PayrollManagement() {
       const data = encodeFunctionData({
         abi: contracts.PayrollManager.abi,
         functionName: 'addEmployee',
-        args: [employeeAddress, formData.name, salaryAmount, parseInt(formData.frequency)],
+        args: [
+          employeeAddress,
+          formData.name,
+          salaryAmount,
+          parseInt(formData.frequency),
+          parseInt(formData.departmentId) // NEW: Department ID
+        ],
       });
 
       const gasEstimate = await publicClient.estimateGas({
@@ -250,7 +298,7 @@ export function PayrollManagement() {
 
       if (receipt.status === 'success') {
         toast.success('Employee added successfully!', { id: toastId });
-        setFormData({ name: '', wallet: '', salary: '', frequency: '2' });
+        setFormData({ name: '', wallet: '', salary: '', frequency: '2', departmentId: '0' });
         await refetchCount();
       } else {
         toast.error('Transaction failed', { id: toastId });
@@ -667,6 +715,39 @@ export function PayrollManagement() {
                 </div>
 
                 <div>
+                  <Label htmlFor="department" className="dark:text-gray-200">
+                    Department <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    value={formData.departmentId}
+                    onValueChange={(value) => setFormData({ ...formData, departmentId: value })}
+                  >
+                    <SelectTrigger
+                      id="department"
+                      className="mt-1.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                      <SelectValue placeholder="Select department" />
+                    </SelectTrigger>
+                    <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
+                      {departments.length === 0 ? (
+                        <SelectItem value="none" disabled className="dark:text-gray-500">
+                          No departments available - Create one first
+                        </SelectItem>
+                      ) : (
+                        departments.map(dept => (
+                          <SelectItem key={dept.id} value={dept.id.toString()} className="dark:text-white dark:hover:bg-gray-700">
+                            {dept.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Employees must belong to a department
+                  </p>
+                </div>
+
+                <div>
                   <Label htmlFor="frequency" className="dark:text-gray-200">
                     Payment Frequency
                   </Label>
@@ -744,13 +825,16 @@ export function PayrollManagement() {
                   </>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => refetchCount()}
-              >
-                <RefreshCw className="w-4 h-4" />
-              </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                refetchCount();
+                fetchEmployees();
+              }}
+            >
+              <RefreshCw className="w-4 h-4" />
+            </Button>
             </div>
           </div>
         </CardHeader>

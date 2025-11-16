@@ -109,7 +109,7 @@ The test script uses the following configuration:
 - **Private Key**: `5f9b16d8121078c8e051b8062073645478809d11639f12938ac0eb594dde8fd9`
 - **Wallet Address**: `0x18314572f1D7669043f9659EDAB96490035dD232` (derived from the private key)
 - **Chain**: Arc Testnet (Chain ID: 5042002)
-- **RPC URL**: `https://arc-testnet.g.alchemy.com/v2/x9KWnxVYhNfjC0Yr8llKf`
+- **RPC URL**: `https://arc-testnet.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4`
 
 ## Test Results
 

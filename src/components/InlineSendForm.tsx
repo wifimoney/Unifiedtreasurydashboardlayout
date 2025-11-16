@@ -15,7 +15,7 @@ import { X, AlertCircle, Check, Loader2, ExternalLink, Fuel } from 'lucide-react
 import { NETWORK_CONFIGS, getNetworkByChainId } from '../lib/walletApi';
 import { arcTestnet } from '../lib/chains';
 import { sepolia, avalancheFuji, baseSepolia } from 'viem/chains';
-import { contracts } from '../lib/contracts';
+import { useTreasuryAddress } from '../lib/contracts';
 
 interface InlineSendFormProps {
   onClose: () => void;
@@ -53,6 +53,7 @@ export function InlineSendForm({ onClose, networkId, tokenAddress, tokenSymbol, 
   const { switchChain } = useSwitchChain();
   const { sendTransaction, data: nativeTxHash, isPending: isNativePending, isSuccess: isNativeSuccess, error: nativeError } = useSendTransaction();
   const { writeContract, data: tokenTxHash, isPending: isTokenPending, isSuccess: isTokenSuccess, error: tokenError } = useWriteContract();
+  const treasuryAddress = useTreasuryAddress();
 
   const isERC20Transfer = !!tokenAddress;
   const txHash = isERC20Transfer ? tokenTxHash : nativeTxHash;
@@ -75,8 +76,8 @@ export function InlineSendForm({ onClose, networkId, tokenAddress, tokenSymbol, 
   const selectedNetwork = getNetworkByChainId(selectedNetworkId);
   const needsNetworkSwitch = chain?.id !== selectedNetworkId;
 
-  // Get recipient address based on type
-  const recipient = recipientType === 'treasury' ? contracts.TreasuryCore.address : customRecipient;
+  // Get recipient address based on type (use active treasury from context)
+  const recipient = recipientType === 'treasury' ? (treasuryAddress || '') : customRecipient;
 
   // Fetch user's balance on selected network (native currency for gas)
   const { data: balanceData } = useBalance({

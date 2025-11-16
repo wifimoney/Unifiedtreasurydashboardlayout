@@ -1,6 +1,6 @@
 import { TokenBalance, TreasuryBalanceData } from './alchemyApi';
 
-const ALCHEMY_API_KEY = 'x9KWnxVYhNfjC0Yr8llKf';
+const ALCHEMY_API_KEY = 'CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4';
 
 // Supported networks for Alchemy API
 const SUPPORTED_NETWORKS = [

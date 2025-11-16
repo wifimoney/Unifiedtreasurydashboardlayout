@@ -1,6 +1,6 @@
 import { contracts } from './contracts';
 
-const ALCHEMY_API_KEY = 'x9KWnxVYhNfjC0Yr8llKf'; // Your Alchemy API key
+const ALCHEMY_API_KEY = 'CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4'; // Your Alchemy API key
 
 export interface TokenBalance {
   address: string;
@@ -38,8 +38,7 @@ const SUPPORTED_NETWORKS = [
   'opt-sepolia',
 ];
 
-export async function fetchTreasuryBalances(): Promise<TreasuryBalanceData> {
-  const treasuryAddress = contracts.TreasuryCore.address;
+export async function fetchTreasuryBalances(treasuryAddress: string): Promise<TreasuryBalanceData> {
 
   try {
     const response = await fetch(

@@ -6,11 +6,13 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { config } from './lib/wagmiConfig';
 import { arcTestnet } from './lib/chains';
 import { ThemeProvider } from "./lib/ThemeContext";
+import { TreasuryProvider } from "./contexts/TreasuryContext";
 import { Layout } from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Pages
 import { LandingPage } from "./pages/LandingPage";
+import { DeployTreasuryPage } from "./pages/DeployTreasuryPage";
 import { OverviewPage } from "./pages/OverviewPage";
 import { VaultPage } from "./pages/VaultPage";
 import { WalletPage } from "./pages/WalletPage";
@@ -37,6 +39,13 @@ function DashboardContent() {
       <Routes>
         {/* Public route - Landing page */}
         <Route path="/" element={<LandingPage />} />
+
+        {/* Deployment route - Requires wallet */}
+        <Route path="/deploy" element={
+          <ProtectedRoute>
+            <DeployTreasuryPage />
+          </ProtectedRoute>
+        } />
 
         {/* Protected routes - Require wallet connection */}
         <Route path="/overview" element={
@@ -120,7 +129,9 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider initialChain={arcTestnet}>
           <ThemeProvider>
-            <DashboardContent />
+            <TreasuryProvider>
+              <DashboardContent />
+            </TreasuryProvider>
           </ThemeProvider>
         </RainbowKitProvider>
       </QueryClientProvider>

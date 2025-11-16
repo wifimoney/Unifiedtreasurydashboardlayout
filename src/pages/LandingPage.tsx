@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 import { useNavigate } from 'react-router-dom';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useTheme } from '../lib/ThemeContext';
+import { useTreasury } from '../contexts/TreasuryContext';
 import { Button } from '../components/ui/button';
 import { Moon, Sun } from 'lucide-react';
 
@@ -10,12 +11,18 @@ export function LandingPage() {
   const { isConnected } = useAccount();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { hasAnyTreasury, isLoading } = useTreasury();
 
   useEffect(() => {
-    if (isConnected) {
-      navigate('/overview');
+    if (isConnected && !isLoading) {
+      // Route based on whether user has a treasury
+      if (hasAnyTreasury) {
+        navigate('/overview');
+      } else {
+        navigate('/deploy');
+      }
     }
-  }, [isConnected, navigate]);
+  }, [isConnected, hasAnyTreasury, isLoading, navigate]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">

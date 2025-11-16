@@ -12,27 +12,37 @@ import {
   ArrowUpRight,
   ExternalLink
 } from 'lucide-react';
-import { contracts, getAddressExplorerUrl } from '../lib/contracts';
+import { useContracts, useTreasuryAddress, getAddressExplorerUrl } from '../lib/contracts';
 import { fetchTreasuryBalances, TreasuryBalanceData, formatTokenBalance, getNetworkDisplayName } from '../lib/alchemyApi';
 
 export function TreasuryDashboard() {
   const publicClient = usePublicClient() as any;
+  const contracts = useContracts();
+  const treasuryAddress = useTreasuryAddress();
   const [treasuryData, setTreasuryData] = useState<TreasuryBalanceData | null>(null);
   const [arcBalance, setArcBalance] = useState<bigint>(0n);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
+  if (!contracts || !treasuryAddress) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-600 dark:text-gray-400">No treasury selected</p>
+      </div>
+    );
+  }
+
   const loadData = async () => {
     setLoading(true);
     try {
       // Fetch balances from Alchemy API
-      const data = await fetchTreasuryBalances();
+      const data = await fetchTreasuryBalances(treasuryAddress);
       setTreasuryData(data);
 
       // Fetch Arc Testnet balance directly
-      if (publicClient) {
+      if (publicClient && contracts) {
         const balance = await publicClient.readContract({
-          address: contracts.TreasuryCore.address,
+          address: treasuryAddress,
           abi: contracts.TreasuryCore.abi,
           functionName: 'getBalance',
         });
@@ -148,7 +158,7 @@ export function TreasuryDashboard() {
               </p>
             </div>
             <a
-              href={getAddressExplorerUrl(contracts.TreasuryCore.address, 'arc')}
+              href={getAddressExplorerUrl(treasuryAddress, 'arc')}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
@@ -204,7 +214,7 @@ export function TreasuryDashboard() {
                 <Wallet className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                 <p className="text-gray-600 dark:text-gray-400 mb-2">No balances found</p>
                 <p className="text-sm text-gray-500 dark:text-gray-500">
-                  Treasury address: {contracts.TreasuryCore.address.slice(0, 10)}...{contracts.TreasuryCore.address.slice(-8)}
+                  Treasury address: {treasuryAddress.slice(0, 10)}...{treasuryAddress.slice(-8)}
                 </p>
               </div>
             )}

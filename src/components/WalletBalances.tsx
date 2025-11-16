@@ -52,7 +52,7 @@ const CHAIN_CONFIGS = [
     chainId: '11155111',
     nativeToken: 'ETH',
     explorerUrl: 'https://sepolia.etherscan.io',
-    rpcUrl: 'https://eth-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4',
+    rpcUrl: 'https://eth-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN47HN4',
     usdcAddress: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
   },
   {
@@ -62,7 +62,7 @@ const CHAIN_CONFIGS = [
     chainId: '11155420',
     nativeToken: 'ETH',
     explorerUrl: 'https://sepolia-optimism.etherscan.io',
-    rpcUrl: 'https://opt-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4',
+    rpcUrl: 'https://opt-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN47HN4',
     usdcAddress: '0x5fd84259d66Cd46123540766Be93DFE6D43130D7',
   },
   {
@@ -72,7 +72,7 @@ const CHAIN_CONFIGS = [
     chainId: '80002',
     nativeToken: 'MATIC',
     explorerUrl: 'https://amoy.polygonscan.com',
-    rpcUrl: 'https://polygon-amoy.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4',
+    rpcUrl: 'https://polygon-amoy.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN47HN4',
     usdcAddress: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582',
   },
   {
@@ -82,7 +82,7 @@ const CHAIN_CONFIGS = [
     chainId: '421614',
     nativeToken: 'ETH',
     explorerUrl: 'https://sepolia.arbiscan.io',
-    rpcUrl: 'https://arb-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4',
+    rpcUrl: 'https://arb-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN47HN4',
     usdcAddress: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
   },
   {
@@ -92,7 +92,7 @@ const CHAIN_CONFIGS = [
     chainId: '84532',
     nativeToken: 'ETH',
     explorerUrl: 'https://sepolia.basescan.org',
-    rpcUrl: 'https://base-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4',
+    rpcUrl: 'https://base-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN47HN4',
     usdcAddress: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
   },
   {
@@ -102,7 +102,7 @@ const CHAIN_CONFIGS = [
     chainId: '43113',
     nativeToken: 'AVAX',
     explorerUrl: 'https://testnet.snowtrace.io',
-    rpcUrl: 'https://avax-fuji.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4',
+    rpcUrl: 'https://avax-fuji.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN47HN4',
     usdcAddress: '0x5425890298aed601595a70AB815c96711a31Bc65',
   },
   {
@@ -112,7 +112,7 @@ const CHAIN_CONFIGS = [
     chainId: '5042002',
     nativeToken: 'USDC',
     explorerUrl: 'https://testnet.arcscan.app',
-    rpcUrl: 'https://arc-testnet.g.alchemy.com/v2/x9KWnxVYhNfjC0Yr8llKf',
+    rpcUrl: 'https://arc-testnet.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4',
     usdcAddress: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
   },
 ];

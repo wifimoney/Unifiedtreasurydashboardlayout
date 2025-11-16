@@ -56,11 +56,16 @@ const riskLevelLabels = {
 
 export function TransactionHistory() {
   const publicClient = usePublicClient() as any;
+  const contracts = useContracts();
   const [entries, setEntries] = useState<ComplianceEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterRisk, setFilterRisk] = useState('all');
+
+  if (!contracts) {
+    return <div className="text-center py-12"><p className="text-gray-600 dark:text-gray-400">No treasury selected</p></div>;
+  }
 
   useEffect(() => {
     async function loadTransactions() {

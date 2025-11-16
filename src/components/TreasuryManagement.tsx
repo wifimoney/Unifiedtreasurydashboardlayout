@@ -14,7 +14,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { contracts, getExplorerUrl, getAddressExplorerUrl } from '../lib/contracts';
+import { useContracts, useTreasuryAddress, getExplorerUrl, getAddressExplorerUrl } from '../lib/contracts';
 
 interface Transaction {
   to: string;
@@ -29,6 +29,8 @@ export function TreasuryManagement() {
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient() as any;
   const { data: walletClient } = useWalletClient();
+  const contracts = useContracts();
+  const treasuryAddress = useTreasuryAddress();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoadingTxs, setIsLoadingTxs] = useState(true);
   const [approvingId, setApprovingId] = useState<number | null>(null);
@@ -36,6 +38,10 @@ export function TreasuryManagement() {
   const [cancellingId, setCancellingId] = useState<number | null>(null);
   const [owners, setOwners] = useState<string[]>([]);
   const [balance, setBalance] = useState<bigint>(0n);
+
+  if (!contracts || !treasuryAddress) {
+    return <div className="text-center py-12"><p className="text-gray-600 dark:text-gray-400">No treasury selected</p></div>;
+  }
 
   // Read transaction count
   const { data: txCount, refetch: refetchCount } = useReadContract({
@@ -334,11 +340,11 @@ export function TreasuryManagement() {
             <div>
               <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Contract Address</div>
               <div className="text-sm font-mono dark:text-white">
-                {contracts.TreasuryCore.address}
+                {treasuryAddress}
               </div>
             </div>
             <a
-              href={getAddressExplorerUrl(contracts.TreasuryCore.address, 'arc')}
+              href={getAddressExplorerUrl(treasuryAddress, 'arc')}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"

@@ -19,7 +19,7 @@ import {
   PlusCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { contracts, getExplorerUrl } from '../lib/contracts';
+import { useContracts, getExplorerUrl } from '../lib/contracts';
 
 interface Department {
   id: number;
@@ -34,6 +34,7 @@ export function BudgetDepartments() {
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient() as any;
   const { data: walletClient } = useWalletClient();
+  const contracts = useContracts();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [isLoadingDepts, setIsLoadingDepts] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -45,6 +46,10 @@ export function BudgetDepartments() {
     budget: '',
     manager: '',
   });
+
+  if (!contracts) {
+    return <div className="text-center py-12"><p className="text-gray-600 dark:text-gray-400">No treasury selected</p></div>;
+  }
 
   // Read department count from contract
   const { data: deptCount, refetch: refetchCount } = useReadContract({

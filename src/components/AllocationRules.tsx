@@ -23,7 +23,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { contracts, getExplorerUrl } from '../lib/contracts';
+import { useContracts, getExplorerUrl } from '../lib/contracts';
 
 // Interface matching contract Rule struct
 interface ContractRule {
@@ -82,8 +82,9 @@ const ruleTypeLabels = {
 
 export function AllocationRules() {
   const { address, isConnected } = useAccount();
-  const publicClient = usePublicClient() as any; // Type assertion for wagmi v2 compatibility
+  const publicClient = usePublicClient() as any;
   const { data: walletClient } = useWalletClient();
+  const contracts = useContracts();
   const [rules, setRules] = useState<AllocationRule[]>([]);
   const [isLoadingRules, setIsLoadingRules] = useState(true);
   const [isCreatingRule, setIsCreatingRule] = useState(false);
@@ -95,6 +96,10 @@ export function AllocationRules() {
     interval: '',
     maxExecutions: '100',
   });
+
+  if (!contracts) {
+    return <div className="text-center py-12"><p className="text-gray-600 dark:text-gray-400">No treasury selected</p></div>;
+  }
 
   // Read rule count from contract (wagmi v2)
   const { data: ruleCount, refetch: refetchCount } = useReadContract({
