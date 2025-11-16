@@ -22,11 +22,11 @@ import { toast } from 'sonner';
 import { useTreasury } from '../contexts/TreasuryContext';
 
 // Import compiled contracts with bytecode and ABIs
-import TreasuryCoreCompiled from '../../../backend/out/TreasuryCore.sol/TreasuryCore.json';
-import BudgetAllocatorCompiled from '../../../backend/out/BudgetAllocator.sol/BudgetAllocator.json';
-import PayrollManagerCompiled from '../../../backend/out/PayrollManager.sol/PayrollManager.json';
-import ComplianceTrackerCompiled from '../../../backend/out/ComplianceTracker.sol/ComplianceTracker.json';
-import RuleEngineCompiled from '../../../backend/out/RuleEngine.sol/RuleEngine.json';
+import TreasuryCoreCompiled from '../lib/compiled/TreasuryCore.json';
+import BudgetAllocatorCompiled from '../lib/compiled/BudgetAllocator.json';
+import PayrollManagerCompiled from '../lib/compiled/PayrollManager.json';
+import ComplianceTrackerCompiled from '../lib/compiled/ComplianceTracker.json';
+import RuleEngineCompiled from '../lib/compiled/RuleEngine.json';
 
 const USDC_ADDRESS = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
 const PROGRESS_STORAGE_KEY = 'arcboard-deployment-progress';
