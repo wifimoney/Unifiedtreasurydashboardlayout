@@ -24,7 +24,7 @@ const TESTNETS = [
   { name: 'Ethereum', rpc: 'https://eth-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4', usdc: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238', symbol: 'ETH', explorer: 'https://sepolia.etherscan.io', chainId: 11155111, chain: sepolia },
   { name: 'Base', rpc: 'https://base-sepolia.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4', usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e', symbol: 'ETH', explorer: 'https://sepolia.basescan.org', chainId: 84532, chain: baseSepolia },
   { name: 'Avalanche', rpc: 'https://avax-fuji.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4', usdc: '0x5425890298aed601595a70AB815c96711a31Bc65', symbol: 'AVAX', explorer: 'https://testnet.snowtrace.io', chainId: 43113, chain: avalancheFuji },
-  { name: 'ARC', rpc: 'https://arc-testnet.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4', usdc: null, symbol: 'USDC', explorer: 'https://testnet.arcscan.app', chainId: 5042002, chain: arcTestnet },
+  { name: 'ARC', rpc: 'https://arc-testnet.g.alchemy.com/v2/CXvHG0j6A1Fv6mI2y-iIKxGtWbiW7HN4', usdc: '0x3600000000000000000000000000000000000000', symbol: 'USDC', explorer: 'https://testnet.arcscan.app', chainId: 5042002, chain: arcTestnet },
 ];
 
 const GATEWAY_WALLET = '0x0077777d7EBA4688BDeF3E311b846F25870A19B9' as `0x${string}`;
@@ -314,7 +314,11 @@ export function WalletBalancesSimple() {
       }
 
       const destDomain = destChain.chainId === 11155111 ? 0 : destChain.chainId === 84532 ? 6 : destChain.chainId === 43113 ? 1 : 26;
-      const destToken = destChain.usdc || zeroAddress;
+      const destToken = destChain.usdc; // Now ARC has proper USDC address
+
+      if (!destToken) {
+        throw new Error('Destination chain USDC address not configured');
+      }
 
       // Use Base as source (domain 6) since you have $3 there
       const baseBurnIntent = {
@@ -406,13 +410,13 @@ export function WalletBalancesSimple() {
       const transferData = await transferRes.json();
       console.log('Circle API response:', transferData);
       console.log('Response status:', transferRes.status);
-      
+
       // Check for API error
       if (transferRes.status !== 200 && transferRes.status !== 201) {
         console.error('Circle API error:', transferData);
         throw new Error(transferData.message || transferData.error || 'Circle API rejected the request');
       }
-      
+
       if (!transferData || (!transferData.attestation && !transferData[0]?.attestation)) {
         throw new Error(`No attestation received. Response: ${JSON.stringify(transferData)}`);
       }
