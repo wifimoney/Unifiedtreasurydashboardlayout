@@ -231,7 +231,8 @@ export function PayrollManagement() {
   // Only fetch on mount, not on every employeeCount change
   useEffect(() => {
     fetchEmployees();
-  }, []); // Empty dependency array - only on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - only on mount, refresh via button
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -300,6 +301,7 @@ export function PayrollManagement() {
         toast.success('Employee added successfully!', { id: toastId });
         setFormData({ name: '', wallet: '', salary: '', frequency: '2', departmentId: '0' });
         await refetchCount();
+        fetchEmployees(); // Refresh employee list
       } else {
         toast.error('Transaction failed', { id: toastId });
       }
@@ -376,6 +378,7 @@ export function PayrollManagement() {
           ),
         });
         await refetchCount();
+        fetchEmployees(); // Refresh employee list
       } else {
         toast.error('Payment failed', { id: toastId });
       }
@@ -456,6 +459,7 @@ export function PayrollManagement() {
           ),
         });
         await refetchCount();
+        fetchEmployees(); // Refresh employee list
       } else {
         toast.error('Batch payment failed', { id: toastId });
       }
@@ -520,6 +524,7 @@ export function PayrollManagement() {
         setEditingAddress(null);
         setEditSalary('');
         await refetchCount();
+        fetchEmployees(); // Refresh employee list
       } else {
         toast.error('Transaction failed', { id: toastId });
       }
@@ -576,6 +581,7 @@ export function PayrollManagement() {
       if (receipt.status === 'success') {
         toast.success('Employee removed!', { id: toastId });
         await refetchCount();
+        fetchEmployees(); // Refresh employee list
       } else {
         toast.error('Transaction failed', { id: toastId });
       }
