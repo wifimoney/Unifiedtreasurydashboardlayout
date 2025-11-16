@@ -661,23 +661,12 @@ export function WalletBalances() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-2xl mb-2">My Wallet Balances</CardTitle>
+              <CardTitle className="text-2xl mb-2">Circle Gateway</CardTitle>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Connected: {address?.slice(0, 6)}...{address?.slice(-4)}
+                Move USDC from your wallet to the Circle Gateway to use on other networks
               </p>
-              {lastUpdate && (
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                  Last updated: {lastUpdate.toLocaleTimeString()}
-                </p>
-              )}
             </div>
             <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Total USDC</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                  ${totalUsdc.toFixed(2)}
-                </p>
-              </div>
               <Button
                 onClick={fetchBalances}
                 disabled={loading}

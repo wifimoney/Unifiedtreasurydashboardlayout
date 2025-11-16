@@ -6,12 +6,10 @@ import { TreasurySwitcher } from './TreasurySwitcher';
 import {
   Layers,
   Activity,
-  Settings,
   Moon,
   Sun,
   GitBranch,
   Wallet,
-  Wrench,
   Building2,
   ArrowLeftRight,
   Users,
@@ -25,13 +23,11 @@ interface LayoutProps {
 const navItems = [
   { path: '/overview', label: 'Overview', icon: Layers },
   { path: '/vault', label: 'Treasury Vault', icon: Lock },
-  { path: '/wallet', label: 'Gateway', icon: ArrowLeftRight },
+  { path: '/gateway', label: 'Gateway', icon: ArrowLeftRight },
   { path: '/budgets', label: 'Budgets', icon: Building2 },
   { path: '/payroll', label: 'Payroll', icon: Users },
   { path: '/rules', label: 'Rules', icon: GitBranch },
   { path: '/transactions', label: 'Transactions', icon: Activity },
-  { path: '/setup', label: 'Setup', icon: Wrench },
-  { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function Layout({ children }: LayoutProps) {

@@ -7,7 +7,7 @@ import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Button } from './ui/button';
 import { ArrowUpRight, ArrowDownLeft, RefreshCw, Search, ExternalLink, AlertCircle } from 'lucide-react';
-import { contracts, getExplorerUrl } from '../lib/contracts';
+import { useContracts, getExplorerUrl } from '../lib/contracts';
 
 interface ComplianceEntry {
   id: number;

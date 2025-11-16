@@ -21,8 +21,6 @@ import { BudgetsPage } from "./pages/BudgetsPage";
 import { PayrollPage } from "./pages/PayrollPage";
 import { RulesPage } from "./pages/RulesPage";
 import { TransactionsPage } from "./pages/TransactionsPage";
-import { SetupPage } from "./pages/SetupPage";
-import { SettingsPage } from "./pages/SettingsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,7 +60,7 @@ function DashboardContent() {
             </Layout>
           </ProtectedRoute>
         } />
-        <Route path="/wallet" element={
+        <Route path="/gateway" element={
           <ProtectedRoute>
             <Layout>
               <WalletPage />
@@ -104,20 +102,6 @@ function DashboardContent() {
             </Layout>
           </ProtectedRoute>
         } />
-        <Route path="/setup" element={
-          <ProtectedRoute>
-            <Layout>
-              <SetupPage />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="/settings" element={
-          <ProtectedRoute>
-            <Layout>
-              <SettingsPage />
-            </Layout>
-          </ProtectedRoute>
-        } />
       </Routes>
     </BrowserRouter>
   );
@@ -130,7 +114,7 @@ export default function App() {
         <RainbowKitProvider initialChain={arcTestnet}>
           <ThemeProvider>
             <TreasuryProvider>
-              <DashboardContent />
+            <DashboardContent />
             </TreasuryProvider>
           </ThemeProvider>
         </RainbowKitProvider>
