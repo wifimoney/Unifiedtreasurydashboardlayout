@@ -340,7 +340,7 @@ export function PayrollManagement() {
     try {
       const data = encodeFunctionData({
         abi: contracts.PayrollManager.abi,
-        functionName: 'processPayment',
+        functionName: 'processEmployeePayment',
         args: [employeeWallet as `0x${string}`],
       });
 
@@ -420,7 +420,7 @@ export function PayrollManagement() {
     try {
       const data = encodeFunctionData({
         abi: contracts.PayrollManager.abi,
-        functionName: 'processAllPayments',
+        functionName: 'processPayroll',
         args: [],
       });
 

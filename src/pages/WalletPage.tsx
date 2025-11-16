@@ -1,6 +1,6 @@
-import { WalletBalances } from "../components/WalletBalances";
+import { WalletBalancesSimple } from "../components/WalletBalancesSimple";
 
 export function WalletPage() {
-  return <WalletBalances />;
+  return <WalletBalancesSimple />;
 }
 
