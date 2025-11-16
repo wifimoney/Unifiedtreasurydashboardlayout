@@ -405,9 +405,16 @@ export function WalletBalancesSimple() {
 
       const transferData = await transferRes.json();
       console.log('Circle API response:', transferData);
-
+      console.log('Response status:', transferRes.status);
+      
+      // Check for API error
+      if (transferRes.status !== 200 && transferRes.status !== 201) {
+        console.error('Circle API error:', transferData);
+        throw new Error(transferData.message || transferData.error || 'Circle API rejected the request');
+      }
+      
       if (!transferData || (!transferData.attestation && !transferData[0]?.attestation)) {
-        throw new Error('No attestation received from Circle');
+        throw new Error(`No attestation received. Response: ${JSON.stringify(transferData)}`);
       }
 
       // Extract attestation and signature (might be in array or direct)
